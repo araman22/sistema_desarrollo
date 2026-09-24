@@ -11,14 +11,12 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: [self-hosted, deploy]
     steps:
-      - name: Deploy on Ubuntu server
-        env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      - name: Update code on server
         run: |
-          set -euo pipefail
-          cd "$DEPLOY_PATH"
+          set -e
+          cd /var/www/sistema_desarrollo
           git fetch origin main
           git reset --hard origin/main
           composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
