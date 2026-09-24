@@ -13,12 +13,12 @@ Base inicial en Laravel 12, con PostgreSQL configurado como motor predeterminado
 
 ## Flujo de ramas
 
-- Cada persona trabaja en una rama propia y abre un Pull Request hacia `testing`.
+- Cada persona trabaja en su rama personal y abre un Pull Request hacia `testing`.
 - `testing` se usa para validar los cambios.
 - Una vez aprobados, se integra `testing` en `main`.
 - Cada push o merge a `main` inicia el despliegue definido en `.github/workflows/deploy-production.yml`.
 
-## Despliegue en Ubuntu
+Ramas personales existentes: `tapia`, `zarazaga`, `santillan`, `dominguez`, `acuña`, `albarracin`, `banegas`, `pappalardo`.
 
 El workflow usa un **runner propio de GitHub Actions** instalado en el servidor. Así el servidor se conecta hacia GitHub y no hace falta abrir SSH entrante ni configurar el router, aunque el servidor y los colaboradores estén en redes distintas.
 
