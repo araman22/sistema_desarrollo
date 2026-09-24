@@ -20,70 +20,17 @@ Base inicial en Laravel 12, con PostgreSQL configurado como motor predeterminado
 
 Ramas personales existentes: `tapia`, `zarazaga`, `santillan`, `dominguez`, `acuña`, `albarracin`, `banegas`, `pappalardo`.
 
-Para crear la rama de un colaborador nuevo a partir de `main`:
+El workflow usa un **runner propio de GitHub Actions** instalado en el servidor. Así el servidor se conecta hacia GitHub y no hace falta abrir SSH entrante ni configurar el router, aunque el servidor y los colaboradores estén en redes distintas.
 
-```sh
-git checkout main
-git pull
-git switch -c <nombre-del-colaborador>
-git push -u origin <nombre-del-colaborador>
-```
+1. En GitHub, entra al repositorio en **Settings → Actions → Runners → New self-hosted runner**, elige Linux y sigue los comandos que GitHub muestra para descargar y registrar el runner. Esos comandos incluyen un token temporal: ejecútalos directamente en Ubuntu y no los compartas.
+2. Configura el runner como servicio (`svc.sh install` y `svc.sh start`) con un usuario dedicado sin permisos de administrador. Ese usuario debe poder escribir en la carpeta de despliegue y en `storage` y `bootstrap/cache`.
+3. Instala en Ubuntu PHP con `pdo_pgsql`, Composer y Git. Clona el repositorio en una ruta fija. El `origin` debe permitir al usuario del runner hacer `git fetch` (para un repositorio privado, usa una deploy key de solo lectura).
+4. En **Settings → Secrets and variables → Actions**, crea el secreto `DEPLOY_PATH` con la ruta absoluta del clon, por ejemplo `/var/www/sistema_desarrollo`.
+5. En ese clon prepara `.env` (no se versiona), con `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` y PostgreSQL (`DB_CONNECTION=pgsql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`). Si PostgreSQL corre en la misma máquina, `DB_HOST=127.0.0.1`; si corre en otra, usa su dirección privada alcanzable desde Ubuntu. Instala dependencias con `composer install --no-dev`, genera la clave con `php artisan key:generate` y conserva `.env` en el servidor.
 
-## Protección de ramas
+Al integrar cambios en `main`, el runner actualiza el clon, instala dependencias, ejecuta migraciones y optimiza Laravel. Mantén el repositorio privado y limita las modificaciones de workflows y la integración a personas de confianza: un workflow puede ejecutar comandos en el servidor donde está instalado el runner.
 
-En GitHub, **Settings → Branches → Add branch protection rule** (o **Settings → Rules → Rulesets**) para `testing` y `main`:
-
-- Require a pull request before merging.
-- Require status checks when available.
-- Desactivar el push directo a `main` (solo merge por PR desde `testing`).
-- Marcar `testing` como la rama protegida para validar PRs de las ramas personales.
-
-## Despliegue en Ubuntu (runner self-hosted)
-
-El despliegue usa un **runner self-hosted de GitHub Actions** instalado en la PC servidora. El workflow corre *dentro* del servidor, por lo que no hace falta IP pública, puertos abiertos ni secretos de SSH.
-
-Configuración inicial (una sola vez en la PC vieja):
-
-```bash
-# 1) Requisitos
-sudo apt update
-sudo apt install -y git composer php-cli php-fpm php-pgsql php-mbstring php-xml php-curl php-zip unzip nginx
-php -m | grep pgsql        # debe listar pdo_pgsql
-
-# 2) Clonar el repo en la carpeta de despliegue
-sudo mkdir -p /var/www/sistema_desarrollo
-sudo chown $USER:$USER /var/www/sistema_desarrollo
-git clone https://github.com/araman22/sistema_desarrollo.git /var/www/sistema_desarrollo
-cd /var/www/sistema_desarrollo
-
-# 3) Repo privado: crear una deploy key de solo lectura
-ssh-keygen -t ed25519 -f ~/.ssh/deploy_key -N ""
-#    Agregar ~/.ssh/deploy_key.pub en GitHub → Settings → Deploy keys.
-printf 'Host github.com\n    HostName github.com\n    User git\n    IdentityFile ~/.ssh/deploy_key\n    IdentitiesOnly yes\n' > ~/.ssh/config
-git remote set-url origin git@github.com:araman22/sistema_desarrollo.git
-
-# 4) Ambiente de producción
-cp .env.example .env
-#   Editar .env: APP_ENV=production, APP_DEBUG=false, APP_URL,
-#   DB_CONNECTION=pgsql con DB_HOST/DB_PORT/DB_DATABASE/DB_USERNAME/DB_PASSWORD
-php artisan key:generate
-php artisan migrate --force
-php artisan optimize
-
-# 5) Runner self-hosted
-mkdir -p ~/actions-runner && cd ~/actions-runner
-VER=$(curl -sL https://api.github.com/repos/actions/runner/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+')
-curl -sL -o runner.tar.gz "https://github.com/actions/runner/releases/download/$VER/actions-runner-linux-x64-${VER#v}.tar.gz"
-tar xzf runner.tar.gz
-# En GitHub → Settings → Actions → Runners → New self-hosted runner
-# copiar el token y configurar:
-./config.sh --url https://github.com/araman22/sistema_desarrollo --token <TOKEN> --name server001 --work _work --labels deploy --unattended
-# Instalarlo como servicio para que arranque solo:
-sudo ./svc.sh install
-sudo ./svc.sh start
-```
-
-Cada push o merge a `main` ejecuta en el servidor: `git fetch origin main` + `git reset --hard origin/main`, `composer install --no-dev`, `php artisan migrate --force` y `php artisan optimize`. No hace falta tocar el servidor a mano. No se requieren secretos de Actions ni del par SSH.
+Este despliegue solo conecta GitHub Actions con el servidor para actualizar el código. Para que los empleados vean la aplicación desde otras redes, después habrá que habilitar acceso web, por ejemplo mediante VPN o un dominio con HTTPS y un proxy inverso.
 
 ## Desarrollo local
 
