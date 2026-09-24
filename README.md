@@ -13,14 +13,74 @@ Base inicial en Laravel 12, con PostgreSQL configurado como motor predeterminado
 
 ## Flujo de ramas
 
-- Cada persona trabaja en una rama propia y abre un Pull Request hacia `testing`.
+- Cada persona trabaja en su rama personal y abre un Pull Request hacia `testing`.
 - `testing` se usa para validar los cambios.
 - Una vez aprobados, se integra `testing` en `main`.
 - Cada push o merge a `main` inicia el despliegue definido en `.github/workflows/deploy-production.yml`.
 
+Ramas personales existentes: `tapia`, `zarazaga`, `santillan`, `dominguez`, `acuña`, `albarracin`, `banegas`, `pappalardo`.
+
+Para crear la rama de un colaborador nuevo a partir de `main`:
+
+```sh
+git checkout main
+git pull
+git switch -c <nombre-del-colaborador>
+git push -u origin <nombre-del-colaborador>
+```
+
+## Protección de ramas
+
+En GitHub, **Settings → Branches → Add branch protection rule** (o **Settings → Rules → Rulesets**) para `testing` y `main`:
+
+- Require a pull request before merging.
+- Require status checks when available.
+- Desactivar el push directo a `main` (solo merge por PR desde `testing`).
+- Marcar `testing` como la rama protegida para validar PRs de las ramas personales.
+
 ## Despliegue en Ubuntu
 
 El servidor debe tener PHP con `pdo_pgsql`, Composer, Git y acceso a PostgreSQL. El repositorio debe estar clonado en una carpeta de despliegue y esa carpeta debe tener configurado `origin` hacia este repositorio. Para un repositorio privado, configura también una deploy key de solo lectura en GitHub.
+
+Configuración inicial (una sola vez en la PC vieja):
+
+```bash
+# 1) Requisitos
+sudo apt update
+sudo apt install -y git composer php-cli php-fpm php-pgsql php-mbstring php-xml php-curl php-zip unzip nginx
+php -m | grep pgsql        # debe listar pdo_pgsql
+
+# 2) Clonar el repo en la carpeta de despliegue
+sudo mkdir -p /var/www/sistema_desarrollo
+sudo chown $USER:$USER /var/www/sistema_desarrollo
+git clone https://github.com/araman22/sistema_desarrollo.git /var/www/sistema_desarrollo
+cd /var/www/sistema_desarrollo
+git branch --set-upstream-to=origin/main main
+
+# 3) Repo privado: crear una deploy key de solo lectura
+#    ssh-keygen -t ed25519 -f ~/.ssh/deploy_key -N ""
+#    Agregar ~/.ssh/deploy_key.pub en GitHub → Settings → Deploy keys.
+#    Luego configurar ~/.ssh/config para que este clon use la deploy_key
+#    (Host github.com /   IdentityFile ~/.ssh/deploy_key /   IdentitiesOnly yes)
+#    y cambiar origin a SSH: git remote set-url origin git@github.com:araman22/sistema_desarrollo.git
+
+# 4) Ambiente de producción
+cp .env.example .env
+#   Editar .env: APP_ENV=production, APP_DEBUG=false, APP_URL,
+#   DB_CONNECTION=pgsql con DB_HOST/DB_PORT/DB_DATABASE/DB_USERNAME/DB_PASSWORD
+php artisan key:generate
+php artisan migrate --force
+php artisan optimize
+
+# 5) Autorizar a GitHub Actions para entrar por SSH
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys
+#   Agregar al final de authorized_keys la clave pública del par DEPLOY_SSH_KEY.
+#   Configurar nginx/php-fpm para servir /var/www/sistema_desarrollo/public (o usar
+#   php artisan serve --host=0.0.0.0 como solución simple para pruebas).
+```
+
+A partir de ahí, cada push o merge a `main` ejecuta el workflow: hace `git fetch` + `git reset --hard origin/main`, instala dependencias de producción, corre migraciones y optimiza la app. No hace falta ejecutar comandos a mano en el servidor.
 
 En GitHub, abre **Settings → Secrets and variables → Actions** y crea estos secretos:
 
