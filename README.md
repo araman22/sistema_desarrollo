@@ -20,19 +20,17 @@ Base inicial en Laravel 12, con PostgreSQL configurado como motor predeterminado
 
 ## Despliegue en Ubuntu
 
-El servidor debe tener PHP con `pdo_pgsql`, Composer, Git y acceso a PostgreSQL. El repositorio debe estar clonado en una carpeta de despliegue y esa carpeta debe tener configurado `origin` hacia este repositorio. Para un repositorio privado, configura también una deploy key de solo lectura en GitHub.
+El workflow usa un **runner propio de GitHub Actions** instalado en el servidor. Así el servidor se conecta hacia GitHub y no hace falta abrir SSH entrante ni configurar el router, aunque el servidor y los colaboradores estén en redes distintas.
 
-En GitHub, abre **Settings → Secrets and variables → Actions** y crea estos secretos:
+1. En GitHub, entra al repositorio en **Settings → Actions → Runners → New self-hosted runner**, elige Linux y sigue los comandos que GitHub muestra para descargar y registrar el runner. Esos comandos incluyen un token temporal: ejecútalos directamente en Ubuntu y no los compartas.
+2. Configura el runner como servicio (`svc.sh install` y `svc.sh start`) con un usuario dedicado sin permisos de administrador. Ese usuario debe poder escribir en la carpeta de despliegue y en `storage` y `bootstrap/cache`.
+3. Instala en Ubuntu PHP con `pdo_pgsql`, Composer y Git. Clona el repositorio en una ruta fija. El `origin` debe permitir al usuario del runner hacer `git fetch` (para un repositorio privado, usa una deploy key de solo lectura).
+4. En **Settings → Secrets and variables → Actions**, crea el secreto `DEPLOY_PATH` con la ruta absoluta del clon, por ejemplo `/var/www/sistema_desarrollo`.
+5. En ese clon prepara `.env` (no se versiona), con `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` y PostgreSQL (`DB_CONNECTION=pgsql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`). Si PostgreSQL corre en la misma máquina, `DB_HOST=127.0.0.1`; si corre en otra, usa su dirección privada alcanzable desde Ubuntu. Instala dependencias con `composer install --no-dev`, genera la clave con `php artisan key:generate` y conserva `.env` en el servidor.
 
-- `DEPLOY_HOST`: IP o nombre DNS alcanzable desde GitHub Actions.
-- `DEPLOY_USER`: usuario SSH del servidor.
-- `DEPLOY_SSH_KEY`: clave privada SSH autorizada para ese usuario.
-- `DEPLOY_PATH`: ruta absoluta al clon del proyecto en Ubuntu.
-- `DEPLOY_PORT`: opcional; si falta se usa el puerto `22`.
+Al integrar cambios en `main`, el runner actualiza el clon, instala dependencias, ejecuta migraciones y optimiza Laravel. Mantén el repositorio privado y limita las modificaciones de workflows y la integración a personas de confianza: un workflow puede ejecutar comandos en el servidor donde está instalado el runner.
 
-En el servidor crea el archivo `.env` dentro de `DEPLOY_PATH` (no se versiona) y define al menos `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL` y los valores de PostgreSQL (`DB_CONNECTION=pgsql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`). Antes del primer despliegue, instala dependencias (`composer install --no-dev`) y genera una `APP_KEY` con `php artisan key:generate`; conserva ese `.env` en el servidor. La base y el usuario deben existir y aceptar conexiones desde la aplicación.
-
-El workflow actualiza el clon a `origin/main`, instala dependencias de producción, ejecuta migraciones y optimiza Laravel. Asegúrate de que el servidor pueda recibir SSH desde GitHub Actions; una máquina detrás de un router sin acceso entrante necesitará una VPN/túnel o un runner propio dentro de tu red.
+Este despliegue solo conecta GitHub Actions con el servidor para actualizar el código. Para que los empleados vean la aplicación desde otras redes, después habrá que habilitar acceso web, por ejemplo mediante VPN o un dominio con HTTPS y un proxy inverso.
 
 ## Desarrollo local
 
