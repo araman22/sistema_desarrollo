@@ -27,8 +27,7 @@ return new class extends Migration
             $table->dateTime('fecha_vencimiento')->nullable();
             $table->string('estado', 30)->default('pendiente');
             $table->dateTime('fecha_lectura')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index(['alertable_tipo', 'alertable_id']);
             $table->index(['usuario_id', 'estado']);

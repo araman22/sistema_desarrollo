@@ -26,8 +26,7 @@ return new class extends Migration
             $table->foreignId('responsable_id')->nullable()->constrained('policias')->nullOnDelete();
             $table->string('estado', 30)->default('activa');
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('estado');
         });

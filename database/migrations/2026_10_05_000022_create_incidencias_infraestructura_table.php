@@ -24,8 +24,7 @@ return new class extends Migration
             $table->decimal('costo', 15, 2)->nullable();
             $table->dateTime('fecha_resolucion')->nullable();
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('estado');
             $table->index('fecha_reporte');

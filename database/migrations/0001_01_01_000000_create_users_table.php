@@ -29,8 +29,7 @@ return new class extends Migration
             $table->boolean('activo')->default(true);
             $table->timestamp('ultimo_acceso')->nullable();
             $table->string('recordar_token', 100)->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

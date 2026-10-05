@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('rol_id')->constrained('roles')->cascadeOnDelete();
             $table->foreignId('permiso_id')->constrained('permisos')->cascadeOnDelete();
-
             $table->unique(['rol_id', 'permiso_id']);
+            $table->timestamps();
         });
     }
 

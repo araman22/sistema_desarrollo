@@ -14,10 +14,6 @@ class EquipamientoTecnologico extends Model
 
     protected $table = 'equipamientos_tecnologicos';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -48,8 +44,6 @@ class EquipamientoTecnologico extends Model
     {
         return [
             'fecha_adquisicion' => 'date',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

@@ -15,10 +15,6 @@ class Oficina extends Model
 
     protected $table = 'oficinas';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -32,17 +28,6 @@ class Oficina extends Model
         'estado',
         'observaciones',
     ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
-        ];
-    }
 
     public function responsable(): BelongsTo
     {

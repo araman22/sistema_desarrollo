@@ -13,10 +13,6 @@ class Capacitacion extends Model
 
     protected $table = 'capacitaciones';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -41,8 +37,6 @@ class Capacitacion extends Model
             'fecha_fin' => 'date',
             'cantidad_horas' => 'decimal:2',
             'certificado' => 'boolean',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

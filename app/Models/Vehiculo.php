@@ -15,10 +15,6 @@ class Vehiculo extends Model
 
     protected $table = 'vehiculos';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -52,8 +48,6 @@ class Vehiculo extends Model
             'ultima_revision' => 'date',
             'proxima_revision' => 'date',
             'fecha_adquisicion' => 'date',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

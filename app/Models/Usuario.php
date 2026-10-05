@@ -20,10 +20,6 @@ class Usuario extends Authenticatable
     /**
      * La tabla usuarios no usa created_at / updated_at.
      */
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * Laravel espera "remember_token"; la columna del proyecto es recordar_token.
      */
@@ -60,8 +56,6 @@ class Usuario extends Authenticatable
             'contrasena' => 'hashed',
             'activo' => 'boolean',
             'ultimo_acceso' => 'datetime',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

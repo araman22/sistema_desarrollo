@@ -14,10 +14,6 @@ class Alerta extends Model
 
     protected $table = 'alertas';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -44,8 +40,6 @@ class Alerta extends Model
             'fecha_generacion' => 'datetime',
             'fecha_vencimiento' => 'datetime',
             'fecha_lectura' => 'datetime',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

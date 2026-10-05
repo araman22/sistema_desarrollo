@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string('prioridad', 30)->default('media');
             $table->string('estado', 40)->default('pendiente');
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('fecha_inicio');
             $table->index('estado');

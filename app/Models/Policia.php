@@ -16,10 +16,6 @@ class Policia extends Model
 
     protected $table = 'policias';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * Ficha laboral. La identidad (nombre, dni, contacto) esta en `persona`.
      *
@@ -44,8 +40,6 @@ class Policia extends Model
     {
         return [
             'fecha_ingreso' => 'date',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

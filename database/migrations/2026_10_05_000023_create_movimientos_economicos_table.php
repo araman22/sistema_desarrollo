@@ -25,8 +25,7 @@ return new class extends Migration
             $table->string('comprobante', 150)->nullable();
             $table->string('estado', 50)->default('registrado');
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('tipo');
             $table->index('fecha');

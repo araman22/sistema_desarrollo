@@ -18,10 +18,6 @@ class Rol extends Model
      */
     const ADMINISTRADOR = 'administrador';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -38,8 +34,6 @@ class Rol extends Model
     {
         return [
             'activo' => 'boolean',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

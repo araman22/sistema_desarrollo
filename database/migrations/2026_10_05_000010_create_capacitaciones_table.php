@@ -21,8 +21,7 @@ return new class extends Migration
             $table->decimal('cantidad_horas', 6, 2)->nullable();
             $table->boolean('certificado')->default(false);
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('fecha_inicio');
         });

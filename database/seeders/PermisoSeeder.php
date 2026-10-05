@@ -50,14 +50,14 @@ class PermisoSeeder extends Seeder
                     'descripcion' => 'Permite '.$accion.' registros de '.$modulo.'.',
                     'modulo' => $modulo,
                     'accion' => $accion,
-                    'fecha_creacion' => now(),
-                    'fecha_actualizacion' => now(),
                 ];
             }
         }
 
+        // fillAndInsertOrIgnore (y no insertOrIgnore) para que Eloquent agregue
+        // created_at y updated_at: la insercion masiva los omite.
         foreach (array_chunk($filas, 200) as $lote) {
-            Permiso::insertOrIgnore($lote);
+            Permiso::fillAndInsertOrIgnore($lote);
         }
     }
 }

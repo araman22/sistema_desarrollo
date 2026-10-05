@@ -13,10 +13,6 @@ class Licencia extends Model
 
     protected $table = 'licencias';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -40,8 +36,6 @@ class Licencia extends Model
             'fecha_inicio' => 'date',
             'fecha_fin' => 'date',
             'cantidad_dias' => 'integer',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

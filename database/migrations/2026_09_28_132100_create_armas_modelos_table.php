@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string('marca', 100);
             $table->string('modelo', 100);
             $table->string('calibre', 50)->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             // Un modelo se identifica por la pareja marca + modelo, no por
             // cada campo por separado: "Browning" solo o "Hi-Power" solo

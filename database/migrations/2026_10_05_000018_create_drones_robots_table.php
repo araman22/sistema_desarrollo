@@ -24,8 +24,7 @@ return new class extends Migration
             $table->date('fecha_adquisicion')->nullable();
             $table->decimal('horas_uso', 10, 2)->default(0);
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('tipo');
             $table->index('estado');

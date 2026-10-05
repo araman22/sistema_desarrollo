@@ -27,8 +27,7 @@ return new class extends Migration
             $table->string('telefono', 50)->nullable();
             $table->string('correo_electronico', 150)->nullable();
             $table->string('foto', 255)->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('apellido');
             $table->index(['apellido', 'nombre']);

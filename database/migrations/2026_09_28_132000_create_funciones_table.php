@@ -18,8 +18,7 @@ return new class extends Migration
         Schema::create('funciones', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 150)->unique();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
         });
     }
 

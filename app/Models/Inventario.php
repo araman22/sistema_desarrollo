@@ -14,10 +14,6 @@ class Inventario extends Model
 
     protected $table = 'inventarios';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -46,8 +42,6 @@ class Inventario extends Model
         return [
             'fecha_adquisicion' => 'date',
             'valor_adquisicion' => 'decimal:2',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

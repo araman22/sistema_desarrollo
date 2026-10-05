@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('policia_id')->constrained('policias')->cascadeOnDelete();
             $table->string('resultado', 100)->nullable();
             $table->text('observaciones')->nullable();
-
             $table->unique(['capacitacion_id', 'policia_id']);
+            $table->timestamps();
         });
     }
 

@@ -12,10 +12,6 @@ class ArmaModelo extends Model
 
     protected $table = 'armas_modelos';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * Modelo del catalogo (marca + modelo). El arma fisica y su numero de
      * serie viven en `armas`.
@@ -27,17 +23,6 @@ class ArmaModelo extends Model
         'modelo',
         'calibre',
     ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
-        ];
-    }
 
     public function armas(): HasMany
     {

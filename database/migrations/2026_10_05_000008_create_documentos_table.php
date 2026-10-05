@@ -20,8 +20,7 @@ return new class extends Migration
             $table->string('nombre', 100);
             $table->integer('numero');
             $table->string('descripcion', 255);
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('tipo_documento_id');
         });

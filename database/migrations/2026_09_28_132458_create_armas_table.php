@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('estado', 50)->default('disponible');
             $table->date('fecha_adquisicion')->nullable();
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('modelo_arma_id');
             $table->index('estado');

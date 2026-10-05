@@ -16,10 +16,6 @@ class Proyecto extends Model
 
     protected $table = 'proyectos';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -47,8 +43,6 @@ class Proyecto extends Model
             'fecha_inicio' => 'date',
             'fecha_fin' => 'date',
             'porcentaje_avance' => 'decimal:2',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

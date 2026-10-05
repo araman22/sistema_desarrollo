@@ -24,8 +24,7 @@ return new class extends Migration
             $table->date('proxima_fecha')->nullable();
             $table->unsignedInteger('proximo_kilometraje')->nullable();
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
             $table->index(['vehiculo_id', 'fecha']);
         });
     }

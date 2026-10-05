@@ -17,8 +17,7 @@ return new class extends Migration
         Schema::create('tipo_documentos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100)->unique();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
         });
     }
 

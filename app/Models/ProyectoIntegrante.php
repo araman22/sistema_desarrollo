@@ -13,7 +13,7 @@ class ProyectoIntegrante extends Model
     protected $table = 'proyecto_integrantes';
 
     /**
-     * Esta tabla no registra fecha_creacion ni fecha_actualizacion.
+     * Tabla puente: no registra created_at ni updated_at.
      */
     public $timestamps = false;
 

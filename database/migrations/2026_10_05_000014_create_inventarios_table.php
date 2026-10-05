@@ -27,8 +27,7 @@ return new class extends Migration
             $table->decimal('valor_adquisicion', 15, 2)->nullable();
             $table->text('observaciones')->nullable();
             $table->string('codigo_qr', 150)->unique()->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('categoria');
             $table->index('estado');

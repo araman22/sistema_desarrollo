@@ -12,10 +12,6 @@ class Documento extends Model
 
     protected $table = 'documentos';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -33,8 +29,6 @@ class Documento extends Model
     {
         return [
             'numero' => 'integer',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

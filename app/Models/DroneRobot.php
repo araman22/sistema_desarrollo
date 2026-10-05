@@ -15,10 +15,6 @@ class DroneRobot extends Model
 
     protected $table = 'drones_robots';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -44,8 +40,6 @@ class DroneRobot extends Model
         return [
             'fecha_adquisicion' => 'date',
             'horas_uso' => 'decimal:2',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

@@ -14,15 +14,6 @@ class Arma extends Model
 
     protected $table = 'armas';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
-    /**
-     * Arma fisica. El modelo (marca/modelo/calibre) esta en `armas_modelos`.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'modelo_arma_id',
         'numero_serie',
@@ -38,8 +29,6 @@ class Arma extends Model
     {
         return [
             'fecha_adquisicion' => 'date',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

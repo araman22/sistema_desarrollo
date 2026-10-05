@@ -21,8 +21,7 @@ return new class extends Migration
             $table->string('estado', 30)->default('pendiente');
             $table->text('motivo')->nullable();
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('estado');
             $table->index(['policia_id', 'fecha_inicio']);

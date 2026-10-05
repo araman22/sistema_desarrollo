@@ -54,7 +54,7 @@ trait RegistraAuditoria
         return Auditoria::query()
             ->where('tabla_afectada', $this->getTable())
             ->where('registro_id', $this->getKey())
-            ->orderByDesc('fecha_hora');
+            ->orderByDesc('created_at');
     }
 
     /**
@@ -71,7 +71,6 @@ trait RegistraAuditoria
                 'valor_anterior' => $this->normalizarAuditoria($valorAnterior),
                 'valor_nuevo' => $this->normalizarAuditoria($valorNuevo),
                 'direccion_ip' => request()->ip(),
-                'fecha_hora' => now(),
             ]);
         } catch (Throwable $e) {
             Log::error('No se pudo registrar la auditoria: '.$e->getMessage(), [

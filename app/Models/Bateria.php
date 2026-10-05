@@ -12,10 +12,6 @@ class Bateria extends Model
 
     protected $table = 'baterias';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -42,8 +38,6 @@ class Bateria extends Model
             'ciclos' => 'integer',
             'fecha_adquisicion' => 'date',
             'ultima_revision' => 'date',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

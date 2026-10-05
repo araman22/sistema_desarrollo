@@ -19,8 +19,7 @@ return new class extends Migration
             $table->date('fecha_ingreso')->nullable();
             $table->string('estado', 30)->default('activo');
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('oficina_id');
             $table->index('estado');

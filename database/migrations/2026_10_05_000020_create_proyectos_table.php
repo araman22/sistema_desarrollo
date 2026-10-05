@@ -25,8 +25,7 @@ return new class extends Migration
             $table->string('estado', 50)->default('planificado');
             $table->decimal('porcentaje_avance', 5, 2)->default(0);
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('estado');
             $table->index('prioridad');

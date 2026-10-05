@@ -14,10 +14,6 @@ class Actividad extends Model
 
     protected $table = 'actividades';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -41,8 +37,6 @@ class Actividad extends Model
         return [
             'fecha_inicio' => 'datetime',
             'fecha_fin' => 'datetime',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

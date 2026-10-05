@@ -26,8 +26,7 @@ return new class extends Migration
             $table->string('estado', 50)->default('realizado');
             $table->text('resultado')->nullable();
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index(['mantenible_tipo', 'mantenible_id']);
             $table->index('fecha');

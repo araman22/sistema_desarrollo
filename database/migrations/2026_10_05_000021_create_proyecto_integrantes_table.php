@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('fecha_ingreso')->nullable();
             $table->date('fecha_salida')->nullable();
             $table->text('observaciones')->nullable();
-
+            $table->timestamps();
             $table->unique(['proyecto_id', 'policia_id']);
         });
     }

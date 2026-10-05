@@ -14,10 +14,6 @@ class Permiso extends Model
 
     protected $table = 'permisos';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -27,17 +23,6 @@ class Permiso extends Model
         'modulo',
         'accion',
     ];
-
-    /**
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
-        ];
-    }
 
     public function roles(): BelongsToMany
     {

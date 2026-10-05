@@ -28,8 +28,7 @@ return new class extends Migration
             $table->date('proxima_revision')->nullable();
             $table->date('fecha_adquisicion')->nullable();
             $table->text('observaciones')->nullable();
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
 
             $table->index('estado');
             $table->index('proxima_revision');

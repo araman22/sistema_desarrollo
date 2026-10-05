@@ -17,8 +17,7 @@ return new class extends Migration
             $table->text('descripcion')->nullable();
             $table->string('modulo', 100);
             $table->string('accion', 50);
-            $table->timestamp('fecha_creacion')->useCurrent();
-            $table->timestamp('fecha_actualizacion')->useCurrent();
+            $table->timestamps();
         });
     }
 

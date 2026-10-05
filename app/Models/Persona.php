@@ -13,10 +13,6 @@ class Persona extends Model
 
     protected $table = 'personas';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -39,8 +35,6 @@ class Persona extends Model
     {
         return [
             'fecha_nacimiento' => 'date',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

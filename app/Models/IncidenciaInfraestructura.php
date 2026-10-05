@@ -14,10 +14,6 @@ class IncidenciaInfraestructura extends Model
 
     protected $table = 'incidencias_infraestructura';
 
-    const CREATED_AT = 'fecha_creacion';
-
-    const UPDATED_AT = 'fecha_actualizacion';
-
     /**
      * @var list<string>
      */
@@ -44,8 +40,6 @@ class IncidenciaInfraestructura extends Model
             'fecha_reporte' => 'datetime',
             'fecha_resolucion' => 'datetime',
             'costo' => 'decimal:2',
-            'fecha_creacion' => 'datetime',
-            'fecha_actualizacion' => 'datetime',
         ];
     }
 

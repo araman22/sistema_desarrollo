@@ -9,8 +9,9 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * Esta tabla no lleva fecha_creacion / fecha_actualizacion: el registro de
-     * auditoria ya tiene su propio campo fecha_hora.
+     * El momento de la accion auditada es el created_at del registro: los
+     * registros de auditoria no se editan, asi que no hace falta una columna
+     * de momento propia.
      */
     public function up(): void
     {
@@ -23,10 +24,10 @@ return new class extends Migration
             $table->json('valor_anterior')->nullable();
             $table->json('valor_nuevo')->nullable();
             $table->string('direccion_ip', 45)->nullable();
-            $table->dateTime('fecha_hora');
+            $table->timestamps();
 
             $table->index(['tabla_afectada', 'registro_id']);
-            $table->index('fecha_hora');
+            $table->index('created_at');
         });
     }
 

@@ -14,15 +14,6 @@ class Auditoria extends Model
     protected $table = 'auditorias';
 
     /**
-     * Esta tabla usa fecha_hora en lugar de created_at / updated_at.
-     */
-    public $timestamps = false;
-
-    const CREATED_AT = 'fecha_hora';
-
-    const UPDATED_AT = null;
-
-    /**
      * @var list<string>
      */
     protected $fillable = [
@@ -33,7 +24,6 @@ class Auditoria extends Model
         'valor_anterior',
         'valor_nuevo',
         'direccion_ip',
-        'fecha_hora',
     ];
 
     /**
@@ -44,7 +34,6 @@ class Auditoria extends Model
         return [
             'valor_anterior' => 'array',
             'valor_nuevo' => 'array',
-            'fecha_hora' => 'datetime',
         ];
     }
 
