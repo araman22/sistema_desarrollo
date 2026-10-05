@@ -8,17 +8,29 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Restaura la migracion base del framework, pero creando la tabla usuarios
+     * (no users) junto con las tablas de infraestructura que el proyecto necesita:
+     * password_reset_tokens, porque config/auth.php la usa para el broker de
+     * passwords, y sessions, porque .env define SESSION_DRIVER=database.
+     *
+     * La FK de usuarios hacia policia y rol se agrega despues en
+     * create_usuarios_table, donde ya existen las tablas destino.
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('usuarios', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
+            $table->unsignedBigInteger('policia_id')->nullable();
+            $table->unsignedBigInteger('rol_id');
+            $table->string('nombre_usuario', 100);
+            $table->string('correo_electronico', 150)->nullable();
+            $table->string('contrasena');
+            $table->boolean('activo')->default(true);
+            $table->timestamp('ultimo_acceso')->nullable();
+            $table->string('recordar_token', 100)->nullable();
+            $table->timestamp('fecha_creacion')->useCurrent();
+            $table->timestamp('fecha_actualizacion')->useCurrent();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -29,7 +41,7 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
@@ -42,7 +54,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('usuarios');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }

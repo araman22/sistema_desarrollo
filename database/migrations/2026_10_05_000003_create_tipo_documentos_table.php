@@ -8,10 +8,13 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Catalogo de tipos de documento. Se crea antes de `documentos`
+     * (2026_10_05_000008) porque alli se agrega la FK.
      */
     public function up(): void
     {
-        Schema::create('jerarquias', function (Blueprint $table) {
+        Schema::create('tipo_documentos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100)->unique();
             $table->timestamp('fecha_creacion')->useCurrent();
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jerarquias');
+        Schema::dropIfExists('tipo_documentos');
     }
 };

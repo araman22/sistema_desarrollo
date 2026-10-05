@@ -6,21 +6,26 @@ use App\Models\Concerns\RegistraAuditoria;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Jerarquia extends Model
+class ArmaModelo extends Model
 {
     use RegistraAuditoria;
 
-    protected $table = 'jerarquias';
+    protected $table = 'armas_modelos';
 
     const CREATED_AT = 'fecha_creacion';
 
     const UPDATED_AT = 'fecha_actualizacion';
 
     /**
+     * Modelo del catalogo (marca + modelo). El arma fisica y su numero de
+     * serie viven en `armas`.
+     *
      * @var list<string>
      */
     protected $fillable = [
-        'nombre',
+        'marca',
+        'modelo',
+        'calibre',
     ];
 
     /**
@@ -34,8 +39,16 @@ class Jerarquia extends Model
         ];
     }
 
-    public function policias(): HasMany
+    public function armas(): HasMany
     {
-        return $this->hasMany(Policia::class, 'jerarquia_id');
+        return $this->hasMany(Arma::class, 'modelo_arma_id');
+    }
+
+    /**
+     * Etiqueta lista para mostrar.
+     */
+    public function getNombreCompletoAttribute(): string
+    {
+        return trim($this->marca.' '.$this->modelo);
     }
 }

@@ -4,13 +4,13 @@ namespace App\Models;
 
 use App\Models\Concerns\RegistraAuditoria;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Jerarquia extends Model
+class Documento extends Model
 {
     use RegistraAuditoria;
 
-    protected $table = 'jerarquias';
+    protected $table = 'documentos';
 
     const CREATED_AT = 'fecha_creacion';
 
@@ -20,7 +20,10 @@ class Jerarquia extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'tipo_documento_id',
         'nombre',
+        'numero',
+        'descripcion',
     ];
 
     /**
@@ -29,13 +32,14 @@ class Jerarquia extends Model
     protected function casts(): array
     {
         return [
+            'numero' => 'integer',
             'fecha_creacion' => 'datetime',
             'fecha_actualizacion' => 'datetime',
         ];
     }
 
-    public function policias(): HasMany
+    public function tipo(): BelongsTo
     {
-        return $this->hasMany(Policia::class, 'jerarquia_id');
+        return $this->belongsTo(TipoDocumento::class, 'tipo_documento_id');
     }
 }
