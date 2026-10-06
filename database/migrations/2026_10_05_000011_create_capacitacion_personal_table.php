@@ -11,17 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('armas', function (Blueprint $table) {
+        Schema::create('capacitacion_personal', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('modelo_arma_id')->nullable()->constrained('armas_modelos')->nullOnDelete();
-            $table->string('numero_serie', 100)->nullable();
-            $table->string('estado', 50)->default('disponible');
-            $table->date('fecha_adquisicion')->nullable();
+            $table->foreignId('capacitacion_id')->constrained('capacitaciones')->cascadeOnDelete();
+            $table->foreignId('policia_id')->constrained('policias')->cascadeOnDelete();
+            $table->string('resultado', 100)->nullable();
             $table->text('observaciones')->nullable();
+            $table->unique(['capacitacion_id', 'policia_id']);
             $table->timestamps();
-
-            $table->index('modelo_arma_id');
-            $table->index('estado');
         });
     }
 
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('armas');
+        Schema::dropIfExists('capacitacion_personal');
     }
 };

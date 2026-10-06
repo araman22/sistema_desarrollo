@@ -6,11 +6,11 @@ use App\Models\Concerns\RegistraAuditoria;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Jerarquia extends Model
+class TipoDocumento extends Model
 {
     use RegistraAuditoria;
 
-    protected $table = 'jerarquias';
+    protected $table = 'tipo_documentos';
 
     /**
      * @var list<string>
@@ -19,8 +19,8 @@ class Jerarquia extends Model
         'nombre',
     ];
 
-    public function policias(): HasMany
+    public function documentos(): HasMany
     {
-        return $this->hasMany(Policia::class, 'jerarquia_id');
+        return $this->hasMany(Documento::class, 'tipo_documento_id');
     }
 }

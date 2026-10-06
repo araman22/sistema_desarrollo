@@ -8,12 +8,16 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Catalogo de funciones que puede ocupar un Policia. Se crea antes de
+     * `policias` (2026_09_28_133000) porque alli se agrega la FK
+     * policias.funcion_id -> funciones.id.
      */
     public function up(): void
     {
-        Schema::create('jerarquias', function (Blueprint $table) {
+        Schema::create('funciones', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100)->unique();
+            $table->string('nombre', 150)->unique();
             $table->timestamps();
         });
     }
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jerarquias');
+        Schema::dropIfExists('funciones');
     }
 };

@@ -11,16 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('armas', function (Blueprint $table) {
+        Schema::create('baterias', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('modelo_arma_id')->nullable()->constrained('armas_modelos')->nullOnDelete();
+            $table->foreignId('dron_robot_id')->constrained('drones_robots')->cascadeOnDelete();
+            $table->string('codigo', 50)->unique();
+            $table->string('marca', 100)->nullable();
+            $table->string('modelo', 100)->nullable();
             $table->string('numero_serie', 100)->nullable();
-            $table->string('estado', 50)->default('disponible');
+            $table->string('capacidad', 50)->nullable();
+            $table->unsignedInteger('ciclos')->default(0);
+            $table->string('estado', 50);
             $table->date('fecha_adquisicion')->nullable();
+            $table->date('ultima_revision')->nullable();
             $table->text('observaciones')->nullable();
             $table->timestamps();
 
-            $table->index('modelo_arma_id');
             $table->index('estado');
         });
     }
@@ -30,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('armas');
+        Schema::dropIfExists('baterias');
     }
 };

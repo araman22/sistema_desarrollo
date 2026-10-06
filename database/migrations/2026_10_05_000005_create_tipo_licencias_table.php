@@ -8,10 +8,13 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Catalogo de tipos de licencia. Se crea antes de `licencias`
+     * (2026_10_05_000009) porque alli se agrega la FK.
      */
     public function up(): void
     {
-        Schema::create('jerarquias', function (Blueprint $table) {
+        Schema::create('tipo_licencias', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100)->unique();
             $table->timestamps();
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jerarquias');
+        Schema::dropIfExists('tipo_licencias');
     }
 };

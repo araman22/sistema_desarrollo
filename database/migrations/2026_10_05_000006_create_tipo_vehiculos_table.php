@@ -8,10 +8,13 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Catalogo de tipos de vehiculo. Se crea antes de `vehiculos`
+     * (2026_10_05_000016) porque alli se agrega la FK.
      */
     public function up(): void
     {
-        Schema::create('jerarquias', function (Blueprint $table) {
+        Schema::create('tipo_vehiculos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 100)->unique();
             $table->timestamps();
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jerarquias');
+        Schema::dropIfExists('tipo_vehiculos');
     }
 };
