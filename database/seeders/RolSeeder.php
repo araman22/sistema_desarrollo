@@ -19,19 +19,19 @@ class RolSeeder extends Seeder
             'descripcion' => 'Acceso total a todas las functionalities del sistema.',
             'modulos' => '*',
         ],
-        'direccion' => [
+        'encargado_oficina' => [
             'descripcion' => 'Gestiona policias, oficinas, proyectos y aprobaciones.',
             'modulos' => ['policias', 'oficinas', 'proyectos', 'licencias', 'capacitaciones', 'actividades', 'incidencias', 'movimientos_economicos', 'auditorias', 'alertas'],
         ],
-        'soporte_informatica' => [
+        'soporte' => [
             'descripcion' => 'Administra equipamiento, inventario y mantenimientos tecnologicos.',
             'modulos' => ['equipamientos', 'inventarios', 'mantenimientos', 'drones_robots', 'baterias', 'incidencias'],
         ],
-        'administracion' => [
+        'administrativo' => [
             'descripcion' => 'Registra movimientos economicos, licencias y politicas.',
             'modulos' => ['movimientos_economicos', 'licencias', 'policias', 'documentos', 'vehiculos', 'vehiculo_mantenimientos'],
         ],
-        'consulta' => [
+        'invitado' => [
             'descripcion' => 'Solo lectura sobre los modulos del sistema.',
             'modulos' => ['policias', 'oficinas', 'proyectos', 'actividades', 'inventarios', 'capacitaciones'],
         ],

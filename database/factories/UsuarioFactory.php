@@ -37,7 +37,7 @@ class UsuarioFactory extends Factory
             'rol_id' => Rol::query()->orderBy('id')->value('id'),
             'nombre_usuario' => fake()->unique()->userName(),
             'correo_electronico' => fake()->unique()->safeEmail(),
-            'contrasena' => static::$password ??= Hash::make('password'),
+            'contrasena' => static::$password ??= Hash::make('1234'),
             'activo' => true,
             'ultimo_acceso' => null,
             'recordar_token' => Str::random(10),
