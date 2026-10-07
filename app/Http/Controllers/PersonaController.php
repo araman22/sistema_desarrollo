@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\TipoVehiculo;
+use App\Models\Persona;
 use Illuminate\Http\Request;
 
-class TipoVehiculoController extends Controller
+class PersonaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class TipoVehiculoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TipoVehiculo $tipoVehiculo)
+    public function show(Persona $persona)
     {
         //
     }
@@ -42,7 +42,7 @@ class TipoVehiculoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TipoVehiculo $tipoVehiculo)
+    public function edit(Persona $persona)
     {
         //
     }
@@ -50,7 +50,7 @@ class TipoVehiculoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, TipoVehiculo $tipoVehiculo)
+    public function update(Request $request, Persona $persona)
     {
         //
     }
@@ -58,7 +58,7 @@ class TipoVehiculoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TipoVehiculo $tipoVehiculo)
+    public function destroy(Persona $persona)
     {
         //
     }
