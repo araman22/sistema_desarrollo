@@ -122,4 +122,9 @@ class Usuario extends Authenticatable
     {
         return $this->correo_electronico;
     }
+
+    public function getAuthPassword(): string
+    {
+        return $this->contrasena;
+    }
 }
