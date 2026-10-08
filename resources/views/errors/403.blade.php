@@ -1,12 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso denegado</title>
-</head>
-<body>
-    <h1>No tenés permiso para acceder a esta sección.</h1>
-    <a href="{{ route('dashboard') }}">Volver al inicio</a>
-</body>
-</html>
+@extends('errors.layout')
+
+@php
+    // Los Response::deny de las Policies traen un motivo propio; el genérico
+    // de Laravel no aporta nada, así que se reemplaza por el texto en español.
+    $mensaje = $exception->getMessage();
+
+    if ($mensaje === '' || $mensaje === 'This action is unauthorized.') {
+        $mensaje = 'No tenés permiso para acceder a esta sección.';
+    }
+@endphp
+
+@section('code', '403')
+@section('title', 'Acceso denegado')
+@section('message', $mensaje)
