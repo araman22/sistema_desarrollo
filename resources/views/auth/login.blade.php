@@ -7,6 +7,14 @@
 </head>
 <body>
     <h1>Iniciar sesión</h1>
+
+    @if (session('status'))
+        <p role="status">{{ session('status') }}</p>
+    @endif
+    @if (session('success'))
+        <p role="status">{{ session('success') }}</p>
+    @endif
+
     <form action="{{ route('login.store') }}" method="POST">
         @csrf
         <div>
@@ -34,5 +42,7 @@
         </div>
         <button type="submit">Ingresar</button>
     </form>
+
+    <p><a href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a></p>
 </body>
 </html>
