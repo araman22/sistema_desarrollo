@@ -12,6 +12,9 @@
             @can('viewAny', App\Models\Usuario::class)
                 <a href="{{ route('usuarios.index') }}">Usuarios</a>
             @endcan
+            @can('viewAny', App\Models\Rol::class)
+                <a href="{{ route('roles.index') }}">Roles</a>
+            @endcan
         </nav>
         @auth
             <div>

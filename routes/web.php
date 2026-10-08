@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\RolController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,4 +18,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
     Route::patch('usuarios/{usuario}/estado', [UsuarioController::class, 'cambiarEstado'])->name('usuarios.estado');
+
+    Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+    Route::patch('roles/{rol}/estado', [RolController::class, 'cambiarEstado'])->name('roles.estado');
 });
