@@ -27,5 +27,10 @@ class DatabaseSeeder extends Seeder
             RolSeeder::class,
             UsuarioAdminSeeder::class,
         ]);
+
+        // Usuarios de prueba por rol: nunca fuera del entorno local.
+        if (app()->environment('local')) {
+            $this->call(UsuariosPruebaSeeder::class);
+        }
     }
 }
