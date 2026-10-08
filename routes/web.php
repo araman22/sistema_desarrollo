@@ -46,3 +46,11 @@ Route::middleware('auth')->group(function () {
         ->middleware(['can:download,documento']);
 });
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
