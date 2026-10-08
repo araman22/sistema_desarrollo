@@ -122,4 +122,20 @@ class Usuario extends Authenticatable
     {
         return $this->correo_electronico;
     }
+
+    /**
+     * La contraseña vive en la columna "contrasena", no en "password".
+     */
+    public function getAuthPasswordName(): string
+    {
+        return 'contrasena';
+    }
+
+    /**
+     * Los correos (ej. recuperar contraseña) se envían a correo_electronico.
+     */
+    public function routeNotificationForMail(): ?string
+    {
+        return $this->correo_electronico;
+    }
 }
