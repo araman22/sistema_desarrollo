@@ -31,24 +31,18 @@
     </style>
 </head>
 <body>
-    @auth
     <header class="topbar">
         <strong>SIGDET</strong>
         <nav class="nav">
-            <a href="{{ route('dashboard') }}">Dashboard</a>
-            <a href="{{ route('caja-chica.index') }}">Caja chica</a>
+            <a href="{{ route('dashboard') }}">Principal</a>
+            <a href="{{ route('caja-chica.index') }}">Control de gastos</a>
             <a href="{{ route('oficinas.index') }}">Oficinas</a>
             <a href="{{ route('inventarios.index') }}">Inventario</a>
             <a href="{{ route('equipamientos-tecnologicos.index') }}">Equipamiento</a>
             <a href="{{ route('tipo-documentos.index') }}">Tipos de documento</a>
             <a href="{{ route('documentos.index') }}">Documentos</a>
-            <form method="POST" action="{{ route('logout') }}" style="display:inline; margin-left:8px;">
-                @csrf
-                <button type="submit" class="btn secondary" style="padding: 6px 12px;">Cerrar sesión</button>
-            </form>
         </nav>
     </header>
-    @endauth
 
     <main class="container">
         @include('partials.alerts')

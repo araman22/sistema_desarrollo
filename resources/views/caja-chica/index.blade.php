@@ -6,10 +6,10 @@
 <div class="panel">
     <div class="row" style="justify-content: space-between; align-items: center;">
         <div>
-            <h1>Caja chica</h1>
+            <h1>Control de Gastos</h1>
             <p class="muted">Registro de ingresos y egresos del fondo operativo.</p>
         </div>
-        <a href="{{ route('dashboard') }}" class="btn secondary">Volver al dashboard</a>
+        <a href="{{ route('dashboard') }}" class="btn secondary">Volver a pagina principal</a>
     </div>
 </div>
 
@@ -27,9 +27,9 @@
         <div class="small">Fecha: {{ $ultimoEgreso?->fecha?->format('d/m/Y') ?? '-' }}</div>
     </div>
     <div class="card">
-        <div class="muted">Diferencia</div>
+        <div class="muted">Total en caja</div>
         <h2>${{ number_format($diferencia, 2, '.', '') }}</h2>
-        <div class="small">Resultado entre último ingreso y último egreso.</div>
+        <div class="small">Acumulado de ingresos menos egresos registrados.</div>
     </div>
 </div>
 

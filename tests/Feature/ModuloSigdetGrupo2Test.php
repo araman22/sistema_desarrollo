@@ -187,7 +187,47 @@ class ModuloSigdetGrupo2Test extends TestCase
         $this->actingAs($admin)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Diferencia de caja chica')
+            ->assertSee('Total en caja')
             ->assertSee('10800.00');
+    }
+
+    public function test_el_saldo_de_caja_se_calcula_con_todos_los_movimientos(): void
+    {
+        $admin = $this->makeAdminUser();
+
+        $this->actingAs($admin)
+            ->post(route('caja-chica.store'), [
+                'tipo' => 'ingreso',
+                'monto' => 15000,
+                'fecha' => '2026-10-01',
+                'origen' => 'Junta mensual',
+                'descripcion' => 'Primer ingreso',
+            ])
+            ->assertRedirect(route('caja-chica.index'));
+
+        $this->actingAs($admin)
+            ->post(route('caja-chica.store'), [
+                'tipo' => 'ingreso',
+                'monto' => 5000,
+                'fecha' => '2026-10-03',
+                'origen' => 'Donación',
+                'descripcion' => 'Segundo ingreso',
+            ])
+            ->assertRedirect(route('caja-chica.index'));
+
+        $this->actingAs($admin)
+            ->post(route('caja-chica.store'), [
+                'tipo' => 'egreso',
+                'monto' => 2000,
+                'fecha' => '2026-10-04',
+                'destino' => 'Compra de útiles',
+                'descripcion' => 'Gasto de caja',
+            ])
+            ->assertRedirect(route('caja-chica.index'));
+
+        $this->actingAs($admin)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('18000.00');
     }
 }

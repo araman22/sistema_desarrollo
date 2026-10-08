@@ -11,8 +11,6 @@ class TipoDocumentoController extends Controller
 {
     public function index(): View
     {
-        $this->authorize('viewAny', TipoDocumento::class);
-
         $query = TipoDocumento::query();
 
         if ($search = request('search')) {
@@ -26,15 +24,11 @@ class TipoDocumentoController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', TipoDocumento::class);
-
         return view('tipo-documentos.form', ['tipoDocumento' => new TipoDocumento()]);
     }
 
     public function store(TipoDocumentoRequest $request): RedirectResponse
     {
-        $this->authorize('create', TipoDocumento::class);
-
         $tipoDocumento = TipoDocumento::create($request->validated());
 
         return redirect()->route('tipo-documentos.show', $tipoDocumento)
@@ -43,8 +37,6 @@ class TipoDocumentoController extends Controller
 
     public function show(TipoDocumento $tipoDocumento): View
     {
-        $this->authorize('view', $tipoDocumento);
-
         $tipoDocumento->load('documentos');
 
         return view('tipo-documentos.show', compact('tipoDocumento'));
@@ -52,15 +44,11 @@ class TipoDocumentoController extends Controller
 
     public function edit(TipoDocumento $tipoDocumento): View
     {
-        $this->authorize('update', $tipoDocumento);
-
         return view('tipo-documentos.form', ['tipoDocumento' => $tipoDocumento]);
     }
 
     public function update(TipoDocumentoRequest $request, TipoDocumento $tipoDocumento): RedirectResponse
     {
-        $this->authorize('update', $tipoDocumento);
-
         $tipoDocumento->update($request->validated());
 
         return redirect()->route('tipo-documentos.show', $tipoDocumento)
@@ -69,8 +57,6 @@ class TipoDocumentoController extends Controller
 
     public function destroy(TipoDocumento $tipoDocumento): RedirectResponse
     {
-        $this->authorize('delete', $tipoDocumento);
-
         if ($tipoDocumento->documentos()->exists()) {
             return back()->withErrors([
                 'tipoDocumento' => 'No se puede eliminar porque hay documentos asociados.',

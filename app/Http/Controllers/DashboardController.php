@@ -16,6 +16,9 @@ class DashboardController extends Controller
     {
         $ultimoIngreso = CajaChicaMovimiento::query()->where('tipo', 'ingreso')->latest('fecha')->first();
         $ultimoEgreso = CajaChicaMovimiento::query()->where('tipo', 'egreso')->latest('fecha')->first();
+        $totalIngresos = CajaChicaMovimiento::query()->where('tipo', 'ingreso')->sum('monto');
+        $totalEgresos = CajaChicaMovimiento::query()->where('tipo', 'egreso')->sum('monto');
+        $totalEnCaja = (float) $totalIngresos - (float) $totalEgresos;
 
         $stats = [
             'oficinas' => Oficina::count(),
@@ -25,7 +28,7 @@ class DashboardController extends Controller
             'documentos' => Documento::count(),
             'ultimo_ingreso' => $ultimoIngreso?->monto ?? 0,
             'ultimo_egreso' => $ultimoEgreso?->monto ?? 0,
-            'diferencia_caja_chica' => ($ultimoIngreso?->monto ?? 0) - ($ultimoEgreso?->monto ?? 0),
+            'diferencia_caja_chica' => $totalEnCaja,
             'origen_ultimo_ingreso' => $ultimoIngreso?->origen ?? 'Sin registros',
             'destino_ultimo_egreso' => $ultimoEgreso?->destino ?? 'Sin registros',
         ];

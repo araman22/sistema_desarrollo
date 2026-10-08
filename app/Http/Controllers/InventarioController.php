@@ -13,8 +13,6 @@ class InventarioController extends Controller
 {
     public function index(): View
     {
-        $this->authorize('viewAny', Inventario::class);
-
         $query = Inventario::query()->with(['oficina', 'responsable.persona']);
 
         if ($search = request('search')) {
@@ -50,8 +48,6 @@ class InventarioController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', Inventario::class);
-
         return view('inventarios.form', [
             'inventario' => new Inventario(),
             'oficinas' => Oficina::query()->orderBy('nombre')->get(),
@@ -63,8 +59,6 @@ class InventarioController extends Controller
 
     public function store(InventarioRequest $request): RedirectResponse
     {
-        $this->authorize('create', Inventario::class);
-
         $inventario = Inventario::create($request->validated());
 
         return redirect()->route('inventarios.show', $inventario)
@@ -73,8 +67,6 @@ class InventarioController extends Controller
 
     public function show(Inventario $inventario): View
     {
-        $this->authorize('view', $inventario);
-
         $inventario->load(['oficina', 'responsable.persona']);
 
         return view('inventarios.show', compact('inventario'));
@@ -82,8 +74,6 @@ class InventarioController extends Controller
 
     public function edit(Inventario $inventario): View
     {
-        $this->authorize('update', $inventario);
-
         return view('inventarios.form', [
             'inventario' => $inventario,
             'oficinas' => Oficina::query()->orderBy('nombre')->get(),
@@ -95,8 +85,6 @@ class InventarioController extends Controller
 
     public function update(InventarioRequest $request, Inventario $inventario): RedirectResponse
     {
-        $this->authorize('update', $inventario);
-
         $inventario->update($request->validated());
 
         return redirect()->route('inventarios.show', $inventario)
@@ -105,8 +93,6 @@ class InventarioController extends Controller
 
     public function destroy(Inventario $inventario): RedirectResponse
     {
-        $this->authorize('delete', $inventario);
-
         if ($inventario->mantenimientos()->exists() || $inventario->alertas()->exists()) {
             return back()->withErrors([
                 'inventario' => 'No se puede eliminar porque tiene mantenimientos o alertas asociadas.',

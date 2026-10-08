@@ -15,8 +15,6 @@ class DocumentoController extends Controller
 {
     public function index(): View
     {
-        $this->authorize('viewAny', Documento::class);
-
         $query = Documento::query()->with('tipo');
 
         if ($search = request('search')) {
@@ -39,8 +37,6 @@ class DocumentoController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', Documento::class);
-
         return view('documentos.form', [
             'documento' => new Documento(),
             'tipos' => TipoDocumento::query()->orderBy('nombre')->get(),
@@ -49,8 +45,6 @@ class DocumentoController extends Controller
 
     public function store(DocumentoRequest $request): RedirectResponse
     {
-        $this->authorize('create', Documento::class);
-
         $archivo = $request->file('archivo');
         $this->validarArchivo($archivo);
 
@@ -74,8 +68,6 @@ class DocumentoController extends Controller
 
     public function show(Documento $documento): View
     {
-        $this->authorize('view', $documento);
-
         $documento->load(['tipo', 'usuario']);
 
         return view('documentos.show', compact('documento'));
@@ -83,8 +75,6 @@ class DocumentoController extends Controller
 
     public function edit(Documento $documento): View
     {
-        $this->authorize('update', $documento);
-
         return view('documentos.form', [
             'documento' => $documento,
             'tipos' => TipoDocumento::query()->orderBy('nombre')->get(),
@@ -93,8 +83,6 @@ class DocumentoController extends Controller
 
     public function update(DocumentoRequest $request, Documento $documento): RedirectResponse
     {
-        $this->authorize('update', $documento);
-
         $datos = [
             'tipo_documento_id' => $request->input('tipo_documento_id'),
             'nombre' => $request->input('nombre'),
@@ -126,8 +114,6 @@ class DocumentoController extends Controller
 
     public function destroy(Documento $documento): RedirectResponse
     {
-        $this->authorize('delete', $documento);
-
         if ($documento->ruta_archivo && Storage::disk('local')->exists($documento->ruta_archivo)) {
             Storage::disk('local')->delete($documento->ruta_archivo);
         }
@@ -140,8 +126,6 @@ class DocumentoController extends Controller
 
     public function download(Documento $documento)
     {
-        $this->authorize('download', $documento);
-
         if (! $documento->ruta_archivo || ! Storage::disk('local')->exists($documento->ruta_archivo)) {
             abort(404, 'El archivo ya no está disponible.');
         }
