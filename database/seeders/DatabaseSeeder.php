@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // Catalogos: deben existir antes que las tablas que los referencian.
             FuncionSeeder::class,
+            JerarquiaSeeder::class,
             ArmaModeloSeeder::class,
             TipoDocumentoSeeder::class,
             TipoLicenciaSeeder::class,
