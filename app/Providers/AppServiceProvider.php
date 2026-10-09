@@ -2,16 +2,9 @@
 
 namespace App\Providers;
 
-use App\Models\Documento;
-use App\Models\EquipamientoTecnologico;
-use App\Models\Inventario;
-use App\Models\Oficina;
-use App\Models\TipoDocumento;
-use App\Policies\DocumentoPolicy;
-use App\Policies\EquipamientoTecnologicoPolicy;
-use App\Policies\InventarioPolicy;
-use App\Policies\OficinaPolicy;
-use App\Policies\TipoDocumentoPolicy;
+use App\Models\Usuario;
+use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,10 +23,30 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::policy(Oficina::class, OficinaPolicy::class);
-        Gate::policy(Inventario::class, InventarioPolicy::class);
-        Gate::policy(EquipamientoTecnologico::class, EquipamientoTecnologicoPolicy::class);
-        Gate::policy(TipoDocumento::class, TipoDocumentoPolicy::class);
-        Gate::policy(Documento::class, DocumentoPolicy::class);
+        // Las abilities "modulo.accion" se resuelven con los permisos del rol.
+        // Devolver null (y no false) deja decidir a las Policies que se agreguen.
+        Gate::before(function (Usuario $usuario, string $ability) {
+            if (str_contains($ability, '.') && $usuario->tienePermiso($ability)) {
+                return true;
+            }
+
+            return null;
+        });
+
+        ResetPassword::toMailUsing(function (Usuario $usuario, string $token) {
+            $url = route('password.reset', [
+                'token' => $token,
+                'email' => $usuario->getEmailForPasswordReset(),
+            ]);
+
+            return (new MailMessage)
+                ->subject('Restablecer contraseña - SIGDET')
+                ->greeting("Hola, {$usuario->nombre_usuario}")
+                ->line('Recibimos un pedido para restablecer la contraseña de tu cuenta.')
+                ->action('Restablecer contraseña', $url)
+                ->line('Este enlace vence en '.config('auth.passwords.users.expire').' minutos.')
+                ->line('Si no pediste restablecer la contraseña, podés ignorar este correo.')
+                ->salutation('SIGDET');
+        });
     }
 }

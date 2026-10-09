@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // Catalogos: deben existir antes que las tablas que los referencian.
             FuncionSeeder::class,
+            JerarquiaSeeder::class,
             ArmaModeloSeeder::class,
             TipoDocumentoSeeder::class,
             TipoLicenciaSeeder::class,
@@ -27,5 +28,10 @@ class DatabaseSeeder extends Seeder
             RolSeeder::class,
             UsuarioAdminSeeder::class,
         ]);
+
+        // Usuarios de prueba por rol: nunca fuera del entorno local.
+        if (app()->environment('local')) {
+            $this->call(UsuariosPruebaSeeder::class);
+        }
     }
 }
