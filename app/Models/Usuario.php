@@ -26,6 +26,13 @@ class Usuario extends Authenticatable
     protected $rememberTokenName = 'recordar_token';
 
     /**
+     * Memoria de nombresPermisos() para no consultar la base en cada chequeo.
+     *
+     * @var list<string>|null
+     */
+    protected ?array $nombresPermisosCache = null;
+
+    /**
      * @var list<string>
      */
     protected $fillable = [
@@ -99,9 +106,27 @@ class Usuario extends Authenticatable
         });
     }
 
+    /**
+     * Nombres de los permisos del rol, cargados una sola vez por request.
+     *
+     * @return list<string>
+     */
+    public function nombresPermisos(): array
+    {
+        if ($this->nombresPermisosCache !== null) {
+            return $this->nombresPermisosCache;
+        }
+
+        if (! $this->rol?->activo) {
+            return $this->nombresPermisosCache = [];
+        }
+
+        return $this->nombresPermisosCache = $this->permisos()->pluck('nombre')->all();
+    }
+
     public function tienePermiso(string $nombre): bool
     {
-        return $this->permisos()->where('nombre', $nombre)->exists();
+        return in_array($nombre, $this->nombresPermisos(), true);
     }
 
     public function tieneRol(string $nombre): bool
@@ -119,6 +144,22 @@ class Usuario extends Authenticatable
      * aqui el correo vive en correo_electronico.
      */
     public function getEmailForPasswordReset(): ?string
+    {
+        return $this->correo_electronico;
+    }
+
+    /**
+     * La contraseña vive en la columna "contrasena", no en "password".
+     */
+    public function getAuthPasswordName(): string
+    {
+        return 'contrasena';
+    }
+
+    /**
+     * Los correos (ej. recuperar contraseña) se envían a correo_electronico.
+     */
+    public function routeNotificationForMail(): ?string
     {
         return $this->correo_electronico;
     }
