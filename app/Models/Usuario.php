@@ -17,9 +17,8 @@ class Usuario extends Authenticatable
 
     protected $table = 'usuarios';
 
-    /**
-     * La tabla usuarios no usa created_at / updated_at.
-     */
+    protected $authPasswordName = 'contrasena';
+
     /**
      * Laravel espera "remember_token"; la columna del proyecto es recordar_token.
      */
@@ -148,5 +147,8 @@ class Usuario extends Authenticatable
         return $this->correo_electronico;
     }
 
-    
+    public function routeNotificationForMail(): ?string
+    {
+        return $this->correo_electronico;
+    }
 }

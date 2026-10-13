@@ -33,6 +33,7 @@
     </div>
 </div>
 
+@can('create', App\Models\CajaChicaMovimiento::class)
 <div class="grid" style="margin-top: 24px;">
     <div class="panel">
         <h2>Registrar ingreso</h2>
@@ -100,6 +101,8 @@
     </div>
 </div>
 
+@endcan
+
 <div class="panel" style="margin-top: 24px;">
     <h2>Historial</h2>
     <table>
@@ -120,7 +123,7 @@
                     <td>{{ $movimiento->tipo === 'ingreso' ? $movimiento->origen : $movimiento->destino }}</td>
                     <td>{{ $movimiento->fecha->format('d/m/Y') }}</td>
                     <td>
-                        @if ($movimiento->ticket_path)
+                        @if ($movimiento->ticket_path && auth()->user()->can('download', $movimiento))
                             <a href="{{ route('caja-chica.ticket', $movimiento) }}" target="_blank">Ver comprobante</a>
                         @else
                             <span class="muted">Sin comprobante</span>
