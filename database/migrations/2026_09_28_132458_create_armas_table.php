@@ -13,7 +13,15 @@ return new class extends Migration
     {
         Schema::create('armas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('modelo_arma_id')->nullable()->constrained('armas_modelos')->nullOnDelete();
+            $table->string('numero_serie', 100)->nullable();
+            $table->string('estado', 50)->default('disponible');
+            $table->date('fecha_adquisicion')->nullable();
+            $table->text('observaciones')->nullable();
             $table->timestamps();
+
+            $table->index('modelo_arma_id');
+            $table->index('estado');
         });
     }
 
