@@ -2,13 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Models\Auditoria;
 use App\Models\Permiso;
 use App\Models\Rol;
 use App\Models\Usuario;
 use Closure;
 use Database\Seeders\InicializacionLocalSeeder;
+use Database\Seeders\PermisoSeeder;
 use Database\Seeders\RolSeeder;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Schema\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -170,8 +173,10 @@ class InicializacionLocalSeederTest extends TestCase
 
     public function test_error_al_crear_usuario_revierte_permisos_roles_y_auditoria(): void
     {
-        Usuario::creating(function () {
-            throw new RuntimeException('Fallo simulado de persistencia');
+        DB::listen(function ($consulta) {
+            if (str_starts_with($consulta->sql, 'insert into "usuarios"')) {
+                throw new RuntimeException('Fallo simulado de persistencia');
+            }
         });
         $this->esperarConflicto(fn () => $this->ejecutar(), 'Fallo simulado');
     }
@@ -193,6 +198,231 @@ class InicializacionLocalSeederTest extends TestCase
     {
         $this->assertSame((new ReflectionClass(RolSeeder::class))->getConstant('ROLES'),
             (new ReflectionClass(InicializacionLocalSeeder::class))->getConstant('ROLES'));
+        $this->assertSame((new ReflectionClass(PermisoSeeder::class))->getConstant('MODULOS'),
+            (new ReflectionClass(InicializacionLocalSeeder::class))->getConstant('PERMISOS'));
+    }
+
+    public function test_catalogo_inconsistente_no_modifica_registros(): void
+    {
+        Permiso::create(['nombre' => 'caja_chica.ver', 'modulo' => 'otro', 'accion' => 'ver']);
+        $this->esperarConflicto(fn () => $this->ejecutar(nuevo: false), 'Catalogo inconsistente');
+    }
+
+    public function test_accion_incorrecta_o_nombre_ambiguo_se_rechazan(): void
+    {
+        $permiso = Permiso::create(['nombre' => 'documentos.ver', 'modulo' => 'documentos', 'accion' => 'editar']);
+        $this->esperarConflicto(fn () => $this->ejecutar(nuevo: false), 'Catalogo inconsistente');
+        $permiso->update(['nombre' => 'DOCUMENTOS.VER', 'accion' => 'ver']);
+        $this->esperarConflicto(fn () => $this->ejecutar(nuevo: false), 'Catalogo inconsistente');
+    }
+
+    public function test_permisos_personalizados_y_descripciones_no_se_sobrescriben(): void
+    {
+        $institucional = Permiso::create(['nombre' => 'caja_chica.ver', 'modulo' => 'caja_chica', 'accion' => 'ver', 'descripcion' => 'Propia']);
+        $custom = Permiso::create(['nombre' => 'especial.consultar', 'modulo' => 'especial', 'accion' => 'consultar']);
+        $antes = [$institucional->fresh()->getAttributes(), $custom->fresh()->getAttributes()];
+        $this->ejecutar();
+        $this->assertSame($antes, [$institucional->fresh()->getAttributes(), $custom->fresh()->getAttributes()]);
+    }
+
+    public static function clavesBcrypt(): array
+    {
+        return [
+            'ascii 72 bytes' => ['Aa9!'.str_repeat('x', 68), true],
+            'ascii 73 bytes' => ['Aa9!'.str_repeat('x', 69), false],
+            'unicode 72 bytes' => ['Aa9!'.str_repeat('é', 34), true],
+            'unicode 74 bytes' => ['Aa9!'.str_repeat('é', 35), false],
+        ];
+    }
+
+    #[DataProvider('clavesBcrypt')]
+    public function test_limite_bcrypt_se_mide_en_bytes(string $clave, bool $permitida): void
+    {
+        config(['hashing.driver' => 'bcrypt']);
+        Hash::forgetDrivers();
+        if (! $permitida) {
+            $this->esperarConflicto(fn () => $this->ejecutar(clave: $clave), '72 bytes');
+
+            return;
+        }
+        $this->ejecutar(clave: $clave);
+        $this->assertTrue(Hash::check($clave, Usuario::firstOrFail()->contrasena));
+    }
+
+    public function test_argon2id_admite_contrasenas_mayores_a_72_bytes(): void
+    {
+        if (! defined('PASSWORD_ARGON2ID')) {
+            $this->markTestSkipped('Argon2id no disponible en este PHP.');
+        }
+        config(['hashing.driver' => 'argon2id', 'hashing.argon.memory' => 1024, 'hashing.argon.time' => 1, 'hashing.argon.threads' => 1]);
+        Hash::forgetDrivers();
+        $clave = 'Aa9!'.str_repeat('é', 40);
+        $this->ejecutar(clave: $clave);
+        $this->assertTrue(Hash::check($clave, Usuario::firstOrFail()->contrasena));
+    }
+
+    public function test_auditoria_cli_cubre_creaciones_asignaciones_e_inicializacion(): void
+    {
+        $this->ejecutar();
+        $auditorias = Auditoria::all();
+        $this->assertCount(Permiso::count() + 12, $auditorias);
+        foreach ($auditorias as $auditoria) {
+            $this->assertNull($auditoria->usuario_id);
+            $this->assertNull($auditoria->direccion_ip);
+            $this->assertSame('CLI', $auditoria->valor_nuevo['origen']);
+            $this->assertSame(InicializacionLocalSeeder::class, $auditoria->valor_nuevo['proceso']);
+            $this->assertArrayNotHasKey('contrasena', $auditoria->valor_nuevo['datos']);
+        }
+        $this->assertCount(1, $auditorias->pluck('valor_nuevo')->pluck('lote')->unique());
+        $this->assertDatabaseCount('usuarios', 1);
+        foreach (Rol::all() as $rol) {
+            $asignacion = $auditorias->where('accion', 'asignar_permisos')->firstWhere('registro_id', $rol->id);
+            $this->assertSame($rol->permisos()->orderBy('nombre')->pluck('nombre')->all(), $asignacion->valor_nuevo['datos']['permisos']);
+        }
+        $this->assertSame(1, $auditorias->where('accion', 'inicializar_local')->count());
+    }
+
+    public static function fallosAuditoria(): array
+    {
+        return [
+            'creacion' => ['crear', false],
+            'asignacion' => ['asignar_permisos', false],
+            'resumen final' => ['inicializar_local', false],
+            'cancelacion silenciosa' => ['inicializar_local', true],
+        ];
+    }
+
+    #[DataProvider('fallosAuditoria')]
+    public function test_auditoria_obligatoria_fallida_revierte_toda_la_operacion(string $accion, bool $cancelar): void
+    {
+        Auditoria::creating(function ($auditoria) use ($accion, $cancelar) {
+            if ($auditoria->accion === $accion) {
+                if ($cancelar) {
+                    return false;
+                }
+                throw new RuntimeException('Fallo auditoria obligatorio');
+            }
+        });
+        $this->esperarConflicto(fn () => $this->ejecutar(), $cancelar ? 'auditoria obligatoria' : 'Fallo auditoria');
+    }
+
+    public static function esquemas(): array
+    {
+        return [
+            'compatible' => ['compatible', true],
+            'tabla faltante' => ['tabla', false],
+            'motor MyISAM' => ['motor', false],
+            'columna faltante' => ['columna', false],
+            'sin autoincremento' => ['autoincremento', false],
+            'policia obligatorio' => ['policia', false],
+            'actor obligatorio' => ['actor', false],
+            'sin PK' => ['pk', false],
+            'sin unique usuario' => ['unique_usuario', false],
+            'sin unique correo' => ['unique_correo', false],
+            'sin unique permiso' => ['unique_permiso', false],
+            'sin unique pivote' => ['unique_pivote', false],
+            'FK ausente' => ['fk', false],
+            'FK otra base' => ['fk_base', false],
+            'FK destino incorrecto' => ['fk_destino', false],
+            'FK borrado incorrecto' => ['fk_borrado', false],
+            'FK update incorrecto' => ['fk_update', false],
+            'claves desactivadas' => ['desactivadas', false],
+            'base real diferente' => ['base', false],
+        ];
+    }
+
+    #[DataProvider('esquemas')]
+    public function test_preflight_mysql_con_metadatos_simulados(string $caso, bool $permitido): void
+    {
+        $tablas = [];
+        $columnas = [];
+        $indices = [];
+        $claves = [];
+        $sqlite = DB::connection()->getSchemaBuilder();
+        foreach (['roles', 'permisos', 'usuarios', 'rol_permiso', 'auditorias', 'policias'] as $tabla) {
+            $tablas[] = ['name' => $tabla, 'engine' => 'InnoDB'];
+            $columnas[$tabla] = $sqlite->getColumns($tabla);
+            $indices[$tabla] = $sqlite->getIndexes($tabla);
+            $claves[$tabla] = array_map(fn ($clave) => array_merge($clave, ['foreign_schema' => 'desarrollo_sistema']), $sqlite->getForeignKeys($tabla));
+        }
+        if ($caso === 'tabla') {
+            array_pop($tablas);
+        }
+        if ($caso === 'motor') {
+            $tablas[0]['engine'] = 'MyISAM';
+        }
+        if ($caso === 'columna') {
+            $columnas['usuarios'] = array_values(array_filter($columnas['usuarios'], fn ($c) => $c['name'] !== 'contrasena'));
+        }
+        foreach ($columnas['usuarios'] as &$columna) {
+            if ($caso === 'autoincremento' && $columna['name'] === 'id') {
+                $columna['auto_increment'] = false;
+            }
+            if ($caso === 'policia' && $columna['name'] === 'policia_id') {
+                $columna['nullable'] = false;
+            }
+        }
+        unset($columna);
+        foreach ($columnas['auditorias'] as &$columna) {
+            if ($caso === 'actor' && $columna['name'] === 'usuario_id') {
+                $columna['nullable'] = false;
+            }
+        }
+        unset($columna);
+        if ($caso === 'pk') {
+            $indices['roles'] = [];
+        }
+        foreach (['unique_usuario' => ['usuarios', ['nombre_usuario']], 'unique_correo' => ['usuarios', ['correo_electronico']], 'unique_permiso' => ['permisos', ['nombre']], 'unique_pivote' => ['rol_permiso', ['rol_id', 'permiso_id']]] as $clave => [$tabla, $campos]) {
+            if ($caso === $clave) {
+                $indices[$tabla] = array_values(array_filter($indices[$tabla], fn ($i) => $i['columns'] !== $campos));
+            }
+        }
+        if ($caso === 'fk') {
+            $claves['usuarios'] = [];
+        }
+        foreach ($claves['usuarios'] as &$clave) {
+            if ($clave['columns'] === ['rol_id']) {
+                if ($caso === 'fk_base') {
+                    $clave['foreign_schema'] = 'otra';
+                }
+                if ($caso === 'fk_destino') {
+                    $clave['foreign_table'] = 'policias';
+                }
+                if ($caso === 'fk_borrado') {
+                    $clave['on_delete'] = 'cascade';
+                }
+                if ($caso === 'fk_update') {
+                    $clave['on_update'] = 'cascade';
+                }
+            }
+        }
+        unset($clave);
+        $builder = Mockery::mock(Builder::class);
+        $builder->shouldReceive('getTables')->with('desarrollo_sistema')->andReturn($tablas);
+        $builder->shouldReceive('getColumns')->andReturnUsing(fn ($tabla) => $columnas[$tabla]);
+        $builder->shouldReceive('getIndexes')->andReturnUsing(fn ($tabla) => $indices[$tabla]);
+        $builder->shouldReceive('getForeignKeys')->andReturnUsing(fn ($tabla) => $claves[$tabla]);
+        $conexion = Mockery::mock(Connection::class);
+        $conexion->shouldReceive('selectOne')->once()->with('SELECT DATABASE() AS base_actual, @@SESSION.foreign_key_checks AS claves_foraneas')
+            ->andReturn((object) ['base_actual' => $caso === 'base' ? 'otra' : 'desarrollo_sistema', 'claves_foraneas' => $caso === 'desactivadas' ? 0 : 1]);
+        $conexion->shouldReceive('getSchemaBuilder')->andReturn($builder);
+        $conexion->shouldNotReceive('statement');
+        $conexion->shouldNotReceive('insert');
+        $antes = $this->snapshot();
+        try {
+            (new GuardiaInicializador)->esquema($conexion);
+            $this->assertTrue($permitido);
+        } catch (RuntimeException $e) {
+            $this->assertFalse($permitido, $e->getMessage());
+            $this->assertStringContainsString('Esquema rechazado', $e->getMessage());
+        }
+        $this->assertSame($antes, $this->snapshot());
+    }
+
+    public function test_esquema_incompatible_detiene_el_flujo_antes_de_escribir(): void
+    {
+        $this->app->bind(InicializacionLocalSeeder::class, InicializadorEsquemaIncompatible::class);
+        $this->esperarConflicto(fn () => $this->ejecutar(nuevo: false), 'Esquema rechazado');
     }
 
     public static function destinos(): array
@@ -267,6 +497,12 @@ class InicializacionLocalSeederTest extends TestCase
 // Adaptadores exclusivos de pruebas, no registrados en la aplicacion.
 class InicializadorEnMemoria extends InicializacionLocalSeeder
 {
+    protected function validarEsquema(Connection $conexion): void
+    {
+        // El preflight real se prueba con metadatos MySQL simulados, sin conectarse a MySQL.
+        $this->validarDestino($conexion);
+    }
+
     protected function validarDestino(Connection $conexion): void
     {
         if (! app()->environment('testing') || $conexion->getDriverName() !== 'sqlite'
@@ -283,6 +519,11 @@ class InicializadorEnMemoria extends InicializacionLocalSeeder
 
 class GuardiaInicializador extends InicializacionLocalSeeder
 {
+    public function esquema(Connection $conexion): void
+    {
+        $this->validarEsquema($conexion);
+    }
+
     public function validar(Connection $conexion): void
     {
         $this->validarDestino($conexion);
@@ -291,5 +532,13 @@ class GuardiaInicializador extends InicializacionLocalSeeder
     public function bloquear(Connection $conexion, Closure $operacion): void
     {
         $this->conBloqueo($conexion, $operacion);
+    }
+}
+
+class InicializadorEsquemaIncompatible extends InicializadorEnMemoria
+{
+    protected function validarEsquema(Connection $conexion): void
+    {
+        throw new RuntimeException('Esquema rechazado: simulado.');
     }
 }

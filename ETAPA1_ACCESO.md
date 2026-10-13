@@ -68,13 +68,13 @@ La revision fue aprobada para validacion local. Los 19 archivos se entregan medi
 
 Se agrega `database/seeders/InicializacionLocalSeeder.php`, de ejecucion explicita. No se incorpora a `DatabaseSeeder` ni se modifica ningun archivo del Grupo 1.
 
-El inicializador exige `APP_ENV=local` y la conexion efectiva configurada como MySQL, host exactamente `127.0.0.1`, base `desarrollo_sistema`, sin socket ni configuracion alternativa de lectura/escritura. No admite `--no-interaction`, no recibe contrasenas por argumentos o variables de entorno y no contiene credenciales predeterminadas. `--force` no elude estas comprobaciones.
+El inicializador exige `APP_ENV=local` y la conexion efectiva configurada como MySQL, host exactamente `127.0.0.1`, base `desarrollo_sistema`, sin socket, prefijo de tablas ni configuracion alternativa de lectura/escritura. No admite `--no-interaction`, no recibe contrasenas por argumentos o variables de entorno y no contiene credenciales predeterminadas. `--force` no elude estas comprobaciones.
 
-Antes de crear registros solicita nombre y correo del administrador. Solo si ese usuario no existe solicita una contrasena oculta y su confirmacion, sin fallback visible. Requiere al menos 16 caracteres, mayusculas, minusculas, numeros y simbolos. `Usuario` la almacena mediante su cast `hashed`. Al repetir, no solicita ni modifica la contrasena existente.
+Antes de crear registros solicita nombre y correo del administrador. Solo si ese usuario no existe solicita una contrasena oculta y su confirmacion, sin fallback visible. Requiere al menos 16 caracteres, mayusculas, minusculas, numeros y simbolos. Si el driver es bcrypt se aplica un maximo de 72 bytes mediante `strlen`, no de caracteres: Unicode puede ocupar varios bytes por caracter. Otros drivers, como Argon2id, no reciben ese limite de bcrypt. `Usuario` la almacena mediante su cast `hashed`. Al repetir, no solicita ni modifica la contrasena existente.
 
 La operacion usa una transaccion y un bloqueo MySQL `GET_LOCK`, liberado incluso ante errores, para serializar ejecuciones del inicializador. Crea solamente los roles institucionales ausentes (`administrador`, `encargado_oficina`, `soporte`, `administrativo`, `invitado`) y el usuario solicitado ausente. No crea personas, policias, oficinas, armas ni usuarios de prueba; el administrador usa `policia_id=NULL`.
 
-Para evitar modificar o ejecutar el seeder del Grupo 1 se mantiene una copia local de su matriz, con una prueba de paridad que detecta cambios futuros. A los roles recien creados se asignan los permisos institucionales; el administrador recibe todos los permisos del catalogo. Caja chica se asigna asi:
+Para evitar modificar o ejecutar seeders del Grupo 1 se mantienen copias locales de la matriz de roles y del catalogo institucional, con pruebas de paridad contra `RolSeeder` y `PermisoSeeder`. No se invoca ningun otro seeder. Se insertan solamente permisos institucionales ausentes; se preservan permisos personalizados y descripciones existentes. Antes de escribir se rechaza cualquier permiso institucional cuyo nombre, modulo o accion no coincida con el catalogo, incluidas variantes ambiguas de mayusculas/espacios. A los roles recien creados se asignan los permisos institucionales; el administrador recibe todos los permisos del catalogo, incluidos personalizados, siguiendo el criterio del Grupo 1. Caja chica se asigna asi:
 
 | Rol nuevo | Permisos de caja chica |
 | --- | --- |
@@ -83,7 +83,26 @@ Para evitar modificar o ejecutar el seeder del Grupo 1 se mantiene una copia loc
 | encargado_oficina | ver, descargar |
 | soporte e invitado | ninguno |
 
-Roles, usuarios y asignaciones preexistentes se conservan. No se intenta completar silenciosamente los permisos de un rol existente. Si el administrador existente esta inactivo, tiene otra identidad/rol o carece de permisos, se aborta. Tambien se aborta ante correo ocupado por otro usuario, nombre institucional duplicado o credenciales invalidas. Los registros nuevos de permisos, roles, pivote, usuario y auditoria se revierten ante errores transaccionales; el trait de auditoria conserva su comportamiento preexistente de tolerar fallos de registro.
+Roles, usuarios y asignaciones preexistentes se conservan. No se intenta completar silenciosamente los permisos de un rol existente. Si el administrador existente esta inactivo, tiene otra identidad/rol o carece de permisos, se aborta. Tambien se aborta ante correo ocupado por otro usuario, nombre institucional duplicado o credenciales invalidas. Los registros nuevos de permisos, roles, pivote, usuario y auditoria se revierten ante errores transaccionales.
+
+### Comprobaciones obligatorias antes de escribir
+
+Con el bloqueo adquirido, el inicializador inspecciona la base efectiva (`DATABASE()`) y exige `foreign_key_checks=1`. Consulta metadatos mediante el schema builder de Laravel; no intenta reparar el esquema ni ejecutar DDL.
+
+- Exige tablas InnoDB: `roles`, `permisos`, `usuarios`, `rol_permiso`, `auditorias` y `policias` (destino de la FK opcional del usuario).
+- Comprueba columnas utilizadas, clave primaria `id` y autoincremento. `usuarios.policia_id` y `auditorias.usuario_id` deben admitir NULL.
+- Exige unicidad de `permisos.nombre`, `usuarios.nombre_usuario`, `usuarios.correo_electronico` y el par `rol_permiso(rol_id, permiso_id)`.
+- Comprueba las FK de usuario a rol/policia, pivote a rol/permiso y auditoria a usuario; todas deben referenciar `id` en la misma base. Exige las reglas de borrado del proyecto y actualizacion RESTRICT/NO ACTION.
+
+El usuario de base de datos debe poder leer esos metadatos y ejecutar `GET_LOCK`/`RELEASE_LOCK`, ademas de las operaciones necesarias. Si falta una tabla, motor o restriccion, se aborta sin corregir ni escribir registros. Esta comprobacion no equivale a certificar todos los tipos/longitudes, triggers o datos historicos del sistema: cualquier error de persistencia se revierte transaccionalmente.
+
+`roles.nombre` no tiene UNIQUE en las migraciones del Grupo 1. No se agrega esa restriccion ni se cambia su esquema: se detectan duplicados/variantes y se serializan ejecuciones del inicializador. Evitar cambios administrativos o ejecuciones de otros seeders en paralelo, pues no participan de este bloqueo.
+
+### Auditoria obligatoria
+
+Las altas se realizan sin disparar el trait tolerante, exclusivamente dentro de este inicializador, y se registran explicitamente mediante el modelo existente `Auditoria`. Se audita cada permiso, rol y usuario creado, las asignaciones por rol y un resumen de inicializacion. El pivote utiliza `registro_id=rol_id`, siguiendo la convencion del controlador de roles.
+
+Cada fila incluye `origen=CLI`, proceso, un UUID de lote y datos seleccionados; `usuario_id` y `direccion_ip` son NULL porque no hay actor web autenticado. No se incluyen contrasenas, hashes ni volcados completos de usuarios. No se modifica el trait ni ningun archivo del Grupo 1. Si guardar cualquier auditoria devuelve false o lanza una excepcion, se revierte toda la inicializacion, incluidas las auditorias anteriores del lote. Una repeticion sin cambios no agrega nuevas auditorias: se mantiene la idempotencia de registros.
 
 En la instalacion con roles y usuarios vacios, el resultado esperado es cinco roles institucionales y un administrador activo, con los tres permisos efectivos de caja chica. La segunda ejecucion con el mismo nombre y correo conserva los datos, incluidos hash y timestamps.
 
@@ -107,6 +126,10 @@ Verificar previamente en `.env` los valores `APP_ENV=local`, `DB_CONNECTION=mysq
 
 Se verifica creacion, login real, permisos institucionales y de caja chica, ausencia de fichas ficticias, contrasenas hasheadas y excluidas de auditoria, repeticion sin cambios, personalizaciones preservadas, conflictos de nombre/correo, roles duplicados/inactivos, contrasenas invalidas, modo no interactivo y rollback tras fallos de persistencia. La validacion real del servidor MySQL y de la entrada oculta en la terminal local queda a cargo de la ejecucion manual.
 
-Resultados finales del complemento: 25 pruebas aprobadas, 132 aserciones. Suite completa: 48 pruebas, 250 aserciones; 46 aprobadas y los mismos 2 fallos preexistentes de oficinas/documentos. Laravel Pint y `git diff --check` correctos. Tambien se verifican conflictos por variantes de mayusculas en roles y configuraciones de replicas normalizadas por Laravel.
+Resultados anteriores a la correccion de compatibilidad: 25 pruebas aprobadas, 132 aserciones. Suite completa de esa version: 48 pruebas, 250 aserciones; 46 aprobadas y los mismos 2 fallos preexistentes de oficinas/documentos.
+
+La suite ampliada verifica el catalogo inconsistente, limites ASCII/Unicode de bcrypt, Argon2id, metadatos MySQL simulados, ausencia de restricciones, claves desactivadas, auditorias CLI y rollback si falla la auditoria de altas, asignaciones o resumen (tambien si un evento cancela silenciosamente su guardado). Se conservan login, idempotencia, preservacion de personalizaciones y paridad con el Grupo 1. Los metadatos y el bloqueo MySQL se simulan; no se ejecutaron operaciones sobre MySQL local. Los dos fallos de autorizacion preexistentes de oficinas/documentos siguen fuera del alcance de este complemento.
+
+Resultados de la version corregida: 58 pruebas del inicializador aprobadas, 861 aserciones. Suite completa: 81 pruebas, 979 aserciones; 79 aprobadas y los mismos 2 fallos preexistentes. Laravel Pint y `git diff --check` correctos. El inicializador esta listo para la ejecucion manual local condicionada a superar su preflight; si el esquema instalado no cumple, se detendra sin repararlo. No se certifico ni altero el MySQL del usuario.
 
 Entrega en un commit independiente de la Etapa 1, con solo este documento, el seeder nuevo y su suite. Sin ejecuciones sobre MySQL, migraciones, cambios en los archivos del Grupo 1, Pull Request ni avance a la Etapa 2.
