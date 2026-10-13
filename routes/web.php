@@ -7,7 +7,13 @@ use App\Http\Controllers\EquipamientoTecnologicoController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\TipoDocumentoController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RecuperarContrasenaController;
+use App\Http\Controllers\Auth\RestablecerContrasenaController;
+use App\Http\Controllers\RolController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -32,12 +38,7 @@ Route::resource('documentos', DocumentoController::class)
 
 Route::get('/documentos/{documento}/download', [DocumentoController::class, 'download'])
     ->name('documentos.download');
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RecuperarContrasenaController;
-use App\Http\Controllers\Auth\RestablecerContrasenaController;
-use App\Http\Controllers\RolController;
-use App\Http\Controllers\UsuarioController;
-use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', fn () => redirect()->route('dashboard'));
 
