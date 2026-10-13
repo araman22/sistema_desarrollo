@@ -12,8 +12,6 @@ class EquipamientoTecnologicoController extends Controller
 {
     public function index(): View
     {
-        $this->authorize('viewAny', EquipamientoTecnologico::class);
-
         $query = EquipamientoTecnologico::query()->with('oficina');
 
         if ($search = request('search')) {
@@ -45,8 +43,6 @@ class EquipamientoTecnologicoController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', EquipamientoTecnologico::class);
-
         return view('equipamientos.form', [
             'equipamiento' => new EquipamientoTecnologico(),
             'oficinas' => Oficina::query()->orderBy('nombre')->get(),
@@ -57,8 +53,6 @@ class EquipamientoTecnologicoController extends Controller
 
     public function store(EquipamientoTecnologicoRequest $request): RedirectResponse
     {
-        $this->authorize('create', EquipamientoTecnologico::class);
-
         $equipamiento = EquipamientoTecnologico::create($request->validated());
 
         return redirect()->route('equipamientos-tecnologicos.show', $equipamiento)
@@ -67,8 +61,6 @@ class EquipamientoTecnologicoController extends Controller
 
     public function show(EquipamientoTecnologico $equipamientoTecnologico): View
     {
-        $this->authorize('view', $equipamientoTecnologico);
-
         $equipamientoTecnologico->load('oficina');
 
         return view('equipamientos.show', compact('equipamientoTecnologico'));
@@ -76,8 +68,6 @@ class EquipamientoTecnologicoController extends Controller
 
     public function edit(EquipamientoTecnologico $equipamientoTecnologico): View
     {
-        $this->authorize('update', $equipamientoTecnologico);
-
         return view('equipamientos.form', [
             'equipamiento' => $equipamientoTecnologico,
             'oficinas' => Oficina::query()->orderBy('nombre')->get(),
@@ -88,8 +78,6 @@ class EquipamientoTecnologicoController extends Controller
 
     public function update(EquipamientoTecnologicoRequest $request, EquipamientoTecnologico $equipamientoTecnologico): RedirectResponse
     {
-        $this->authorize('update', $equipamientoTecnologico);
-
         $equipamientoTecnologico->update($request->validated());
 
         return redirect()->route('equipamientos-tecnologicos.show', $equipamientoTecnologico)
@@ -98,8 +86,6 @@ class EquipamientoTecnologicoController extends Controller
 
     public function destroy(EquipamientoTecnologico $equipamientoTecnologico): RedirectResponse
     {
-        $this->authorize('delete', $equipamientoTecnologico);
-
         if ($equipamientoTecnologico->mantenimientos()->exists() || $equipamientoTecnologico->alertas()->exists()) {
             return back()->withErrors([
                 'equipamiento' => 'No se puede eliminar porque tiene mantenimiento o alertas asociadas.',

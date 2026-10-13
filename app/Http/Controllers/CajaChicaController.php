@@ -27,7 +27,9 @@ class CajaChicaController extends Controller
             ->latest('fecha')
             ->first();
 
-        $diferencia = ($ultimoIngreso?->monto ?? 0) - ($ultimoEgreso?->monto ?? 0);
+        $totalIngresos = CajaChicaMovimiento::query()->where('tipo', 'ingreso')->sum('monto');
+        $totalEgresos = CajaChicaMovimiento::query()->where('tipo', 'egreso')->sum('monto');
+        $diferencia = (float) $totalIngresos - (float) $totalEgresos;
 
         return view('caja-chica.index', compact(
             'movimientos',

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="panel">
-    <h1>Dashboard SIGDET</h1>
+    <h1> SIGDET</h1>
     <p class="muted">Resumen general del módulo de gestión del departamento.</p>
 </div>
 
@@ -32,7 +32,7 @@
 </div>
 
 <div class="panel" style="margin-top: 24px;">
-    <h2>Diferencia de caja chica</h2>
+    <h2>Total en caja</h2>
     <div class="grid" style="margin-top: 12px;">
         <div class="card">
             <div class="muted">Último ingreso</div>
@@ -45,9 +45,9 @@
             <div class="small">Destino: {{ $stats['destino_ultimo_egreso'] }}</div>
         </div>
         <div class="card">
-            <div class="muted">Diferencia actual</div>
+            <div class="muted">Saldo acumulado</div>
             <h2>${{ number_format($stats['diferencia_caja_chica'], 2, '.', '') }}</h2>
-            <div class="small">Ingreso menos egreso del último movimiento.</div>
+            <div class="small">Total de ingresos menos egresos registrados.</div>
         </div>
     </div>
 </div>

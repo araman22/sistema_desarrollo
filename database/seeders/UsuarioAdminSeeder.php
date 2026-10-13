@@ -34,9 +34,7 @@ class UsuarioAdminSeeder extends Seeder
             ],
         );
 
-        $jerarquia = Jerarquia::updateOrCreate(
-            ['nombre' => 'Oficial'],
-        );
+        $jerarquia = Jerarquia::where('nombre', 'Oficial Inspector')->firstOrFail();
 
         $funcion = Funcion::where('nombre', 'Administrador del sistema')->firstOrFail();
 
