@@ -1,0 +1,2 @@
+@extends('movilidad.layout')
+@section('content')<h1>{{ $tipo->exists?'Editar':'Registrar' }} tipo de vehículo</h1><form class="card" method="post" action="{{ $tipo->exists?route('tipos-vehiculos.update',$tipo):route('tipos-vehiculos.store') }}">@csrf @if($tipo->exists)@method('PUT')@endif<label for="nombre">Nombre *</label><input id="nombre" name="nombre" value="{{ old('nombre',$tipo->nombre) }}" maxlength="100" required><div class="actions"><button>Guardar</button><a href="{{ route('tipos-vehiculos.index') }}">Cancelar</a></div></form>@endsection
