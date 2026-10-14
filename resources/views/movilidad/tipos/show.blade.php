@@ -1,0 +1,2 @@
+@extends('movilidad.layout')
+@section('content')<h1>{{ $tipo->nombre }}</h1><div class="card"><p>Vehículos de este tipo: {{ $tipo->vehiculos()->count() }}</p><a href="{{ route('tipos-vehiculos.index') }}">Volver</a>@can('delete',$tipo)<form class="actions" method="post" action="{{ route('tipos-vehiculos.destroy',$tipo) }}" onsubmit="return confirm('¿Eliminar este tipo?')">@csrf @method('DELETE')<button class="danger">Eliminar tipo</button></form>@endcan</div>@endsection
