@@ -11,7 +11,7 @@ return new class extends Migration
     {
         // No modificar datos existentes; comprobar ambas tablas antes de cualquier DDL.
         foreach (['drones_robots', 'baterias'] as $tabla) {
-            if (DB::table($tabla)->whereNotNull('numero_serie')->groupBy('numero_serie')->havingRaw('COUNT(*) > 1')->exists()) {
+            if (DB::table($tabla)->select('numero_serie')->whereNotNull('numero_serie')->groupBy('numero_serie')->havingRaw('COUNT(*) > 1')->exists()) {
                 throw new RuntimeException('Hay números de serie repetidos en '.$tabla.'. Revisarlos antes de aplicar la migración.');
             }
         }
