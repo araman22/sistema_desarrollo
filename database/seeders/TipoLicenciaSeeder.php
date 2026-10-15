@@ -21,6 +21,11 @@ class TipoLicenciaSeeder extends Seeder
             'Licencia porophosphoros',
             'Licencia anual',
             'Comision',
+            'Licencia por maternidad',
+            'Licencia por paternidad',
+            'Licencia por estudio',
+            'Licencia por fallecimiento de familiar',
+            'Licencia sin goce de haberes',
         ];
 
         foreach ($tipos as $nombre) {
