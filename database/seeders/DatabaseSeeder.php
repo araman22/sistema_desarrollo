@@ -26,7 +26,13 @@ class DatabaseSeeder extends Seeder
             // Seguridad y catalogos de permisos.
             PermisoSeeder::class,
             RolSeeder::class,
+            CajaChicaPermisoSeeder::class,
             UsuarioAdminSeeder::class,
         ]);
+
+        // Usuarios de prueba por rol: nunca fuera del entorno local.
+        if (app()->environment('local')) {
+            $this->call(UsuariosPruebaSeeder::class);
+        }
     }
 }

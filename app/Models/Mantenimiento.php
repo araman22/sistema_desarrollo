@@ -12,6 +12,10 @@ class Mantenimiento extends Model
 {
     use RegistraAuditoria;
 
+    public const TIPOS_MOVILIDAD = ['preventivo', 'correctivo', 'revision'];
+
+    public const ESTADOS_MOVILIDAD = ['programado', 'en_curso', 'realizado', 'cancelado'];
+
     protected $table = 'mantenimientos';
 
     /**
