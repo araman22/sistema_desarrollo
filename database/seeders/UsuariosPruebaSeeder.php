@@ -21,6 +21,16 @@ class UsuariosPruebaSeeder extends Seeder
         'administrativo' => ['administrativo', true],
         'invitado' => ['invitado', true],
         'inactivo' => ['invitado', false],
+        'jperez' => ['encargado_oficina', true],
+        'mgomez' => ['encargado_oficina', true],
+        'lrodriguez' => ['soporte', true],
+        'afernandez' => ['soporte', true],
+        'cmartinez' => ['administrativo', true],
+        'slopez' => ['administrativo', true],
+        'dsanchez' => ['administrativo', true],
+        'rdiaz' => ['invitado', true],
+        'vromero' => ['invitado', true],
+        'gtorres' => ['soporte', false],
     ];
 
     /**
