@@ -20,6 +20,13 @@ class Documento extends Model
         'nombre',
         'numero',
         'descripcion',
+        'ruta_archivo',
+        'mime_type',
+        'tamano_bytes',
+        'extension',
+        'archivo_original',
+        'hash_archivo',
+        'usuario_id',
     ];
 
     /**
@@ -29,11 +36,17 @@ class Documento extends Model
     {
         return [
             'numero' => 'integer',
+            'tamano_bytes' => 'integer',
         ];
     }
 
     public function tipo(): BelongsTo
     {
         return $this->belongsTo(TipoDocumento::class, 'tipo_documento_id');
+    }
+
+    public function usuario(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 }

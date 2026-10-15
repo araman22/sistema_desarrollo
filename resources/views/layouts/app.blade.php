@@ -1,11 +1,39 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>@yield('title', 'SIGDET') · SIGDET</title><link rel="stylesheet" href="{{ asset('css/sigdet.css') }}"></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Inicio') · SIGDET</title>
+</head>
 <body>
-<header><a href="{{ url('/') }}"><strong>SIGDET</strong></a><nav>
-    @can('viewAny', App\Models\DroneRobot::class)<a href="{{ route('movilidad.drones.index') }}">Drones y robots</a>@endcan
-    @can('viewAny', App\Models\Bateria::class)<a href="{{ route('movilidad.baterias.index') }}">Baterías</a>@endcan
-    @yield('navigation')
-</nav>@auth<span>{{ auth()->user()->nombre_usuario }}</span>@endauth</header>
-<main><x-feedback />@yield('content')</main>
-</body></html>
+    <header>
+        <nav>
+            <a href="{{ route('dashboard') }}">Dashboard</a>
+            @can('viewAny', App\Models\CajaChicaMovimiento::class)
+                <a href="{{ route('caja-chica.index') }}">Caja chica</a>
+            @endcan
+            @can('viewAny', App\Models\Usuario::class)
+                <a href="{{ route('usuarios.index') }}">Usuarios</a>
+            @endcan
+            @can('viewAny', App\Models\Rol::class)
+                <a href="{{ route('roles.index') }}">Roles</a>
+            @endcan
+        </nav>
+        @auth
+            <div>
+                <span>{{ auth()->user()->nombre_usuario }}</span>
+                <form action="{{ route('logout') }}" method="POST" style="display: inline">
+                    @csrf
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            </div>
+        @endauth
+    </header>
+
+    <main>
+        @include('partials.mensajes')
+
+        @yield('content')
+    </main>
+</body>
+</html>
