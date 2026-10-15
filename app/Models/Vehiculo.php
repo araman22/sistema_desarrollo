@@ -2,53 +2,20 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\RegistraAuditoria;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Vehiculo extends Model
 {
-    use RegistraAuditoria;
+    use HasFactory;
 
-    protected $table = 'vehiculos';
+    protected $fillable = ['tipo_vehiculo_id', 'dominio', 'anio', 'numero_chasis', 'numero_motor', 'kilometraje', 'responsable_id', 'estado', 'compania_seguro', 'numero_poliza', 'vencimiento_seguro', 'ultima_revision', 'proxima_revision', 'fecha_adquisicion', 'observaciones'];
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'tipo_vehiculo_id',
-        'dominio',
-        'anio',
-        'numero_chasis',
-        'numero_motor',
-        'kilometraje',
-        'responsable_id',
-        'estado',
-        'compania_seguro',
-        'numero_poliza',
-        'vencimiento_seguro',
-        'ultima_revision',
-        'proxima_revision',
-        'fecha_adquisicion',
-        'observaciones',
-    ];
-
-    /**
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
-        return [
-            'anio' => 'integer',
-            'kilometraje' => 'integer',
-            'vencimiento_seguro' => 'date',
-            'ultima_revision' => 'date',
-            'proxima_revision' => 'date',
-            'fecha_adquisicion' => 'date',
-        ];
+        return ['anio' => 'integer', 'kilometraje' => 'integer', 'vencimiento_seguro' => 'date', 'ultima_revision' => 'date', 'proxima_revision' => 'date', 'fecha_adquisicion' => 'date'];
     }
 
     public function tipo(): BelongsTo
@@ -58,7 +25,7 @@ class Vehiculo extends Model
 
     public function responsable(): BelongsTo
     {
-        return $this->belongsTo(Policia::class, 'responsable_id');
+        return $this->belongsTo(ResponsablePolicial::class, 'responsable_id');
     }
 
     public function mantenimientos(): HasMany

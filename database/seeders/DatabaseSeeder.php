@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             // Seguridad y catalogos de permisos.
             PermisoSeeder::class,
             RolSeeder::class,
+            CajaChicaPermisoSeeder::class,
             UsuarioAdminSeeder::class,
         ]);
 

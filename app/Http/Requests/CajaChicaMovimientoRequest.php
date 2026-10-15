@@ -2,14 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Models\CajaChicaMovimiento;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class CajaChicaMovimientoRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can('create', CajaChicaMovimiento::class) ?? false;
     }
 
     public function rules(): array

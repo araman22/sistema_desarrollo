@@ -31,6 +31,7 @@
     </div>
 </div>
 
+@can('viewAny', App\Models\CajaChicaMovimiento::class)
 <div class="panel" style="margin-top: 24px;">
     <h2>Total en caja</h2>
     <div class="grid" style="margin-top: 12px;">
@@ -51,4 +52,5 @@
         </div>
     </div>
 </div>
+@endcan
 @endsection
