@@ -14,12 +14,20 @@ use App\Http\Controllers\RolController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware(['auth'])->group(function () {
 
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/caja-chica', [CajaChicaController::class, 'index'])
+        ->middleware('can:viewAny,App\Models\CajaChicaMovimiento')
+        ->name('caja-chica.index');
 
-Route::get('/caja-chica', [CajaChicaController::class, 'index'])->name('caja-chica.index');
-Route::post('/caja-chica', [CajaChicaController::class, 'store'])->name('caja-chica.store');
-Route::get('/caja-chica/{cajaChica}/ticket', [CajaChicaController::class, 'downloadTicket'])->name('caja-chica.ticket');
+    Route::post('/caja-chica', [CajaChicaController::class, 'store'])
+        ->middleware('can:create,App\Models\CajaChicaMovimiento')
+        ->name('caja-chica.store');
+
+    Route::get('/caja-chica/{cajaChica}/ticket', [CajaChicaController::class, 'downloadTicket'])
+        ->middleware('can:download,cajaChica')
+        ->name('caja-chica.ticket');
+});
 
 Route::resource('oficinas', OficinaController::class)
     ->parameters(['oficinas' => 'oficina']);
@@ -58,7 +66,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::view('/dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
