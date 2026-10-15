@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             FuncionSeeder::class,
             JerarquiaSeeder::class,
             ArmaModeloSeeder::class,
+            ArmaSeeder::class,
             TipoDocumentoSeeder::class,
             TipoLicenciaSeeder::class,
             TipoVehiculoSeeder::class,
@@ -30,9 +31,12 @@ class DatabaseSeeder extends Seeder
             UsuarioAdminSeeder::class,
         ]);
 
-        // Usuarios de prueba por rol: nunca fuera del entorno local.
+        // Usuarios y datos de prueba: nunca fuera del entorno local.
         if (app()->environment('local')) {
-            $this->call(UsuariosPruebaSeeder::class);
+            $this->call([
+                UsuariosPruebaSeeder::class,
+                DatosPruebaSeeder::class,
+            ]);
         }
     }
 }
