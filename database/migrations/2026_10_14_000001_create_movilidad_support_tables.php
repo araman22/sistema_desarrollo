@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('movilidad_accesos', function (Blueprint $t) {
             $t->id();
-            $t->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
+            $t->foreignId('user_id')->unique()->constrained('usuarios')->cascadeOnDelete();
             $t->boolean('puede_editar')->default(false);
             $t->timestamps();
         });
