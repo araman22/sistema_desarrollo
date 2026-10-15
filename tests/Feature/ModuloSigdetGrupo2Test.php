@@ -8,6 +8,7 @@ use App\Models\Oficina;
 use App\Models\Rol;
 use App\Models\TipoDocumento;
 use App\Models\Usuario;
+use Database\Seeders\CajaChicaPermisoSeeder;
 use Database\Seeders\PermisoSeeder;
 use Database\Seeders\RolSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,7 +24,7 @@ class ModuloSigdetGrupo2Test extends TestCase
     {
         parent::setUp();
 
-        $this->seed([PermisoSeeder::class, RolSeeder::class]);
+        $this->seed([PermisoSeeder::class, RolSeeder::class, CajaChicaPermisoSeeder::class]);
     }
 
     protected function makeAdminUser(): Usuario

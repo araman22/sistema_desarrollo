@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CajaChicaMovimientoRequest;
 use App\Models\CajaChicaMovimiento;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CajaChicaController extends Controller
 {
     public function index(): View
     {
+        Gate::authorize('viewAny', CajaChicaMovimiento::class);
+
         $movimientos = CajaChicaMovimiento::query()
             ->orderByDesc('fecha')
             ->orderByDesc('id')
@@ -41,6 +45,8 @@ class CajaChicaController extends Controller
 
     public function store(CajaChicaMovimientoRequest $request): RedirectResponse
     {
+        Gate::authorize('create', CajaChicaMovimiento::class);
+
         $data = $request->validated();
 
         if ($request->hasFile('ticket')) {
@@ -54,10 +60,14 @@ class CajaChicaController extends Controller
         return redirect()->route('caja-chica.index')->with('success', 'Movimiento registrado correctamente.');
     }
 
-    public function downloadTicket(CajaChicaMovimiento $cajaChica): \Symfony\Component\HttpFoundation\BinaryFileResponse
+    public function downloadTicket(CajaChicaMovimiento $cajaChica): StreamedResponse
     {
+        Gate::authorize('download', $cajaChica);
+
         abort_if(blank($cajaChica->ticket_path), 404, 'No existe comprobante asociado.');
 
-        return response()->download(storage_path('app/' . $cajaChica->ticket_path), 'ticket-compra-' . $cajaChica->id . '.pdf');
+        abort_unless(Storage::disk('local')->exists($cajaChica->ticket_path), 404);
+
+        return Storage::disk('local')->download($cajaChica->ticket_path);
     }
 }
