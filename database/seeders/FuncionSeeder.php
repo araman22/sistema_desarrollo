@@ -24,6 +24,11 @@ class FuncionSeeder extends Seeder
             'Tecnico de soporte',
             'Perito',
             'Jefe de oficina',
+            'Chofer',
+            'Operador de drones',
+            'Administrativo contable',
+            'Instructor',
+            'Encargado de deposito',
         ];
 
         foreach ($funciones as $nombre) {

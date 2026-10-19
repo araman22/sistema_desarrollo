@@ -23,6 +23,11 @@ class TipoDocumentoSeeder extends Seeder
             'Actuacion',
             'Carta',
             'Certificado',
+            'Nota',
+            'Memorando',
+            'Disposicion',
+            'Oficio',
+            'Expediente',
         ];
 
         foreach ($tipos as $nombre) {

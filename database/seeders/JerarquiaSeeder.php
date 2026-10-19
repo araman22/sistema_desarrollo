@@ -22,6 +22,11 @@ class JerarquiaSeeder extends Seeder
             'Oficial Ayudante',
             'Oficial Subinspector',
             'Oficial Inspector',
+            'Oficial Principal',
+            'Subcomisario',
+            'Comisario',
+            'Comisario Inspector',
+            'Comisario Mayor',
         ];
         foreach ($jerarquias as $nombre) {
             Jerarquia::updateOrCreate(['nombre' => $nombre]);

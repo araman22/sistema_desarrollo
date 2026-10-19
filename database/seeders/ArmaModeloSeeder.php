@@ -21,6 +21,11 @@ class ArmaModeloSeeder extends Seeder
             ['marca' => 'SIG Sauer', 'modelo' => 'P226', 'calibre' => '.40 S&W'],
             ['marca' => 'Colt', 'modelo' => 'M4', 'calibre' => '5.56x45mm'],
             ['marca' => 'Benelli', 'modelo' => 'M4', 'calibre' => '12ga'],
+            ['marca' => 'Bersa', 'modelo' => 'Thunder 9', 'calibre' => '9mm'],
+            ['marca' => 'Beretta', 'modelo' => '92FS', 'calibre' => '9mm'],
+            ['marca' => 'Smith & Wesson', 'modelo' => 'M&P9', 'calibre' => '9mm'],
+            ['marca' => 'FN Herstal', 'modelo' => 'FAL', 'calibre' => '7.62x51mm'],
+            ['marca' => 'Mossberg', 'modelo' => '500', 'calibre' => '12ga'],
         ];
 
         foreach ($modelos as $modelo) {
