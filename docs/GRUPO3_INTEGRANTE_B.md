@@ -137,3 +137,11 @@ git push origin acuña
 ```
 
 Recorrido de una operación: ruta protegida → sesión/cuenta activa → Policy/Gate → FormRequest → controller → service transaccional → relación Eloquent/modelo → base/auditoría → redirect y vista con mensajes.
+
+## Actualización de presentación — 21/10/2026
+
+Se renovaron las vistas del Grupo 3 B con una presentación sobria de trabajo: cabecera azul oscuro, fondo gris claro, tablas con acciones compactas, estados discretos con texto, navegación del módulo y formularios agrupados por identificación, asignación y seguimiento. Los estilos de public/css/sigdet.css están limitados a .movilidad-page. El layout general conserva las rutas de seguridad y otros módulos; las páginas de vehículos del integrante A conservan su layout propio.
+
+Se recuperó el registro de las rutas de drones y baterías, que había quedado ausente tras la integración de vehículos. Ahora viven en routes/movilidad-recursos.php, incluido desde routes/movilidad.php sin reemplazar las rutas A. Se adaptaron las expectativas de las pruebas al login general y al cierre de sesión de cuentas inactivas que ya implementó el Grupo 1.
+
+Validación de esta actualización: 18 pruebas del Grupo 3 B y 199 comprobaciones aprobadas; ocho pantallas renderizadas con datos de prueba en SQLite en memoria; listado y formulario inspeccionados en navegador. No se alteró la base de trabajo. La suite completa tiene 98 pruebas aprobadas y 32 fallidas en otros módulos, incluidas pruebas de vehículos que referencian App\Models\User inexistente, expectativas de login anteriores a la integración, conteos de seeders y comprobaciones de permisos del Grupo 2. Esos archivos permanecen sin cambios y requieren revisión de sus responsables.
