@@ -20,6 +20,3 @@ Route::middleware('auth')->scopeBindings()->group(function () {
     Route::post('/vehiculos/{vehiculo}/documentos', [VehiculoDocumentoController::class, 'store'])->name('vehiculos.documentos.store');
     Route::get('/vehiculos/{vehiculo}/documentos/{documento}', [VehiculoDocumentoController::class, 'download'])->name('vehiculos.documentos.download');
 });
-
-// Rutas del Grupo 3 B: drones, baterías y sus mantenimientos.
-require __DIR__.'/movilidad-recursos.php';
