@@ -1,52 +1,18 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RecuperarContrasenaController;
+use App\Http\Controllers\Auth\RestablecerContrasenaController;
 use App\Http\Controllers\CajaChicaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\EquipamientoTecnologicoController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\OficinaController;
-use App\Http\Controllers\TipoDocumentoController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RecuperarContrasenaController;
-use App\Http\Controllers\Auth\RestablecerContrasenaController;
 use App\Http\Controllers\RolController;
+use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
-
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/caja-chica', [CajaChicaController::class, 'index'])
-        ->middleware('can:viewAny,App\Models\CajaChicaMovimiento')
-        ->name('caja-chica.index');
-
-    Route::post('/caja-chica', [CajaChicaController::class, 'store'])
-        ->middleware('can:create,App\Models\CajaChicaMovimiento')
-        ->name('caja-chica.store');
-
-    Route::get('/caja-chica/{cajaChica}/ticket', [CajaChicaController::class, 'downloadTicket'])
-        ->middleware('can:download,cajaChica')
-        ->name('caja-chica.ticket');
-});
-
-Route::resource('oficinas', OficinaController::class)
-    ->parameters(['oficinas' => 'oficina']);
-
-Route::resource('inventarios', InventarioController::class)
-    ->parameters(['inventarios' => 'inventario']);
-
-Route::resource('equipamientos-tecnologicos', EquipamientoTecnologicoController::class)
-    ->parameters(['equipamientos-tecnologicos' => 'equipamientoTecnologico']);
-
-Route::resource('tipo-documentos', TipoDocumentoController::class)
-    ->parameters(['tipo-documentos' => 'tipoDocumento']);
-
-Route::resource('documentos', DocumentoController::class)
-    ->parameters(['documentos' => 'documento']);
-
-Route::get('/documentos/{documento}/download', [DocumentoController::class, 'download'])
-    ->name('documentos.download');
-
 
 Route::get('/', fn () => redirect()->route('dashboard'));
 
@@ -69,9 +35,45 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
+    // Seguridad
     Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
     Route::patch('usuarios/{usuario}/estado', [UsuarioController::class, 'cambiarEstado'])->name('usuarios.estado');
 
     Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
     Route::patch('roles/{rol}/estado', [RolController::class, 'cambiarEstado'])->name('roles.estado');
+
+    // Caja chica
+    Route::get('/caja-chica', [CajaChicaController::class, 'index'])
+        ->middleware('can:viewAny,App\Models\CajaChicaMovimiento')
+        ->name('caja-chica.index');
+
+    Route::post('/caja-chica', [CajaChicaController::class, 'store'])
+        ->middleware('can:create,App\Models\CajaChicaMovimiento')
+        ->name('caja-chica.store');
+
+    Route::get('/caja-chica/{cajaChica}/ticket', [CajaChicaController::class, 'downloadTicket'])
+        ->middleware('can:download,cajaChica')
+        ->name('caja-chica.ticket');
+
+    // Oficinas, inventario y documentación
+    Route::resource('oficinas', OficinaController::class)
+        ->parameters(['oficinas' => 'oficina']);
+
+    Route::resource('inventarios', InventarioController::class)
+        ->parameters(['inventarios' => 'inventario']);
+
+    Route::resource('equipamientos-tecnologicos', EquipamientoTecnologicoController::class)
+        ->parameters(['equipamientos-tecnologicos' => 'equipamientoTecnologico']);
+
+    Route::resource('tipo-documentos', TipoDocumentoController::class)
+        ->parameters(['tipo-documentos' => 'tipoDocumento']);
+
+    Route::resource('documentos', DocumentoController::class)
+        ->parameters(['documentos' => 'documento']);
+
+    Route::get('/documentos/{documento}/download', [DocumentoController::class, 'download'])
+        ->name('documentos.download');
+
+    // Movilidad
+    require __DIR__.'/movilidad.php';
 });
