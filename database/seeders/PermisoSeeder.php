@@ -30,7 +30,7 @@ class PermisoSeeder extends Seeder
         'proyectos' => ['ver', 'crear', 'editar', 'eliminar'],
         'incidencias' => ['ver', 'crear', 'editar', 'eliminar', 'resolver'],
         'movimientos_economicos' => ['ver', 'crear', 'editar', 'eliminar', 'exportar'],
-        'caja_chica' => ['ver', 'crear', 'descargar'],
+        'fondo_fijo' => ['ver', 'crear', 'descargar'],
         'documentos' => ['ver', 'crear', 'editar', 'eliminar', 'descargar'],
         'mantenimientos' => ['ver', 'crear', 'editar', 'eliminar'],
         'auditorias' => ['ver', 'exportar'],

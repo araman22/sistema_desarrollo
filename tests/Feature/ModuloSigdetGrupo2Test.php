@@ -8,7 +8,7 @@ use App\Models\Oficina;
 use App\Models\Rol;
 use App\Models\TipoDocumento;
 use App\Models\Usuario;
-use Database\Seeders\CajaChicaPermisoSeeder;
+use Database\Seeders\FondoFijoPermisoSeeder;
 use Database\Seeders\PermisoSeeder;
 use Database\Seeders\RolSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,7 +24,7 @@ class ModuloSigdetGrupo2Test extends TestCase
     {
         parent::setUp();
 
-        $this->seed([PermisoSeeder::class, RolSeeder::class, CajaChicaPermisoSeeder::class]);
+        $this->seed([PermisoSeeder::class, RolSeeder::class, FondoFijoPermisoSeeder::class]);
     }
 
     protected function makeAdminUser(): Usuario
@@ -161,7 +161,7 @@ class ModuloSigdetGrupo2Test extends TestCase
         Storage::fake('local');
 
         $this->actingAs($admin)
-            ->post(route('caja-chica.store'), [
+            ->post(route('fondo-fijo.store'), [
                 'tipo' => 'ingreso',
                 'monto' => 15000,
                 'fecha' => '2026-10-01',
@@ -169,11 +169,11 @@ class ModuloSigdetGrupo2Test extends TestCase
                 'destino' => '',
                 'descripcion' => 'Ingreso por junta mensual',
             ])
-            ->assertRedirect(route('caja-chica.index'))
+            ->assertRedirect(route('fondo-fijo.index'))
             ->assertSessionHas('success');
 
         $this->actingAs($admin)
-            ->post(route('caja-chica.store'), [
+            ->post(route('fondo-fijo.store'), [
                 'tipo' => 'egreso',
                 'monto' => 4200,
                 'fecha' => '2026-10-02',
@@ -182,7 +182,7 @@ class ModuloSigdetGrupo2Test extends TestCase
                 'descripcion' => 'Compra de papelera',
                 'ticket' => UploadedFile::fake()->create('ticket.pdf', 200, 'application/pdf'),
             ])
-            ->assertRedirect(route('caja-chica.index'))
+            ->assertRedirect(route('fondo-fijo.index'))
             ->assertSessionHas('success');
 
         $this->actingAs($admin)
@@ -197,34 +197,34 @@ class ModuloSigdetGrupo2Test extends TestCase
         $admin = $this->makeAdminUser();
 
         $this->actingAs($admin)
-            ->post(route('caja-chica.store'), [
+            ->post(route('fondo-fijo.store'), [
                 'tipo' => 'ingreso',
                 'monto' => 15000,
                 'fecha' => '2026-10-01',
                 'origen' => 'Junta mensual',
                 'descripcion' => 'Primer ingreso',
             ])
-            ->assertRedirect(route('caja-chica.index'));
+            ->assertRedirect(route('fondo-fijo.index'));
 
         $this->actingAs($admin)
-            ->post(route('caja-chica.store'), [
+            ->post(route('fondo-fijo.store'), [
                 'tipo' => 'ingreso',
                 'monto' => 5000,
                 'fecha' => '2026-10-03',
                 'origen' => 'Donación',
                 'descripcion' => 'Segundo ingreso',
             ])
-            ->assertRedirect(route('caja-chica.index'));
+            ->assertRedirect(route('fondo-fijo.index'));
 
         $this->actingAs($admin)
-            ->post(route('caja-chica.store'), [
+            ->post(route('fondo-fijo.store'), [
                 'tipo' => 'egreso',
                 'monto' => 2000,
                 'fecha' => '2026-10-04',
                 'destino' => 'Compra de útiles',
                 'descripcion' => 'Gasto de caja',
             ])
-            ->assertRedirect(route('caja-chica.index'));
+            ->assertRedirect(route('fondo-fijo.index'));
 
         $this->actingAs($admin)
             ->get(route('dashboard'))

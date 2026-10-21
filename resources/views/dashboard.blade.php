@@ -31,7 +31,7 @@
     </div>
 </div>
 
-@can('viewAny', App\Models\CajaChicaMovimiento::class)
+@can('viewAny', App\Models\FondoFijoMovimiento::class)
 <div class="panel" style="margin-top: 24px;">
     <h2>Total en caja</h2>
     <div class="grid" style="margin-top: 12px;">
@@ -47,7 +47,7 @@
         </div>
         <div class="card">
             <div class="muted">Saldo acumulado</div>
-            <h2>${{ number_format($stats['diferencia_caja_chica'], 2, '.', '') }}</h2>
+            <h2>${{ number_format($stats['diferencia_fondo_fijo'], 2, '.', '') }}</h2>
             <div class="small">Total de ingresos menos egresos registrados.</div>
         </div>
     </div>
