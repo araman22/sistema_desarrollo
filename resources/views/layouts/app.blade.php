@@ -9,8 +9,8 @@
     <header>
         <nav>
             <a href="{{ route('dashboard') }}">Dashboard</a>
-            @can('viewAny', App\Models\CajaChicaMovimiento::class)
-                <a href="{{ route('caja-chica.index') }}">Caja chica</a>
+            @can('viewAny', App\Models\FondoFijoMovimiento::class)
+                <a href="{{ route('fondo-fijo.index') }}">Fondo fijo</a>
             @endcan
             @can('viewAny', App\Models\Usuario::class)
                 <a href="{{ route('usuarios.index') }}">Usuarios</a>

@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Alerta;
 use App\Models\Auditoria;
-use App\Models\CajaChicaMovimiento;
+use App\Models\FondoFijoMovimiento;
 use App\Models\MovimientoEconomico;
 use App\Models\Permiso;
 use App\Models\Rol;
 use App\Models\Usuario;
-use Database\Seeders\CajaChicaPermisoSeeder;
+use Database\Seeders\FondoFijoPermisoSeeder;
 use Database\Seeders\PermisoSeeder;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -40,11 +40,11 @@ class Grupo4AccesoTest extends TestCase
         ], $atributos));
     }
 
-    private function movimiento(): CajaChicaMovimiento
+    private function movimiento(): FondoFijoMovimiento
     {
-        return CajaChicaMovimiento::create([
+        return FondoFijoMovimiento::create([
             'tipo' => 'ingreso', 'monto' => '125.50', 'fecha' => '2026-10-01',
-            'origen' => 'Fondo', 'ticket_path' => 'caja-chica/tickets/prueba.png',
+            'origen' => 'Fondo', 'ticket_path' => 'fondo-fijo/tickets/prueba.png',
         ]);
     }
 
@@ -112,41 +112,41 @@ class Grupo4AccesoTest extends TestCase
     {
         $movimiento = $this->movimiento();
         $this->get(route('dashboard'))->assertRedirect(route('login'));
-        $this->get(route('caja-chica.index'))->assertRedirect(route('login'));
-        $this->post(route('caja-chica.store'), [])->assertRedirect(route('login'));
-        $this->get(route('caja-chica.ticket', $movimiento))->assertRedirect(route('login'));
+        $this->get(route('fondo-fijo.index'))->assertRedirect(route('login'));
+        $this->post(route('fondo-fijo.store'), [])->assertRedirect(route('login'));
+        $this->get(route('fondo-fijo.ticket', $movimiento))->assertRedirect(route('login'));
     }
 
     public function test_sin_permisos_no_puede_listar_crear_descargar_ni_ver_saldos(): void
     {
         $movimiento = $this->movimiento();
         $this->actingAs($this->usuario());
-        $this->get(route('caja-chica.index'))->assertForbidden();
-        $this->post(route('caja-chica.store'), [])->assertForbidden();
-        $this->get(route('caja-chica.ticket', $movimiento))->assertForbidden();
+        $this->get(route('fondo-fijo.index'))->assertForbidden();
+        $this->post(route('fondo-fijo.store'), [])->assertForbidden();
+        $this->get(route('fondo-fijo.ticket', $movimiento))->assertForbidden();
         $this->get(route('dashboard'))->assertOk()->assertDontSee('Total en caja')
             ->assertViewHas('stats', fn ($stats) => ! array_key_exists('ultimo_ingreso', $stats));
-        $this->assertDatabaseCount('caja_chica_movimientos', 1);
+        $this->assertDatabaseCount('fondo_fijo_movimientos', 1);
     }
 
     public function test_lectura_no_concede_creacion_ni_descarga(): void
     {
         $movimiento = $this->movimiento();
-        $this->actingAs($this->usuario(['caja_chica.ver']));
-        $this->get(route('caja-chica.index'))->assertOk()->assertDontSee('Registrar ingreso');
-        $this->post(route('caja-chica.store'), [])->assertForbidden();
-        $this->get(route('caja-chica.ticket', $movimiento))->assertForbidden();
-        $this->get(route('dashboard'))->assertOk()->assertViewHas('stats', fn ($stats) => (float) $stats['diferencia_caja_chica'] === 125.50);
+        $this->actingAs($this->usuario(['fondo_fijo.ver']));
+        $this->get(route('fondo-fijo.index'))->assertOk()->assertDontSee('Registrar ingreso');
+        $this->post(route('fondo-fijo.store'), [])->assertForbidden();
+        $this->get(route('fondo-fijo.ticket', $movimiento))->assertForbidden();
+        $this->get(route('dashboard'))->assertOk()->assertViewHas('stats', fn ($stats) => (float) $stats['diferencia_fondo_fijo'] === 125.50);
     }
 
     public function test_permiso_crear_registra_usuario_sin_copiar_movimiento_general(): void
     {
-        $usuario = $this->usuario(['caja_chica.crear', 'caja_chica.ver']);
-        $this->actingAs($usuario)->post(route('caja-chica.store'), [
+        $usuario = $this->usuario(['fondo_fijo.crear', 'fondo_fijo.ver']);
+        $this->actingAs($usuario)->post(route('fondo-fijo.store'), [
             'tipo' => 'ingreso', 'monto' => '80.25', 'fecha' => '2026-10-01',
             'origen' => 'Fondo', 'usuario_id' => 999,
-        ])->assertRedirect(route('caja-chica.index'));
-        $this->assertDatabaseHas('caja_chica_movimientos', ['usuario_id' => $usuario->id, 'monto' => '80.25']);
+        ])->assertRedirect(route('fondo-fijo.index'));
+        $this->assertDatabaseHas('fondo_fijo_movimientos', ['usuario_id' => $usuario->id, 'monto' => '80.25']);
         $this->assertDatabaseCount('movimientos_economicos', 0);
     }
 
@@ -155,29 +155,29 @@ class Grupo4AccesoTest extends TestCase
         Storage::fake('local');
         $movimiento = $this->movimiento();
         Storage::disk('local')->put($movimiento->ticket_path, 'comprobante');
-        $this->actingAs($this->usuario(['caja_chica.descargar']))
-            ->get(route('caja-chica.ticket', $movimiento))->assertOk()->assertDownload('prueba.png');
+        $this->actingAs($this->usuario(['fondo_fijo.descargar']))
+            ->get(route('fondo-fijo.ticket', $movimiento))->assertOk()->assertDownload('prueba.png');
         Storage::disk('local')->delete($movimiento->ticket_path);
-        $this->get(route('caja-chica.ticket', $movimiento))->assertNotFound();
+        $this->get(route('fondo-fijo.ticket', $movimiento))->assertNotFound();
     }
 
     public function test_rol_inactivo_no_concede_acceso_a_caja(): void
     {
-        $usuario = $this->usuario(['caja_chica.ver', 'caja_chica.crear', 'caja_chica.descargar']);
+        $usuario = $this->usuario(['fondo_fijo.ver', 'fondo_fijo.crear', 'fondo_fijo.descargar']);
         $usuario->rol()->update(['activo' => false]);
         $this->actingAs($usuario);
-        $this->get(route('caja-chica.index'))->assertForbidden();
-        $this->post(route('caja-chica.store'), [])->assertForbidden();
-        $this->get(route('caja-chica.ticket', $this->movimiento()))->assertForbidden();
+        $this->get(route('fondo-fijo.index'))->assertForbidden();
+        $this->post(route('fondo-fijo.store'), [])->assertForbidden();
+        $this->get(route('fondo-fijo.ticket', $this->movimiento()))->assertForbidden();
     }
 
     public function test_desactivar_usuario_cierra_sesion_y_logout_funciona(): void
     {
-        $usuario = $this->usuario(['caja_chica.ver']);
+        $usuario = $this->usuario(['fondo_fijo.ver']);
         $this->actingAs($usuario)->post(route('logout'))->assertRedirect(route('login'));
         $this->assertGuest();
         $usuario->update(['activo' => false]);
-        $this->actingAs($usuario)->get(route('caja-chica.index'))->assertRedirect(route('login'));
+        $this->actingAs($usuario)->get(route('fondo-fijo.index'))->assertRedirect(route('login'));
         $this->assertGuest();
     }
 
@@ -221,8 +221,8 @@ class Grupo4AccesoTest extends TestCase
         $permiso = Permiso::where('nombre', 'alertas.ver')->firstOrFail();
         $permiso->update(['descripcion' => 'Descripcion personalizada']);
         $admin->permisos()->attach($permiso);
-        $this->seed(CajaChicaPermisoSeeder::class);
-        $this->seed(CajaChicaPermisoSeeder::class);
+        $this->seed(FondoFijoPermisoSeeder::class);
+        $this->seed(FondoFijoPermisoSeeder::class);
         $this->assertSame(4, $admin->permisos()->count());
         $this->assertSame('Personalizado', $admin->fresh()->descripcion);
         $this->assertFalse($admin->fresh()->activo);
