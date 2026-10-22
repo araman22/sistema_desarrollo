@@ -10,7 +10,7 @@
             <p class="muted">{{ $documento->tipo?->nombre ?? 'Sin tipo' }} · Nº {{ $documento->numero }}</p>
         </div>
         @can('update', $documento)
-            <a href="{{ route('documentos.edit', $documento) }}" class="btn">Editar</a>
+            <a href="{{ route('documentos.edit', $documento) }}" class="action-button action-edit">Editar</a>
         @endcan
     </div>
 
