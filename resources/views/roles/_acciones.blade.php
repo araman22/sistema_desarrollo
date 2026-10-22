@@ -1,5 +1,5 @@
 @can('update', $rol)
-    <a href="{{ route('roles.edit', $rol) }}">Editar</a>
+    <a href="{{ route('roles.edit', $rol) }}" class="action-button action-edit">Editar</a>
 @endcan
 
 @can('cambiarEstado', $rol)
@@ -18,6 +18,6 @@
     <form action="{{ route('roles.destroy', $rol) }}" method="POST" style="display: inline">
         @csrf
         @method('DELETE')
-        <button type="submit" onclick="return confirm('¿Eliminar este rol? Esta acción no se puede deshacer.')">Eliminar</button>
+        <button type="submit" onclick="return confirm('¿Eliminar este rol? Esta acción no se puede deshacer.')" class="action-button action-delete">Eliminar</button>
     </form>
 @endcan

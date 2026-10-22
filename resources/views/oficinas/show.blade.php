@@ -10,7 +10,7 @@
             <p class="muted">{{ $oficina->ubicacion ?? 'Sin ubicación definida' }}</p>
         </div>
         @can('update', $oficina)
-            <a href="{{ route('oficinas.edit', $oficina) }}" class="btn">Editar</a>
+            <a href="{{ route('oficinas.edit', $oficina) }}" class="action-button action-edit">Editar</a>
         @endcan
     </div>
 

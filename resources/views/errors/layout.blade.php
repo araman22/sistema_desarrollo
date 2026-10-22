@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title') · SIGDET</title>
-</head>
-<body>
-    <main>
+<link rel="stylesheet" href="{{ asset('css/sigdet.css') }}?v={{ filemtime(public_path('css/sigdet.css')) }}"></head>
+<body class="sigdet-app auth-page">
+    <main class="auth-card">
         <p>Error @yield('code')</p>
         <h1>@yield('title')</h1>
         <p>@yield('message')</p>
