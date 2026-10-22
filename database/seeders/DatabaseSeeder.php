@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             TipoDocumentoSeeder::class,
             TipoLicenciaSeeder::class,
             TipoVehiculoSeeder::class,
+            MovilidadSeeder::class,
 
             // Seguridad y catalogos de permisos.
             PermisoSeeder::class,
@@ -31,12 +32,10 @@ class DatabaseSeeder extends Seeder
             UsuarioAdminSeeder::class,
         ]);
 
-        // Usuarios y datos de prueba: nunca fuera del entorno local.
-        if (app()->environment('local')) {
-            $this->call([
-                UsuariosPruebaSeeder::class,
-                DatosPruebaSeeder::class,
-            ]);
-        }
+        $this->call([
+            UsuariosPruebaSeeder::class,
+            DatosPruebaSeeder::class,
+            MovilidadDemoSeeder::class,
+        ]);
     }
 }
