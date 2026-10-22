@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Caja chica - SIGDET')
+@section('title', 'Fondo fijo - SIGDET')
 
 @section('content')
 <div class="panel">
@@ -33,11 +33,11 @@
     </div>
 </div>
 
-@can('create', App\Models\CajaChicaMovimiento::class)
+@can('create', App\Models\FondoFijoMovimiento::class)
 <div class="grid" style="margin-top: 24px;">
     <div class="panel">
         <h2>Registrar ingreso</h2>
-        <form action="{{ route('caja-chica.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('fondo-fijo.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="tipo" value="ingreso">
 
@@ -67,7 +67,7 @@
 
     <div class="panel">
         <h2>Registrar egreso</h2>
-        <form action="{{ route('caja-chica.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('fondo-fijo.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="tipo" value="egreso">
 
@@ -124,7 +124,7 @@
                     <td>{{ $movimiento->fecha->format('d/m/Y') }}</td>
                     <td>
                         @if ($movimiento->ticket_path && auth()->user()->can('download', $movimiento))
-                            <a href="{{ route('caja-chica.ticket', $movimiento) }}" target="_blank">Ver comprobante</a>
+                            <a href="{{ route('fondo-fijo.ticket', $movimiento) }}" target="_blank">Ver comprobante</a>
                         @else
                             <span class="muted">Sin comprobante</span>
                         @endif
