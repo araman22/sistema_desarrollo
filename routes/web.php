@@ -14,7 +14,7 @@ use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => redirect()->route('dashboard'));
+Route::get('/', fn() => redirect()->route('dashboard'));
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
@@ -55,23 +55,49 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:download,fondoFijo')
         ->name('fondo-fijo.ticket');
 
-    // Oficinas, inventario y documentación
+    // Oficinas, inventario y documentación: cada acción exige el permiso de su Policy.
     Route::resource('oficinas', OficinaController::class)
-        ->parameters(['oficinas' => 'oficina']);
+        ->parameters(['oficinas' => 'oficina'])
+        ->middlewareFor('index', 'can:viewAny,App\Models\Oficina')
+        ->middlewareFor(['create', 'store'], 'can:create,App\Models\Oficina')
+        ->middlewareFor('show', 'can:view,oficina')
+        ->middlewareFor(['edit', 'update'], 'can:update,oficina')
+        ->middlewareFor('destroy', 'can:delete,oficina');
 
     Route::resource('inventarios', InventarioController::class)
-        ->parameters(['inventarios' => 'inventario']);
+        ->parameters(['inventarios' => 'inventario'])
+        ->middlewareFor('index', 'can:viewAny,App\Models\Inventario')
+        ->middlewareFor(['create', 'store'], 'can:create,App\Models\Inventario')
+        ->middlewareFor('show', 'can:view,inventario')
+        ->middlewareFor(['edit', 'update'], 'can:update,inventario')
+        ->middlewareFor('destroy', 'can:delete,inventario');
 
     Route::resource('equipamientos-tecnologicos', EquipamientoTecnologicoController::class)
-        ->parameters(['equipamientos-tecnologicos' => 'equipamientoTecnologico']);
+        ->parameters(['equipamientos-tecnologicos' => 'equipamientoTecnologico'])
+        ->middlewareFor('index', 'can:viewAny,App\Models\EquipamientoTecnologico')
+        ->middlewareFor(['create', 'store'], 'can:create,App\Models\EquipamientoTecnologico')
+        ->middlewareFor('show', 'can:view,equipamientoTecnologico')
+        ->middlewareFor(['edit', 'update'], 'can:update,equipamientoTecnologico')
+        ->middlewareFor('destroy', 'can:delete,equipamientoTecnologico');
 
     Route::resource('tipo-documentos', TipoDocumentoController::class)
-        ->parameters(['tipo-documentos' => 'tipoDocumento']);
+        ->parameters(['tipo-documentos' => 'tipoDocumento'])
+        ->middlewareFor('index', 'can:viewAny,App\Models\TipoDocumento')
+        ->middlewareFor(['create', 'store'], 'can:create,App\Models\TipoDocumento')
+        ->middlewareFor('show', 'can:view,tipoDocumento')
+        ->middlewareFor(['edit', 'update'], 'can:update,tipoDocumento')
+        ->middlewareFor('destroy', 'can:delete,tipoDocumento');
 
     Route::resource('documentos', DocumentoController::class)
-        ->parameters(['documentos' => 'documento']);
+        ->parameters(['documentos' => 'documento'])
+        ->middlewareFor('index', 'can:viewAny,App\Models\Documento')
+        ->middlewareFor(['create', 'store'], 'can:create,App\Models\Documento')
+        ->middlewareFor('show', 'can:view,documento')
+        ->middlewareFor(['edit', 'update'], 'can:update,documento')
+        ->middlewareFor('destroy', 'can:delete,documento');
 
     Route::get('/documentos/{documento}/download', [DocumentoController::class, 'download'])
+        ->middleware('can:download,documento')
         ->name('documentos.download');
 
 });
