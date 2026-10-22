@@ -13,44 +13,26 @@
         <div class="muted">Oficinas</div>
         <h2>{{ $stats['oficinas'] }}</h2>
     </div>
-    <div class="card">
-        <div class="muted">Inventarios</div>
-        <h2>{{ $stats['inventarios'] }}</h2>
-    </div>
-    <div class="card">
-        <div class="muted">Equipamiento</div>
-        <h2>{{ $stats['equipos'] }}</h2>
-    </div>
-    <div class="card">
-        <div class="muted">Tipos documentales</div>
-        <h2>{{ $stats['tipos_documentos'] }}</h2>
-    </div>
-    <div class="card">
-        <div class="muted">Documentos</div>
-        <h2>{{ $stats['documentos'] }}</h2>
-    </div>
-</div>
-
+</section>
 @can('viewAny', App\Models\FondoFijoMovimiento::class)
-<div class="panel" style="margin-top: 24px;">
-    <h2>Total en caja</h2>
-    <div class="grid" style="margin-top: 12px;">
-        <div class="card">
-            <div class="muted">Último ingreso</div>
-            <h2>${{ number_format($stats['ultimo_ingreso'], 2, '.', '') }}</h2>
-            <div class="small">Origen: {{ $stats['origen_ultimo_ingreso'] }}</div>
-        </div>
-        <div class="card">
-            <div class="muted">Último egreso</div>
-            <h2>${{ number_format($stats['ultimo_egreso'], 2, '.', '') }}</h2>
-            <div class="small">Destino: {{ $stats['destino_ultimo_egreso'] }}</div>
-        </div>
-        <div class="card">
-            <div class="muted">Saldo acumulado</div>
-            <h2>${{ number_format($stats['diferencia_fondo_fijo'], 2, '.', '') }}</h2>
-            <div class="small">Total de ingresos menos egresos registrados.</div>
-        </div>
+<section class="card finance-panel" aria-labelledby="caja-heading">
+    <div class="card-heading"><div><h2 id="caja-heading">Total en caja</h2><p>Últimos movimientos y saldo del fondo operativo.</p></div><a class="button secondary" href="{{ route('fondo-fijo.index') }}">Ver movimientos</a></div>
+    <div class="finance-grid">
+        <div><span class="stat-label">Último ingreso</span><strong class="finance-value">${{ number_format($stats['ultimo_ingreso'], 2, '.', '') }}</strong><span class="stat-description">Origen: {{ $stats['origen_ultimo_ingreso'] }}</span></div>
+        <div><span class="stat-label">Último egreso</span><strong class="finance-value">${{ number_format($stats['ultimo_egreso'], 2, '.', '') }}</strong><span class="stat-description">Destino: {{ $stats['destino_ultimo_egreso'] }}</span></div>
+        <div class="balance"><span class="stat-label">Saldo acumulado</span><strong class="finance-value">${{ number_format($stats['diferencia_fondo_fijo'], 2, '.', '') }}</strong><span class="stat-description">Total de ingresos menos egresos registrados.</span></div>
     </div>
 </div>
 @endcan
+<section class="card"><div class="card-heading"><div><h2>Accesos de trabajo</h2><p>Módulos disponibles según los permisos de tu cuenta.</p></div></div><div class="module-shortcuts">
+    @can('viewAny', App\Models\Oficina::class)<a href="{{ route('oficinas.index') }}"><strong>Oficinas</strong><span>Dependencias y responsables</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+    @can('viewAny', App\Models\Inventario::class)<a href="{{ route('inventarios.index') }}"><strong>Inventario</strong><span>Recursos y asignaciones</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+    @can('viewAny', App\Models\EquipamientoTecnologico::class)<a href="{{ route('equipamientos-tecnologicos.index') }}"><strong>Equipamiento</strong><span>Equipos y seguimiento técnico</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+    @can('viewAny', App\Models\Documento::class)<a href="{{ route('documentos.index') }}"><strong>Documentos</strong><span>Consulta y gestión documental</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+    @can('viewAny', App\Models\DroneRobot::class)<a href="{{ route('movilidad.drones.index') }}"><strong>Drones y robots</strong><span>Recursos y mantenimientos</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+    @can('viewAny', App\Models\Bateria::class)<a href="{{ route('movilidad.baterias.index') }}"><strong>Baterías</strong><span>Ciclos, asignaciones y revisiones</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+    @can('viewAny', App\Models\FondoFijoMovimiento::class)<a href="{{ route('fondo-fijo.index') }}"><strong>Fondo fijo</strong><span>Ingresos, egresos y saldo</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+    @can('viewAny', App\Models\Usuario::class)<a href="{{ route('usuarios.index') }}"><strong>Usuarios</strong><span>Cuentas y acceso al sistema</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+    @can('viewAny', App\Models\Rol::class)<a href="{{ route('roles.index') }}"><strong>Roles</strong><span>Perfiles y permisos</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
+</div></section>
 @endsection
