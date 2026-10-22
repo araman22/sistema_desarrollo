@@ -31,7 +31,7 @@ class VehiculoMantenimientoController extends Controller
 
     private function form(Vehiculo $vehiculo, VehiculoMantenimiento $mantenimiento)
     {
-        return view('movilidad.mantenimientos.form', ['vehiculo' => $vehiculo, 'mantenimiento' => $mantenimiento, 'responsables' => ResponsablePolicial::opciones()]);
+        return view('movilidad.vehiculos.mantenimiento-form', ['vehiculo' => $vehiculo, 'mantenimiento' => $mantenimiento, 'responsables' => ResponsablePolicial::opciones()]);
     }
 
     public function store(VehiculoMantenimientoRequest $r, Vehiculo $vehiculo)
