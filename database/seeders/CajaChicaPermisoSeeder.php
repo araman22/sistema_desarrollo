@@ -10,7 +10,7 @@ use Illuminate\Database\Seeder;
  * Asignacion aditiva: no modifica roles ni retira permisos existentes.
  * Puede ejecutarse por separado en instalaciones existentes.
  */
-class FondoFijoPermisoSeeder extends Seeder
+class CajaChicaPermisoSeeder extends Seeder
 {
     public function run(): void
     {
@@ -26,7 +26,7 @@ class FondoFijoPermisoSeeder extends Seeder
             $rol = Rol::where('nombre', $nombre)->first();
 
             if ($rol) {
-                $ids = Permiso::where('modulo', 'fondo_fijo')->whereIn('accion', $acciones)->pluck('id');
+                $ids = Permiso::where('modulo', 'caja_chica')->whereIn('accion', $acciones)->pluck('id');
                 $rol->permisos()->syncWithoutDetaching($ids);
             }
         }

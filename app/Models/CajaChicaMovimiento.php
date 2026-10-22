@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class FondoFijoMovimiento extends Model
+class CajaChicaMovimiento extends Model
 {
-    protected $table = 'fondo_fijo_movimientos';
+    protected $table = 'caja_chica_movimientos';
 
     protected $fillable = [
         'tipo',

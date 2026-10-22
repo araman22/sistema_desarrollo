@@ -6,11 +6,11 @@ use App\Models\Actividad;
 use App\Models\Alerta;
 use App\Models\Arma;
 use App\Models\Auditoria;
+use App\Models\CajaChicaMovimiento;
 use App\Models\Capacitacion;
 use App\Models\CapacitacionPersonal;
 use App\Models\Documento;
 use App\Models\EquipamientoTecnologico;
-use App\Models\FondoFijoMovimiento;
 use App\Models\Funcion;
 use App\Models\IncidenciaInfraestructura;
 use App\Models\Inventario;
@@ -57,7 +57,7 @@ class DatosPruebaSeeder extends Seeder
             $proyectos = $this->proyectos($oficinas, $policias);
             $this->incidencias($oficinas, $policias);
             $this->movimientosEconomicos($policias, $proyectos);
-            $this->fondoFijo($admin);
+            $this->cajaChica($admin);
             $this->alertas($admin, $vehiculos, $equipamientos, $inventarios, $actividades, $proyectos);
             $this->auditorias($admin, $policias);
         });
@@ -71,7 +71,7 @@ class DatosPruebaSeeder extends Seeder
         $datos = [
             ['Division Informatica', 'Soporte tecnico y redes.', 'Edificio Central, 2do piso'],
             ['Division Movilidad', 'Gestion de la flota de vehiculos.', 'Playon Norte'],
-            ['Division Administrativa', 'Tramites, compras y fondo fijo.', 'Edificio Central, PB'],
+            ['Division Administrativa', 'Tramites, compras y caja chica.', 'Edificio Central, PB'],
             ['Division Capacitacion', 'Formacion y entrenamiento del personal.', 'Anexo Sur'],
             ['Division Operaciones Especiales', 'Drones, robots y operativos.', 'Base Aerea Este'],
         ];
@@ -492,18 +492,18 @@ class DatosPruebaSeeder extends Seeder
         }
     }
 
-    private function fondoFijo(Usuario $admin): void
+    private function cajaChica(Usuario $admin): void
     {
         $datos = [
-            ['ingreso', 50000, 'Tesoreria', null, 'Apertura de fondo fijo'],
+            ['ingreso', 50000, 'Tesoreria', null, 'Fondo inicial de caja chica'],
             ['egreso', 4500, null, 'Kiosco', 'Cafe y azucar para la oficina'],
             ['egreso', 12000, null, 'Ferreteria', 'Lamparas y cinta aisladora'],
             ['egreso', 8000, null, 'Correo', 'Envio de documentacion'],
-            ['ingreso', 20000, 'Tesoreria', null, 'Reposicion de fondo fijo'],
+            ['ingreso', 20000, 'Tesoreria', null, 'Reposicion de caja chica'],
         ];
 
         foreach ($datos as $i => [$tipo, $monto, $origen, $destino, $descripcion]) {
-            FondoFijoMovimiento::updateOrCreate(
+            CajaChicaMovimiento::updateOrCreate(
                 ['descripcion' => $descripcion],
                 [
                     'tipo' => $tipo,

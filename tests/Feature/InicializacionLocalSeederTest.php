@@ -84,17 +84,17 @@ class InicializacionLocalSeederTest extends TestCase
         $this->assertTrue(Hash::check($clave, $admin->contrasena));
         $this->assertSame(Permiso::count(), $admin->rol->permisos()->count());
         foreach (['ver', 'crear', 'descargar'] as $accion) {
-            $this->assertTrue($admin->tienePermiso('fondo_fijo.'.$accion));
+            $this->assertTrue($admin->tienePermiso('caja_chica.'.$accion));
         }
         foreach (['administrativo' => ['ver', 'crear', 'descargar'], 'encargado_oficina' => ['ver', 'descargar']] as $rol => $acciones) {
             $usuario = new Usuario(['rol_id' => Rol::where('nombre', $rol)->value('id')]);
             foreach ($acciones as $accion) {
-                $this->assertTrue($usuario->tienePermiso('fondo_fijo.'.$accion));
+                $this->assertTrue($usuario->tienePermiso('caja_chica.'.$accion));
             }
             $this->assertTrue($usuario->tienePermiso('movimientos_economicos.ver'));
         }
         foreach (['soporte', 'invitado'] as $rol) {
-            $this->assertFalse((new Usuario(['rol_id' => Rol::where('nombre', $rol)->value('id')]))->tienePermiso('fondo_fijo.ver'));
+            $this->assertFalse((new Usuario(['rol_id' => Rol::where('nombre', $rol)->value('id')]))->tienePermiso('caja_chica.ver'));
         }
         $this->assertDatabaseCount('personas', 0);
         $this->assertDatabaseCount('policias', 0);
@@ -102,7 +102,7 @@ class InicializacionLocalSeederTest extends TestCase
         $this->post(route('login.store'), ['nombre_usuario' => 'admin_local', 'password' => $clave])
             ->assertRedirect(route('dashboard'));
         $this->assertAuthenticatedAs($admin);
-        $this->get(route('fondo-fijo.index'))->assertOk();
+        $this->get(route('caja-chica.index'))->assertOk();
         $this->assertStringNotContainsString($clave, DB::table('auditorias')->get()->toJson());
         $this->assertStringNotContainsString($admin->contrasena, DB::table('auditorias')->get()->toJson());
     }
@@ -204,7 +204,7 @@ class InicializacionLocalSeederTest extends TestCase
 
     public function test_catalogo_inconsistente_no_modifica_registros(): void
     {
-        Permiso::create(['nombre' => 'fondo_fijo.ver', 'modulo' => 'otro', 'accion' => 'ver']);
+        Permiso::create(['nombre' => 'caja_chica.ver', 'modulo' => 'otro', 'accion' => 'ver']);
         $this->esperarConflicto(fn () => $this->ejecutar(nuevo: false), 'Catalogo inconsistente');
     }
 
@@ -218,7 +218,7 @@ class InicializacionLocalSeederTest extends TestCase
 
     public function test_permisos_personalizados_y_descripciones_no_se_sobrescriben(): void
     {
-        $institucional = Permiso::create(['nombre' => 'fondo_fijo.ver', 'modulo' => 'fondo_fijo', 'accion' => 'ver', 'descripcion' => 'Propia']);
+        $institucional = Permiso::create(['nombre' => 'caja_chica.ver', 'modulo' => 'caja_chica', 'accion' => 'ver', 'descripcion' => 'Propia']);
         $custom = Permiso::create(['nombre' => 'especial.consultar', 'modulo' => 'especial', 'accion' => 'consultar']);
         $antes = [$institucional->fresh()->getAttributes(), $custom->fresh()->getAttributes()];
         $this->ejecutar();

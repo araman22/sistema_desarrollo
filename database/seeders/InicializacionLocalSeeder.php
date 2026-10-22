@@ -75,7 +75,7 @@ class InicializacionLocalSeeder extends Seeder
         ],
     ];
 
-    private const FONDO_FIJO = [
+    private const CAJA_CHICA = [
         'administrador' => ['ver', 'crear', 'descargar'],
         'administrativo' => ['ver', 'crear', 'descargar'],
         'encargado_oficina' => ['ver', 'descargar'],
@@ -99,7 +99,7 @@ class InicializacionLocalSeeder extends Seeder
         'proyectos' => ['ver', 'crear', 'editar', 'eliminar'],
         'incidencias' => ['ver', 'crear', 'editar', 'eliminar', 'resolver'],
         'movimientos_economicos' => ['ver', 'crear', 'editar', 'eliminar', 'exportar'],
-        'fondo_fijo' => ['ver', 'crear', 'descargar'],
+        'caja_chica' => ['ver', 'crear', 'descargar'],
         'documentos' => ['ver', 'crear', 'editar', 'eliminar', 'descargar'],
         'mantenimientos' => ['ver', 'crear', 'editar', 'eliminar'],
         'auditorias' => ['ver', 'exportar'],
@@ -136,7 +136,7 @@ class InicializacionLocalSeeder extends Seeder
             });
         });
 
-        $this->command->info('Inicializacion local verificada. Permisos de fondo fijo disponibles.');
+        $this->command->info('Inicializacion local verificada. Permisos de caja chica disponibles.');
     }
 
     protected function validarDestino(Connection $conexion): void
@@ -340,8 +340,8 @@ class InicializacionLocalSeeder extends Seeder
                 'activo' => true,
             ]);
             $ids = $this->idsInstitucionales($configuracion['permisos']);
-            $caja = Permiso::where('modulo', 'fondo_fijo')
-                ->whereIn('accion', self::FONDO_FIJO[$nombreRol] ?? [])->pluck('id')->all();
+            $caja = Permiso::where('modulo', 'caja_chica')
+                ->whereIn('accion', self::CAJA_CHICA[$nombreRol] ?? [])->pluck('id')->all();
             $rol->permisos()->syncWithoutDetaching(array_unique([...$ids, ...$caja]));
             $cambios['roles'][] = $rol->id;
             $this->auditar('crear', 'roles', $rol->id, ['nombre' => $rol->nombre, 'activo' => true], $lote);
@@ -375,8 +375,8 @@ class InicializacionLocalSeeder extends Seeder
         }
 
         foreach (['ver', 'crear', 'descargar'] as $accion) {
-            if (! $administrador->tienePermiso('fondo_fijo.'.$accion)) {
-                throw new RuntimeException('El administrador no tiene los permisos efectivos de fondo fijo.');
+            if (! $administrador->tienePermiso('caja_chica.'.$accion)) {
+                throw new RuntimeException('El administrador no tiene los permisos efectivos de caja chica.');
             }
         }
         if ($cambios['permisos'] !== [] || $cambios['roles'] !== [] || $cambios['usuario'] !== null) {

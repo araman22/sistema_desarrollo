@@ -3,10 +3,10 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RecuperarContrasenaController;
 use App\Http\Controllers\Auth\RestablecerContrasenaController;
+use App\Http\Controllers\CajaChicaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\EquipamientoTecnologicoController;
-use App\Http\Controllers\FondoFijoController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\OficinaController;
 use App\Http\Controllers\RolController;
@@ -42,18 +42,18 @@ Route::middleware('auth')->group(function () {
     Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
     Route::patch('roles/{rol}/estado', [RolController::class, 'cambiarEstado'])->name('roles.estado');
 
-    // Fondo fijo
-    Route::get('/fondo-fijo', [FondoFijoController::class, 'index'])
-        ->middleware('can:viewAny,App\Models\FondoFijoMovimiento')
-        ->name('fondo-fijo.index');
+    // Caja chica
+    Route::get('/caja-chica', [CajaChicaController::class, 'index'])
+        ->middleware('can:viewAny,App\Models\CajaChicaMovimiento')
+        ->name('caja-chica.index');
 
-    Route::post('/fondo-fijo', [FondoFijoController::class, 'store'])
-        ->middleware('can:create,App\Models\FondoFijoMovimiento')
-        ->name('fondo-fijo.store');
+    Route::post('/caja-chica', [CajaChicaController::class, 'store'])
+        ->middleware('can:create,App\Models\CajaChicaMovimiento')
+        ->name('caja-chica.store');
 
-    Route::get('/fondo-fijo/{fondoFijo}/ticket', [FondoFijoController::class, 'downloadTicket'])
-        ->middleware('can:download,fondoFijo')
-        ->name('fondo-fijo.ticket');
+    Route::get('/caja-chica/{cajaChica}/ticket', [CajaChicaController::class, 'downloadTicket'])
+        ->middleware('can:download,cajaChica')
+        ->name('caja-chica.ticket');
 
     // Oficinas, inventario y documentación
     Route::resource('oficinas', OficinaController::class)
