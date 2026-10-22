@@ -10,7 +10,7 @@
             <p class="muted">{{ $equipamientoTecnologico->tipo }} · {{ $equipamientoTecnologico->codigo }}</p>
         </div>
         @can('update', $equipamientoTecnologico)
-            <a href="{{ route('equipamientos-tecnologicos.edit', $equipamientoTecnologico) }}" class="btn">Editar</a>
+            <a href="{{ route('equipamientos-tecnologicos.edit', $equipamientoTecnologico) }}" class="action-button action-edit">Editar</a>
         @endcan
     </div>
 

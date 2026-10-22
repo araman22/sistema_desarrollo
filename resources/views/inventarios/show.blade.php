@@ -10,7 +10,7 @@
             <p class="muted">{{ $inventario->descripcion }}</p>
         </div>
         @can('update', $inventario)
-            <a href="{{ route('inventarios.edit', $inventario) }}" class="btn">Editar</a>
+            <a href="{{ route('inventarios.edit', $inventario) }}" class="action-button action-edit">Editar</a>
         @endcan
     </div>
 
