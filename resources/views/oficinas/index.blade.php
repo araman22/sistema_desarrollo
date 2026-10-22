@@ -6,7 +6,7 @@
 <div class="row" style="justify-content: space-between; margin-bottom: 20px; align-items:flex-end;">
     <div>
         <h1>Oficinas</h1>
-        <p class="muted">Listado y administración de dependencias.</p>
+        <p class="muted">Administración de Dependencia.</p>
     </div>
     @can('create', App\Models\Oficina::class)
         <a href="{{ route('oficinas.create') }}" class="btn">Nueva oficina</a>
@@ -67,15 +67,15 @@
                     <td>{{ $oficina->responsable?->persona?->nombre_completo ?? 'No asignado' }}</td>
                     <td><span class="badge">{{ $oficina->estado }}</span></td>
                     <td class="row">
-                        <a href="{{ route('oficinas.show', $oficina) }}" class="btn secondary">Ver</a>
+                        <a href="{{ route('oficinas.show', $oficina) }}" class="action-button action-view">Ver</a>
                         @can('update', $oficina)
-                            <a href="{{ route('oficinas.edit', $oficina) }}" class="btn secondary">Editar</a>
+                            <a href="{{ route('oficinas.edit', $oficina) }}" class="action-button action-edit">Editar</a>
                         @endcan
                         @can('delete', $oficina)
                             <form method="POST" action="{{ route('oficinas.destroy', $oficina) }}" onsubmit="return confirm('¿Desea eliminar la oficina?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn danger">Eliminar</button>
+                                <button type="submit" class="action-button action-delete">Eliminar</button>
                             </form>
                         @endcan
                     </td>

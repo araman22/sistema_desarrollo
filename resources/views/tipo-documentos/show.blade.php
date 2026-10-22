@@ -10,7 +10,7 @@
             <p class="muted">Catálogo documentario del sistema.</p>
         </div>
         @can('update', $tipoDocumento)
-            <a href="{{ route('tipo-documentos.edit', $tipoDocumento) }}" class="btn">Editar</a>
+            <a href="{{ route('tipo-documentos.edit', $tipoDocumento) }}" class="action-button action-edit">Editar</a>
         @endcan
     </div>
 

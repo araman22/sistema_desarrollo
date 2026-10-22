@@ -1,5 +1,5 @@
 @can('update', $usuario)
-    <a href="{{ route('usuarios.edit', $usuario) }}">Editar</a>
+    <a href="{{ route('usuarios.edit', $usuario) }}" class="action-button action-edit">Editar</a>
 @endcan
 
 @can('cambiarEstado', $usuario)
@@ -18,6 +18,6 @@
     <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" style="display: inline">
         @csrf
         @method('DELETE')
-        <button type="submit" onclick="return confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')">Eliminar</button>
+        <button type="submit" onclick="return confirm('¿Eliminar este usuario? Esta acción no se puede deshacer.')" class="action-button action-delete">Eliminar</button>
     </form>
 @endcan

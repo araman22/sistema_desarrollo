@@ -74,6 +74,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/documentos/{documento}/download', [DocumentoController::class, 'download'])
         ->name('documentos.download');
 
-    // Movilidad
-    require __DIR__.'/movilidad.php';
 });
+
+// Cada archivo de movilidad define sus propios controles de acceso.
+require __DIR__.'/movilidad.php';
+require __DIR__.'/movilidad-recursos.php';
