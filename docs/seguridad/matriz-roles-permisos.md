@@ -1,4 +1,3 @@
-
 # Matriz de roles y permisos
 
 Fuente: `database/seeders/RolSeeder.php` y `CajaChicaPermisoSeeder.php`.
@@ -48,4 +47,4 @@ El rol `administrador` tiene **todos** los permisos.
 ## Observaciones
 - Solo `administrador` gestiona usuarios y roles.
 - Nadie fuera de `administrador` puede **eliminar** en oficinas, policías, vehículos ni documentos.
-- `tipo_documentos` y `tipo_vehiculos` no tienen permisos propios en `PermisoSeeder`: hay que definir quién los administra.
+- `tipo_documentos` usa los permisos de `documentos.*` (ver `TipoDocumentoPolicy`). `tipo_vehiculos` no tiene permisos propios en `PermisoSeeder`.

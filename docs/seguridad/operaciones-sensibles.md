@@ -9,7 +9,7 @@ Operaciones que deben verificar permiso en el servidor (no alcanza con ocultar e
 | Activar / desactivar usuarios | `usuarios.editar` | Dejar a alguien sin acceso | administrador |
 | Crear / editar / eliminar roles | `roles.crear` / `.editar` / `.eliminar` | Cambiar qué puede hacer cada uno | administrador |
 | Asignar permisos a un rol | `roles.asignar` | Escalada de privilegios | administrador |
-| Eliminar cualquier registro | `*.eliminar` | Pérdida de datos | administrador (y soporte en sus módulos) |
+| Eliminar cualquier registro | `*.eliminar` | Pérdida de datos | administrador, soporte (equipamientos, inventarios, mantenimientos, drones, baterías), encargado_oficina (licencias, capacitaciones, actividades, proyectos) |
 | Autorizar licencias | `licencias.autorizar` | Aprobar ausencias sin control | administrador, encargado_oficina |
 | Registrar movimientos económicos | `movimientos_economicos.crear` / `.editar` | Fraude o errores contables | administrador, administrativo |
 | Movimientos de caja chica | `caja_chica.crear` | Manejo de dinero | administrador, administrativo |
