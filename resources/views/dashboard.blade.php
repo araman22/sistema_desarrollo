@@ -13,7 +13,7 @@
 </section>
 @can('viewAny', App\Models\FondoFijoMovimiento::class)
 <section class="card finance-panel" aria-labelledby="caja-heading">
-    <div class="card-heading"><div><h2 id="caja-heading">Total en caja</h2><p>Últimos movimientos y saldo del fondo operativo.</p></div><a class="button secondary" href="{{ route('fondo-fijo.index') }}">Ver movimientos</a></div>
+    <div class="card-heading"><div><h2 id="caja-heading">Total en caja</h2><p>Últimos movimientos y saldo del fondo operativo.</p></div><a class="action-button action-view" href="{{ route('fondo-fijo.index') }}">Ver movimientos</a></div>
     <div class="finance-grid">
         <div><span class="stat-label">Último ingreso</span><strong class="finance-value">${{ number_format($stats['ultimo_ingreso'], 2, '.', '') }}</strong><span class="stat-description">Origen: {{ $stats['origen_ultimo_ingreso'] }}</span></div>
         <div><span class="stat-label">Último egreso</span><strong class="finance-value">${{ number_format($stats['ultimo_egreso'], 2, '.', '') }}</strong><span class="stat-description">Destino: {{ $stats['destino_ultimo_egreso'] }}</span></div>

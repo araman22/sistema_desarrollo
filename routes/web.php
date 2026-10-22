@@ -100,6 +100,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:download,documento')
         ->name('documentos.download');
 
-    // Movilidad
-    require __DIR__ . '/movilidad.php';
 });
+
+// Cada archivo de movilidad define sus propios controles de acceso.
+require __DIR__.'/movilidad.php';
+require __DIR__.'/movilidad-recursos.php';

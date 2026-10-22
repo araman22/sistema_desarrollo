@@ -159,3 +159,33 @@
 .sigdet-app .auth-caption{text-align:center;font-size:11px;color:var(--muted);margin:22px 0}
 @media(max-width:1000px){.sigdet-app .stats-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.sigdet-app .module-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}.sigdet-app .finance-value{font-size:23px}}
 @media(max-width:650px){.sigdet-app .app-context{display:none}.sigdet-app .system-nav nav{padding:0 18px;gap:22px}.sigdet-app .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sigdet-app .stat-card{padding:17px}.sigdet-app .finance-grid{grid-template-columns:1fr}.sigdet-app .finance-grid>div{border-right:0;border-bottom:1px solid var(--line)}.sigdet-app .module-shortcuts{grid-template-columns:1fr}.sigdet-app .section-title span{display:none}.sigdet-app .auth-card{padding:25px}.sigdet-app .app-footer{padding:16px;font-size:10px}.sigdet-app .dashboard-caption{display:none}}
+
+/* Pantallas de acceso y recuperación con el mismo ancho y controles. */
+.sigdet-app.auth-page main.auth-card{max-width:470px;margin:52px auto;padding:32px;width:calc(100% - 32px)}
+.sigdet-app.auth-page main.auth-card>form{display:block;border:0;padding:0;margin:24px 0 0}
+.sigdet-app.auth-page main.auth-card>form input:not([type=checkbox]){width:100%;min-width:0}
+.sigdet-app.auth-page main.auth-card>form label{margin-bottom:7px}
+.sigdet-app .danger{background:#963d48;border-color:#963d48}
+.sigdet-app .panel table,.sigdet-app .card table{min-width:540px}
+.sigdet-app .card{overflow-x:auto}
+@media(max-width:650px){.sigdet-app.auth-page main.auth-card{margin:28px auto;padding:24px}}
+/* Acciones de registro compartidas: consulta, edición y eliminación. */
+.sigdet-app .action-button,
+.sigdet-app .row-actions .action-button,
+.sigdet-app:not(.movilidad-page) main>table .action-button{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    min-height:36px;padding:7px 13px;margin:2px 3px 2px 0;
+    border:1px solid var(--action-color);border-radius:4px;
+    background:var(--action-color);color:#fff;
+    font:600 12px/1.5 "Segoe UI",system-ui,sans-serif;text-decoration:none;
+    white-space:nowrap;vertical-align:middle;cursor:pointer;
+}
+.sigdet-app .action-button.action-view{--action-color:#237447;--action-hover:#195a35}
+.sigdet-app .action-button.action-edit{--action-color:#245da8;--action-hover:#1b4781}
+.sigdet-app .action-button.action-delete{--action-color:#b32f3d;--action-hover:#902431}
+.sigdet-app .action-button:hover,
+.sigdet-app .row-actions .action-button:hover,
+.sigdet-app:not(.movilidad-page) main>table .action-button:hover{
+    background:var(--action-hover);border-color:var(--action-hover);color:#fff;text-decoration:none;
+}
+.sigdet-app .action-button:focus-visible{outline:3px solid var(--action-color);outline-offset:3px}

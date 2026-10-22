@@ -124,7 +124,7 @@
                     <td>{{ $movimiento->fecha->format('d/m/Y') }}</td>
                     <td>
                         @if ($movimiento->ticket_path && auth()->user()->can('download', $movimiento))
-                            <a href="{{ route('fondo-fijo.ticket', $movimiento) }}" target="_blank">Ver comprobante</a>
+                            <a href="{{ route('fondo-fijo.ticket', $movimiento) }}" target="_blank" class="action-button action-view">Ver comprobante</a>
                         @else
                             <span class="muted">Sin comprobante</span>
                         @endif

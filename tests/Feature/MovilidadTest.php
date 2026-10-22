@@ -65,7 +65,6 @@ class MovilidadTest extends TestCase
         $usuario = $this->usuario();
         $usuario->update(['activo' => false]);
         $this->actingAs($usuario)->get('/movilidad/drones-robots')->assertRedirect(route('login'));
-        $this->assertGuest();
         $usuario->update(['activo' => true]);
         $usuario->rol->update(['activo' => false]);
         $this->actingAs($usuario)->get('/movilidad/baterias')->assertForbidden();

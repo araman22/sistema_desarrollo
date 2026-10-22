@@ -53,18 +53,18 @@
                     <td>{{ $documento->tipo?->nombre ?? 'Sin tipo' }}</td>
                     <td>{{ $documento->archivo_original ?? 'Sin archivo' }}</td>
                     <td class="row">
-                        <a href="{{ route('documentos.show', $documento) }}" class="btn secondary">Ver</a>
+                        <a href="{{ route('documentos.show', $documento) }}" class="action-button action-view">Ver</a>
                         @can('download', $documento)
                             <a href="{{ route('documentos.download', $documento) }}" class="btn secondary">Descargar</a>
                         @endcan
                         @can('update', $documento)
-                            <a href="{{ route('documentos.edit', $documento) }}" class="btn secondary">Editar</a>
+                            <a href="{{ route('documentos.edit', $documento) }}" class="action-button action-edit">Editar</a>
                         @endcan
                         @can('delete', $documento)
                             <form method="POST" action="{{ route('documentos.destroy', $documento) }}" onsubmit="return confirm('¿Desea eliminar el documento?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn danger">Eliminar</button>
+                                <button type="submit" class="action-button action-delete">Eliminar</button>
                             </form>
                         @endcan
                     </td>
