@@ -60,14 +60,15 @@ class MovilidadTest extends TestCase
 
     public function test_anonimos_cuentas_y_roles_inactivos_no_acceden(): void
     {
-        $this->get('/movilidad/drones-robots')->assertUnauthorized();
+        $this->get('/movilidad/drones-robots')->assertRedirect(route('login'));
         $this->getJson('/movilidad/baterias')->assertUnauthorized();
         $usuario = $this->usuario();
         $usuario->update(['activo' => false]);
-        $this->actingAs($usuario)->get('/movilidad/drones-robots')->assertForbidden();
+        $this->actingAs($usuario)->get('/movilidad/drones-robots')->assertRedirect(route('login'));
+        $this->assertGuest();
         $usuario->update(['activo' => true]);
         $usuario->rol->update(['activo' => false]);
-        $this->get('/movilidad/baterias')->assertForbidden();
+        $this->actingAs($usuario)->get('/movilidad/baterias')->assertForbidden();
     }
 
     public function test_sin_permisos_y_solo_lectura_no_pueden_modificar(): void
