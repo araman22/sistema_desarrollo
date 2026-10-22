@@ -59,15 +59,15 @@
                     <td>{{ $inventario->oficina?->nombre ?? 'Sin oficina' }}</td>
                     <td><span class="badge">{{ $inventario->estado }}</span></td>
                     <td class="row">
-                        <a href="{{ route('inventarios.show', $inventario) }}" class="btn secondary">Ver</a>
+                        <a href="{{ route('inventarios.show', $inventario) }}" class="action-button action-view">Ver</a>
                         @can('update', $inventario)
-                            <a href="{{ route('inventarios.edit', $inventario) }}" class="btn secondary">Editar</a>
+                            <a href="{{ route('inventarios.edit', $inventario) }}" class="action-button action-edit">Editar</a>
                         @endcan
                         @can('delete', $inventario)
                             <form method="POST" action="{{ route('inventarios.destroy', $inventario) }}" onsubmit="return confirm('¿Desea eliminar el recurso?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn danger">Eliminar</button>
+                                <button type="submit" class="action-button action-delete">Eliminar</button>
                             </form>
                         @endcan
                     </td>

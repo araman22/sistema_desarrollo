@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Vehiculo extends Model
 {
@@ -31,6 +33,11 @@ class Vehiculo extends Model
     public function mantenimientos(): HasMany
     {
         return $this->hasMany(VehiculoMantenimiento::class, 'vehiculo_id');
+    }
+
+    public function documentos(): HasMany
+    {
+        return $this->hasMany(VehiculoDocumento::class, 'vehiculo_id');
     }
 
     public function alertas(): MorphMany

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar contraseña</title>
-</head>
-<body>
+<link rel="stylesheet" href="{{ asset('css/sigdet.css') }}?v={{ filemtime(public_path('css/sigdet.css')) }}"></head>
+<body class="sigdet-app auth-page"><main class="auth-card">
     <h1>Recuperar contraseña</h1>
 
     @if (session('status'))
@@ -27,5 +27,5 @@
     </form>
 
     <p><a href="{{ route('login') }}">Volver a iniciar sesión</a></p>
-</body>
+</main></body>
 </html>

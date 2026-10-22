@@ -59,15 +59,15 @@
                     <td>{{ $equipamiento->oficina?->nombre ?? 'Sin oficina' }}</td>
                     <td><span class="badge">{{ $equipamiento->estado }}</span></td>
                     <td class="row">
-                        <a href="{{ route('equipamientos-tecnologicos.show', $equipamiento) }}" class="btn secondary">Ver</a>
+                        <a href="{{ route('equipamientos-tecnologicos.show', $equipamiento) }}" class="action-button action-view">Ver</a>
                         @can('update', $equipamiento)
-                            <a href="{{ route('equipamientos-tecnologicos.edit', $equipamiento) }}" class="btn secondary">Editar</a>
+                            <a href="{{ route('equipamientos-tecnologicos.edit', $equipamiento) }}" class="action-button action-edit">Editar</a>
                         @endcan
                         @can('delete', $equipamiento)
                             <form method="POST" action="{{ route('equipamientos-tecnologicos.destroy', $equipamiento) }}" onsubmit="return confirm('¿Desea eliminar el equipo?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn danger">Eliminar</button>
+                                <button type="submit" class="action-button action-delete">Eliminar</button>
                             </form>
                         @endcan
                     </td>
