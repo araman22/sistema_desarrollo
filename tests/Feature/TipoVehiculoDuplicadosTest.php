@@ -105,7 +105,7 @@ class TipoVehiculoDuplicadosTest extends TestCase
         $this->assertDatabaseHas('tipo_vehiculos', ['id' => $original->id, 'nombre' => 'Camión']);
         $this->assertSame($original->id, $vehiculo->fresh()->tipo_vehiculo_id);
         $this->assertSame(1, $vehiculo->mantenimientos()->count());
-        $this->assertDatabaseHas('movilidad_auditorias', ['accion' => 'unificar_tipo', 'tabla' => 'vehiculos', 'registro_id' => $vehiculo->id]);
+        $this->assertDatabaseHas('auditorias', ['accion' => 'unificar_tipo', 'tabla_afectada' => 'vehiculos', 'registro_id' => $vehiculo->id]);
         $this->assertDatabaseHas('tipo_vehiculos', ['nombre' => 'Caña']);
         $this->assertDatabaseHas('tipo_vehiculos', ['nombre' => 'Cana']);
     }

@@ -30,7 +30,7 @@ class PoliciaController extends Controller
         ]);
 
         $policias = Policia::query()
-            ->with(['persona', 'jerarquia', 'oficina', 'funcion'])
+            ->with(['persona', 'jerarquia', 'oficina', 'funcion', 'novedadesVigentes'])
             ->when($filtros['search'] ?? null, fn ($q, $search) => $q->where(function ($q) use ($search) {
                 $q->where('numero_legajo', 'like', "%{$search}%")
                     ->orWhereHas('persona', fn ($p) => $p->buscar($search));

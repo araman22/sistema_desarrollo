@@ -17,6 +17,7 @@ use Database\Seeders\RolSeeder;
 use Database\Seeders\TipoLicenciaSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ModuloPersonalTest extends TestCase
@@ -248,6 +249,26 @@ class ModuloPersonalTest extends TestCase
         $this->get(route('personal.show', $policia))->assertForbidden();
         $this->get(route('licencias.index'))->assertForbidden();
         $this->post(route('personal.novedades.store', $policia), ['situacion' => 'activo', 'fecha_desde' => '2026-10-01'])->assertForbidden();
+    }
+
+    public function test_el_listado_no_consulta_la_situacion_agente_por_agente(): void
+    {
+        $consultas = function (): int {
+            DB::flushQueryLog();
+            DB::enableQueryLog();
+            $this->get(route('personal.index'))->assertOk();
+
+            return count(DB::getQueryLog());
+        };
+        $this->agente(legajo: 'A-1');
+        $this->post(route('personal.novedades.store', $this->agente(legajo: 'A-2')), ['situacion' => 'franco_servicio', 'fecha_desde' => '2026-10-27']);
+        $conDos = $consultas();
+        foreach (range(3, 8) as $i) {
+            $this->agente(legajo: "A-$i");
+        }
+
+        $this->assertSame($conDos, $consultas());
+        $this->get(route('personal.index'))->assertSee('Franco de servicio');
     }
 
     public function test_las_vistas_se_renderizan(): void

@@ -81,6 +81,11 @@ class Policia extends Model
     // La novedad vigente más reciente define la situación; sin novedades el agente está activo.
     public function situacionActual(?CarbonInterface $al = null): string
     {
+        // En listados se precarga novedadesVigentes para no consultar agente por agente.
+        if ($al === null && $this->relationLoaded('novedadesVigentes')) {
+            return $this->novedadesVigentes->first()?->situacion ?? 'activo';
+        }
+
         return $this->novedades()->vigentesAl($al ?? today())->orderByDesc('fecha_desde')->orderByDesc('id')->value('situacion') ?? 'activo';
     }
 
@@ -112,6 +117,11 @@ class Policia extends Model
     public function novedades(): HasMany
     {
         return $this->hasMany(NovedadRevista::class, 'policia_id');
+    }
+
+    public function novedadesVigentes(): HasMany
+    {
+        return $this->novedades()->vigentesAl(today())->orderByDesc('fecha_desde')->orderByDesc('id');
     }
 
     public function persona(): BelongsTo
