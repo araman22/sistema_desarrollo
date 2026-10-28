@@ -42,7 +42,7 @@ class MovilidadParteATest extends TestCase
 
     private function datos(array $extra = []): array
     {
-        return array_merge(['dominio' => 'AB123CD', 'tipo_vehiculo_id' => TipoVehiculo::firstOrCreate(['nombre' => 'Automóvil'])->id, 'estado' => 'disponible', 'kilometraje' => 1000], $extra);
+        return array_merge(['dominio' => 'AB123CD', 'tipo_vehiculo_id' => TipoVehiculo::obtener('Automóvil')->id, 'estado' => 'disponible', 'kilometraje' => 1000], $extra);
     }
 
     private function mantenimiento(array $extra = []): array

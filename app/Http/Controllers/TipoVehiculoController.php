@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TipoVehiculoRequest;
 use App\Models\TipoVehiculo;
 use App\Services\MovilidadAuditoria;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -43,10 +44,10 @@ class TipoVehiculoController extends Controller
     {
         Gate::authorize('create', TipoVehiculo::class);
         $data = $r->validated();
-        DB::transaction(function () use ($data) {
+        $this->guardar(function () use ($data) {
             $t = TipoVehiculo::create($data);
             MovilidadAuditoria::registrar('crear', $t);
-        });
+        }, $data['nombre']);
 
         return redirect()->route('tipos-vehiculos.index')->with('success', 'Tipo registrado.');
     }
@@ -55,13 +56,24 @@ class TipoVehiculoController extends Controller
     {
         Gate::authorize('update', $tipo);
         $data = $r->validated();
-        DB::transaction(function () use ($data, $tipo) {
+        $this->guardar(function () use ($data, $tipo) {
             $anterior = $tipo->getAttributes();
             $tipo->update($data);
             MovilidadAuditoria::registrar('editar', $tipo, $anterior);
-        });
+        }, $data['nombre'], $tipo->id);
 
         return redirect()->route('tipos-vehiculos.index')->with('success', 'Tipo actualizado.');
+    }
+
+    // El índice único resuelve las altas simultáneas que pasaron la validación al mismo tiempo.
+    private function guardar(callable $operacion, string $nombre, ?int $exceptoId = null): void
+    {
+        try {
+            DB::transaction($operacion);
+        } catch (UniqueConstraintViolationException $e) {
+            $existente = TipoVehiculo::equivalenteA($nombre, $exceptoId);
+            throw ValidationException::withMessages(['nombre' => $existente ? TipoVehiculoRequest::mensajeDuplicado($existente) : 'Ya existe un tipo de vehículo equivalente.']);
+        }
     }
 
     public function destroy(TipoVehiculo $tipo)

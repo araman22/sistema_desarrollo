@@ -9,8 +9,8 @@ class MovilidadSeeder extends Seeder
 {
     public function run(): void
     {
-        foreach (['Automóvil', 'Camioneta', 'Utilitario', 'Moto', 'Camión', 'Ambulancia', 'Trailer', 'Minibus', 'Furgon', 'Cuatriciclo', 'Lancha', 'Grua'] as $nombre) {
-            TipoVehiculo::firstOrCreate(['nombre' => $nombre]);
+        foreach (['Automóvil', 'Camioneta', 'Utilitario', 'Moto', 'Camión', 'Ambulancia', 'Trailer', 'Minibús', 'Furgón', 'Cuatriciclo', 'Lancha', 'Grúa'] as $nombre) {
+            TipoVehiculo::obtener($nombre);
         }
     }
 }

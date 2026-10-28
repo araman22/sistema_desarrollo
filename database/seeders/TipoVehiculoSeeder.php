@@ -18,20 +18,20 @@ class TipoVehiculoSeeder extends Seeder
         $tipos = [
             'Utilitario',
             'Camioneta',
-            'Automovil',
+            'Automóvil',
             'Moto',
-            'Camion',
+            'Camión',
             'Trailer',
             'Ambulancia',
-            'Minibus',
-            'Furgon',
+            'Minibús',
+            'Furgón',
             'Cuatriciclo',
             'Lancha',
-            'Grua',
+            'Grúa',
         ];
 
         foreach ($tipos as $nombre) {
-            TipoVehiculo::updateOrCreate(['nombre' => $nombre]);
+            TipoVehiculo::obtener($nombre);
         }
     }
 }
