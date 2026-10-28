@@ -22,8 +22,10 @@ class TipoVehiculoDuplicadosTest extends TestCase
         parent::setUp();
 
         $rol = Rol::create(['nombre' => uniqid('rol-'), 'activo' => true]);
-        foreach (['ver', 'crear', 'editar', 'eliminar'] as $accion) {
-            $rol->permisos()->attach(Permiso::firstOrCreate(['nombre' => "vehiculos.$accion"], ['modulo' => 'vehiculos', 'accion' => $accion]));
+        foreach (['vehiculos', 'tipos_vehiculos'] as $modulo) {
+            foreach (['ver', 'crear', 'editar', 'eliminar'] as $accion) {
+                $rol->permisos()->attach(Permiso::firstOrCreate(['nombre' => "$modulo.$accion"], compact('modulo', 'accion')));
+            }
         }
         $this->actingAs(Usuario::factory()->create(['rol_id' => $rol->id]));
     }

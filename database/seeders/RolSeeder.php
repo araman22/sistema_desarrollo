@@ -53,6 +53,7 @@ class RolSeeder extends Seeder
                 'movimientos_economicos' => ['ver', 'crear', 'editar', 'exportar'],
                 'licencias' => ['ver', 'crear', 'editar'],
                 'vehiculos' => ['ver', 'crear', 'editar'],
+                'tipos_vehiculos' => ['ver', 'crear', 'editar'],
                 'vehiculo_mantenimientos' => ['ver', 'crear', 'editar'],
                 'documentos' => ['ver', 'crear', 'editar', 'descargar'],
                 'expedientes' => ['ver', 'crear', 'editar', 'pasar'],

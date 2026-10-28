@@ -27,7 +27,7 @@ class Vehiculo extends Model
 
     public function responsable(): BelongsTo
     {
-        return $this->belongsTo(ResponsablePolicial::class, 'responsable_id');
+        return $this->belongsTo(Policia::class, 'responsable_id');
     }
 
     public function mantenimientos(): HasMany
