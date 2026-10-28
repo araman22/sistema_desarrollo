@@ -3,11 +3,14 @@
 namespace App\Support;
 
 use App\Models\Usuario;
+use Illuminate\Contracts\Auth\Authenticatable;
 
+/** Único criterio de permisos de movilidad: vehículos, drones, baterías y sus mantenimientos. */
 class PermisosMovilidad
 {
-    public static function permite(Usuario $usuario, string $permiso): bool
+    public static function permite(?Authenticatable $usuario, string $permiso): bool
     {
-        return $usuario->estaActivo() && $usuario->rol?->activo && $usuario->tienePermiso($permiso);
+        // nombresPermisos() ya devuelve vacío si el rol está inactivo.
+        return $usuario instanceof Usuario && $usuario->estaActivo() && $usuario->tienePermiso($permiso);
     }
 }

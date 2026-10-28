@@ -25,7 +25,8 @@ Route::get('/', fn() => redirect()->route('dashboard'));
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
-    Route::post('/login', [LoginController::class, 'store'])->name('login.store');
+    // LoginRequest limita por usuario + IP; este límite frena a quien prueba muchos usuarios desde la misma IP.
+    Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:20,1')->name('login.store');
 
     // Los nombres password.* los usa la notificación ResetPassword de Laravel.
     Route::get('/olvide-contrasena', [RecuperarContrasenaController::class, 'create'])->name('password.request');

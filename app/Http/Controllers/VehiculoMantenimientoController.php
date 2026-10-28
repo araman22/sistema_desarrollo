@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VehiculoMantenimientoRequest;
-use App\Models\ResponsablePolicial;
+use App\Models\Policia;
 use App\Models\Vehiculo;
 use App\Models\VehiculoMantenimiento;
 use App\Services\MovilidadAuditoria;
@@ -31,7 +31,7 @@ class VehiculoMantenimientoController extends Controller
 
     private function form(Vehiculo $vehiculo, VehiculoMantenimiento $mantenimiento)
     {
-        return view('movilidad.vehiculos.mantenimiento-form', ['vehiculo' => $vehiculo, 'mantenimiento' => $mantenimiento, 'responsables' => ResponsablePolicial::opciones()]);
+        return view('movilidad.vehiculos.mantenimiento-form', ['vehiculo' => $vehiculo, 'mantenimiento' => $mantenimiento, 'responsables' => Policia::opcionesResponsable()]);
     }
 
     public function store(VehiculoMantenimientoRequest $r, Vehiculo $vehiculo)

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\RegistraAuditoria;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -228,6 +229,18 @@ class Policia extends Model
     public function mantenimientosRegistrados(): MorphMany
     {
         return $this->morphMany(Mantenimiento::class, 'mantenible', 'mantenible_tipo', 'mantenible_id');
+    }
+
+    /**
+     * Agentes activos para los desplegables de responsable, con nombre y legajo en una sola consulta.
+     *
+     * @return Collection<int, self>
+     */
+    public static function opcionesResponsable(): Collection
+    {
+        return static::query()->join('personas', 'personas.id', '=', 'policias.persona_id')
+            ->where('policias.estado', 'activo')->orderBy('personas.apellido')->orderBy('personas.nombre')
+            ->get(['policias.id', 'personas.nombre', 'personas.apellido', 'policias.numero_legajo']);
     }
 
     public function scopeActivos(Builder $query): Builder
