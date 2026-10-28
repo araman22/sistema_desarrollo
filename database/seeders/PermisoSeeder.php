@@ -24,6 +24,7 @@ class PermisoSeeder extends Seeder
         'inventarios' => ['ver', 'crear', 'editar', 'eliminar'],
         'equipamientos' => ['ver', 'crear', 'editar', 'eliminar'],
         'vehiculos' => ['ver', 'crear', 'editar', 'eliminar'],
+        'tipos_vehiculos' => ['ver', 'crear', 'editar', 'eliminar'],
         'vehiculo_mantenimientos' => ['ver', 'crear', 'editar', 'eliminar'],
         'drones_robots' => ['ver', 'crear', 'editar', 'eliminar'],
         'baterias' => ['ver', 'crear', 'editar', 'eliminar'],
