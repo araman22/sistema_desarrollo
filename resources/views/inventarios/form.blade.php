@@ -24,6 +24,10 @@
                     @endforeach
                 </select>
             </div>
+            <div class="field" style="flex:1; min-width:140px;">
+                <label for="cantidad">Cantidad</label>
+                <input id="cantidad" name="cantidad" type="number" min="1" max="1000000" value="{{ old('cantidad', $inventario->cantidad ?? 1) }}" required>
+            </div>
             <div class="field" style="flex:1; min-width:220px;">
                 <label for="estado">Estado</label>
                 <select id="estado" name="estado" required>

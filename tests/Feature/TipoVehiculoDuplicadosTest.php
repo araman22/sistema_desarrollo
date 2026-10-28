@@ -22,8 +22,10 @@ class TipoVehiculoDuplicadosTest extends TestCase
         parent::setUp();
 
         $rol = Rol::create(['nombre' => uniqid('rol-'), 'activo' => true]);
-        foreach (['ver', 'crear', 'editar', 'eliminar'] as $accion) {
-            $rol->permisos()->attach(Permiso::firstOrCreate(['nombre' => "vehiculos.$accion"], ['modulo' => 'vehiculos', 'accion' => $accion]));
+        foreach (['vehiculos', 'tipos_vehiculos'] as $modulo) {
+            foreach (['ver', 'crear', 'editar', 'eliminar'] as $accion) {
+                $rol->permisos()->attach(Permiso::firstOrCreate(['nombre' => "$modulo.$accion"], compact('modulo', 'accion')));
+            }
         }
         $this->actingAs(Usuario::factory()->create(['rol_id' => $rol->id]));
     }
@@ -105,7 +107,7 @@ class TipoVehiculoDuplicadosTest extends TestCase
         $this->assertDatabaseHas('tipo_vehiculos', ['id' => $original->id, 'nombre' => 'Camión']);
         $this->assertSame($original->id, $vehiculo->fresh()->tipo_vehiculo_id);
         $this->assertSame(1, $vehiculo->mantenimientos()->count());
-        $this->assertDatabaseHas('movilidad_auditorias', ['accion' => 'unificar_tipo', 'tabla' => 'vehiculos', 'registro_id' => $vehiculo->id]);
+        $this->assertDatabaseHas('auditorias', ['accion' => 'unificar_tipo', 'tabla_afectada' => 'vehiculos', 'registro_id' => $vehiculo->id]);
         $this->assertDatabaseHas('tipo_vehiculos', ['nombre' => 'Caña']);
         $this->assertDatabaseHas('tipo_vehiculos', ['nombre' => 'Cana']);
     }

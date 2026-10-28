@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VehiculoRequest;
-use App\Models\ResponsablePolicial;
+use App\Models\Policia;
 use App\Models\TipoVehiculo;
 use App\Models\Vehiculo;
 use App\Services\MovilidadAuditoria;
@@ -40,13 +40,13 @@ class VehiculoController extends Controller
 
     private function form(Vehiculo $vehiculo)
     {
-        return view('movilidad.vehiculos.form', ['vehiculo' => $vehiculo, 'tipos' => TipoVehiculo::orderBy('nombre')->get(), 'responsables' => ResponsablePolicial::opciones()]);
+        return view('movilidad.vehiculos.form', ['vehiculo' => $vehiculo, 'tipos' => TipoVehiculo::orderBy('nombre')->get(), 'responsables' => Policia::opcionesResponsable()]);
     }
 
     public function show(Vehiculo $vehiculo)
     {
         Gate::authorize('view', $vehiculo);
-        $vehiculo->load(['tipo', 'mantenimientos', 'documentos']);
+        $vehiculo->load(['tipo', 'responsable.persona', 'mantenimientos', 'documentos']);
 
         return view('movilidad.vehiculos.show', compact('vehiculo'));
     }

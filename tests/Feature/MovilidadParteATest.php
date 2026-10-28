@@ -33,7 +33,7 @@ class MovilidadParteATest extends TestCase
     private function acceder(bool $editar = true): Usuario
     {
         $acciones = $editar ? ['ver', 'crear', 'editar', 'eliminar'] : ['ver'];
-        $permisos = collect(['vehiculos', 'vehiculo_mantenimientos'])->crossJoin($acciones)->map(fn ($par) => implode('.', $par))->all();
+        $permisos = collect(['vehiculos', 'tipos_vehiculos', 'vehiculo_mantenimientos'])->crossJoin($acciones)->map(fn ($par) => implode('.', $par))->all();
         $u = $this->usuario($permisos);
         $this->actingAs($u);
 
@@ -79,7 +79,7 @@ class MovilidadParteATest extends TestCase
         $this->acceder();
         $this->post('/vehiculos', $this->datos(['dominio' => ' ab123cd ']))->assertRedirect();
         $this->assertDatabaseHas('vehiculos', ['dominio' => 'AB123CD']);
-        $this->assertDatabaseHas('movilidad_auditorias', ['accion' => 'crear', 'tabla' => 'vehiculos']);
+        $this->assertDatabaseHas('auditorias', ['accion' => 'crear', 'tabla_afectada' => 'vehiculos']);
     }
 
     public function test_dominio_duplicado_se_rechaza(): void
@@ -151,7 +151,9 @@ class MovilidadParteATest extends TestCase
         $v = Vehiculo::create($this->datos());
         $this->post(route('vehiculos.mantenimientos.store', $v), $this->mantenimiento())->assertRedirect();
         $this->assertSame(1200, $v->fresh()->kilometraje);
-        $this->assertDatabaseHas('movilidad_auditorias', ['tabla' => 'vehiculo_mantenimientos', 'accion' => 'crear']);
+        $this->assertDatabaseHas('auditorias', ['tabla_afectada' => 'vehiculo_mantenimientos', 'accion' => 'crear']);
+        // Una sola fila por operación: el modelo ya no se audita además por el trait automático.
+        $this->assertSame(1, DB::table('auditorias')->where(['tabla_afectada' => 'vehiculo_mantenimientos', 'accion' => 'crear'])->count());
     }
 
     public function test_no_se_elimina_vehiculo_con_historial(): void
@@ -261,8 +263,8 @@ class MovilidadParteATest extends TestCase
         $v = Vehiculo::create($this->datos(['responsable_id' => $ids[0]]));
         $this->put(route('vehiculos.update', $v), $this->datos(['responsable_id' => $ids[1]]))->assertRedirect();
         $this->assertSame($ids[1], $v->fresh()->responsable_id);
-        $a = DB::table('movilidad_auditorias')->where('tabla', 'vehiculos')->first();
-        $this->assertSame($ids[0], json_decode($a->anterior, true)['responsable_id']);
+        $a = DB::table('auditorias')->where('tabla_afectada', 'vehiculos')->where('accion', 'editar')->first();
+        $this->assertSame($ids[0], json_decode($a->valor_anterior, true)['responsable_id']);
         $this->put(route('vehiculos.update', $v), $this->datos(['responsable_id' => $ids[2]]))->assertSessionHasErrors('responsable_id');
     }
 
@@ -278,13 +280,23 @@ class MovilidadParteATest extends TestCase
     public function test_login_y_logout(): void
     {
         $u = $this->usuario();
-        $this->get(route('movilidad.login'))->assertOk();
-        $this->post(route('movilidad.login.store'), ['nombre_usuario' => $u->nombre_usuario, 'password' => 'incorrecta'])->assertSessionHasErrors();
+        $this->get('/movilidad/acceso')->assertRedirect(route('login'));
+        $this->post(route('login.store'), ['nombre_usuario' => $u->nombre_usuario, 'password' => 'incorrecta'])->assertSessionHasErrors();
         $this->assertGuest();
-        $this->post(route('movilidad.login.store'), ['nombre_usuario' => $u->nombre_usuario, 'password' => '1234'])->assertRedirect();
+        $this->post(route('login.store'), ['nombre_usuario' => $u->nombre_usuario, 'password' => '1234'])->assertRedirect();
         $this->assertAuthenticatedAs($u);
-        $this->post(route('movilidad.logout'))->assertRedirect();
+        $this->post(route('logout'))->assertRedirect();
         $this->assertGuest();
+    }
+
+    public function test_los_tipos_de_vehiculo_requieren_permisos_propios(): void
+    {
+        $permisos = collect(['ver', 'crear', 'editar', 'eliminar'])->map(fn ($accion) => "vehiculos.$accion")->all();
+        $this->actingAs($this->usuario($permisos));
+        $this->get('/vehiculos')->assertOk();
+        $this->get(route('tipos-vehiculos.index'))->assertForbidden();
+        $this->post('/tipos-vehiculos', ['nombre' => 'Camión'])->assertForbidden();
+        $this->assertDatabaseMissing('tipo_vehiculos', ['nombre' => 'Camión']);
     }
 
     public function test_permiso_revocado_tiene_efecto_inmediato(): void

@@ -83,7 +83,8 @@ class TipoVehiculoController extends Controller
             $t = TipoVehiculo::lockForUpdate()->findOrFail($tipo->id);
             if ($t->vehiculos()->exists()) {
                 throw ValidationException::withMessages(['tipo' => 'No puede eliminar un tipo utilizado por vehículos.']);
-            }MovilidadAuditoria::registrar('eliminar', $t, $t->getAttributes());
+            }
+            MovilidadAuditoria::registrar('eliminar', $t, $t->getAttributes());
             $t->delete();
         });
 
