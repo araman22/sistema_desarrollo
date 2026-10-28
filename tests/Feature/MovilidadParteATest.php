@@ -3,7 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\TipoVehiculo;
-use App\Models\User;
+use App\Models\Permiso;
+use App\Models\Rol;
+use App\Models\Usuario;
 use App\Models\Vehiculo;
 use App\Services\VehiculoAlertas;
 use Database\Seeders\MovilidadSeeder;
@@ -17,10 +19,22 @@ class MovilidadParteATest extends TestCase
 {
     use RefreshDatabase;
 
-    private function acceder(bool $editar = true): User
+    private function usuario(array $permisos = []): Usuario
     {
-        $u = User::factory()->create();
-        DB::table('movilidad_accesos')->insert(['user_id' => $u->id, 'puede_editar' => $editar]);
+        $rol = Rol::create(['nombre' => uniqid('rol-'), 'activo' => true]);
+        foreach ($permisos as $nombre) {
+            [$modulo, $accion] = explode('.', $nombre);
+            $rol->permisos()->attach(Permiso::firstOrCreate(['nombre' => $nombre], compact('modulo', 'accion')));
+        }
+
+        return Usuario::factory()->create(['rol_id' => $rol->id]);
+    }
+
+    private function acceder(bool $editar = true): Usuario
+    {
+        $acciones = $editar ? ['ver', 'crear', 'editar', 'eliminar'] : ['ver'];
+        $permisos = collect(['vehiculos', 'vehiculo_mantenimientos'])->crossJoin($acciones)->map(fn ($par) => implode('.', $par))->all();
+        $u = $this->usuario($permisos);
         $this->actingAs($u);
 
         return $u;
@@ -28,7 +42,7 @@ class MovilidadParteATest extends TestCase
 
     private function datos(array $extra = []): array
     {
-        return array_merge(['dominio' => 'AB123CD', 'tipo_vehiculo_id' => TipoVehiculo::firstOrCreate(['nombre' => 'Automóvil'])->id, 'estado' => 'disponible', 'kilometraje' => 1000], $extra);
+        return array_merge(['dominio' => 'AB123CD', 'tipo_vehiculo_id' => TipoVehiculo::obtener('Automóvil')->id, 'estado' => 'disponible', 'kilometraje' => 1000], $extra);
     }
 
     private function mantenimiento(array $extra = []): array
@@ -38,13 +52,13 @@ class MovilidadParteATest extends TestCase
 
     public function test_invitado_no_accede(): void
     {
-        $this->get('/vehiculos')->assertRedirect(route('movilidad.login'));
-        $this->post('/vehiculos', $this->datos())->assertRedirect(route('movilidad.login'));
+        $this->get('/vehiculos')->assertRedirect(route('login'));
+        $this->post('/vehiculos', $this->datos())->assertRedirect(route('login'));
     }
 
     public function test_usuario_sin_permiso_no_accede_por_url(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->actingAs($this->usuario());
         $v = Vehiculo::factory()->create();
         $this->get('/vehiculos')->assertForbidden();
         $this->get(route('vehiculos.show', $v))->assertForbidden();
@@ -213,7 +227,7 @@ class MovilidadParteATest extends TestCase
         $otro = Vehiculo::create($this->datos(['dominio' => 'XY555ZZ']));
         $this->get(route('vehiculos.documentos.download', [$otro, $d]))->assertNotFound();
         $this->delete(route('vehiculos.destroy', $v))->assertSessionHasErrors('vehiculo');
-        $this->actingAs(User::factory()->create());
+        $this->actingAs($this->usuario());
         $this->get(route('vehiculos.documentos.download', [$v, $d]))->assertForbidden();
     }
 
@@ -263,10 +277,11 @@ class MovilidadParteATest extends TestCase
 
     public function test_login_y_logout(): void
     {
-        $u = User::factory()->create();
+        $u = $this->usuario();
         $this->get(route('movilidad.login'))->assertOk();
-        $this->post(route('movilidad.login.store'), ['email' => $u->email, 'password' => 'incorrecta'])->assertSessionHasErrors('email');
-        $this->post(route('movilidad.login.store'), ['email' => $u->email, 'password' => 'password'])->assertRedirect();
+        $this->post(route('movilidad.login.store'), ['nombre_usuario' => $u->nombre_usuario, 'password' => 'incorrecta'])->assertSessionHasErrors();
+        $this->assertGuest();
+        $this->post(route('movilidad.login.store'), ['nombre_usuario' => $u->nombre_usuario, 'password' => '1234'])->assertRedirect();
         $this->assertAuthenticatedAs($u);
         $this->post(route('movilidad.logout'))->assertRedirect();
         $this->assertGuest();
@@ -275,19 +290,14 @@ class MovilidadParteATest extends TestCase
     public function test_permiso_revocado_tiene_efecto_inmediato(): void
     {
         $u = $this->acceder();
-        DB::table('movilidad_accesos')->where('user_id', $u->id)->delete();
+        $u->rol->permisos()->detach();
         $this->get('/vehiculos')->assertForbidden();
     }
 
     public function test_factory_seeder_y_comando(): void
     {
         $this->seed(MovilidadSeeder::class);
-        $this->assertDatabaseCount('tipo_vehiculos', 7);
-        $u = User::factory()->create();
-        $this->artisan('movilidad:autorizar', ['email' => $u->email, '--editar' => true])->assertSuccessful();
-        $this->assertDatabaseHas('movilidad_accesos', ['user_id' => $u->id, 'puede_editar' => 1]);
-        $this->artisan('movilidad:autorizar', ['email' => $u->email, '--revocar' => true])->assertSuccessful();
-        $this->assertDatabaseMissing('movilidad_accesos', ['user_id' => $u->id]);
+        $this->assertDatabaseCount('tipo_vehiculos', 12);
         Vehiculo::factory()->create();
     }
 
