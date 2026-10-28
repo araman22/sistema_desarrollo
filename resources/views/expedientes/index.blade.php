@@ -3,59 +3,61 @@
 @section('title', 'Expedientes')
 
 @section('content')
-<div class="row" style="justify-content: space-between; margin-bottom: 20px;">
+<div class="workspace-view view-index">
+<div class="row page-header" style="justify-content: space-between; margin-bottom: 20px;">
     <div>
         <h1>Expedientes</h1>
         <p class="muted">Notas, memorándums y trámites organizados por bibliorato, con su recorrido de pases.</p>
     </div>
     <div class="row">
-        <a href="{{ route('biblioratos.index') }}" class="btn secondary">Biblioratos</a>
+        <a href="{{ route('biblioratos.index') }}" class="action-button action-primary">Biblioratos</a>
         @can('create', App\Models\Expediente::class)
-            <a href="{{ route('expedientes.create') }}" class="btn">Nuevo expediente</a>
+            <a href="{{ route('expedientes.create') }}" class="action-button action-primary">Nuevo expediente</a>
         @endcan
     </div>
 </div>
 
 @if($pendientes > 0)
-    <p class="panel" role="status">Hay <strong>{{ $pendientes }}</strong> expediente(s) pendiente(s) de recepción. <a href="{{ route('expedientes.index', ['estado' => 'pendiente_recepcion']) }}">Ver pendientes</a></p>
+    <p class="panel" role="status">Hay <strong>{{ $pendientes }}</strong> expediente(s) pendiente(s) de recepción. <a href="{{ route('expedientes.index', ['estado' => 'pendiente_recepcion']) }}" class="action-button action-view">Ver pendientes</a></p>
 @endif
 
-<form method="GET" class="panel">
+<form method="GET" class="panel filter-panel">
     <div class="row" style="gap: 12px; align-items:end;">
         <div style="flex:2; min-width:200px;">
-            <label for="search">Buscar</label>
-            <input id="search" name="search" value="{{ request('search') }}" placeholder="Número, asunto, origen o destino">
+            <div class="filter-field"><label for="search">Buscar</label>
+            <input id="search" name="search" value="{{ request('search') }}" placeholder="Número, asunto, origen o destino"></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="bibliorato_id">Bibliorato</label>
+            <div class="filter-field"><label for="bibliorato_id">Bibliorato</label>
             <select id="bibliorato_id" name="bibliorato_id">
                 <option value="">Todos</option>
                 @foreach($biblioratos as $bibliorato)
                     <option value="{{ $bibliorato->id }}" {{ (string) request('bibliorato_id') === (string) $bibliorato->id ? 'selected' : '' }}>{{ $bibliorato->nombre }}</option>
                 @endforeach
-            </select>
+            </select></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="estado">Estado</label>
+            <div class="filter-field"><label for="estado">Estado</label>
             <select id="estado" name="estado">
                 <option value="">Todos</option>
                 @foreach($estados as $valor => $texto)
                     <option value="{{ $valor }}" {{ request('estado') === $valor ? 'selected' : '' }}>{{ $texto }}</option>
                 @endforeach
-            </select>
+            </select></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="ubicacion">Ubicación actual</label>
-            <input id="ubicacion" name="ubicacion" value="{{ request('ubicacion') }}">
+            <div class="filter-field"><label for="ubicacion">Ubicación actual</label>
+            <input id="ubicacion" name="ubicacion" value="{{ request('ubicacion') }}"></div>
         </div>
         <div>
-            <button type="submit" class="btn">Filtrar</button>
+            <button type="submit" class="action-button action-primary">Filtrar</button>
+            <a href="{{ url()->current() }}" class="action-button action-neutral">Limpiar</a>
         </div>
     </div>
 </form>
 
 <div class="panel" style="margin-top: 20px;">
-    <table>
+    <div class="table-panel"><table>
         <thead>
             <tr>
                 <th>Número</th>
@@ -66,7 +68,7 @@
                 <th>Ubicación actual</th>
                 <th>Responsable</th>
                 <th>Estado</th>
-                <th>Acciones</th>
+                <th class="actions-column">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -91,8 +93,9 @@
                 <tr><td colspan="9">No hay expedientes que coincidan con los filtros.</td></tr>
             @endforelse
         </tbody>
-    </table>
+    </table></div>
 
     @include('partials.pagination', ['paginator' => $expedientes])
+</div>
 </div>
 @endsection

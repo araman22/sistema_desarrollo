@@ -4,7 +4,7 @@
     $mostrarContrasena = $usuario === null || auth()->user()->can('restablecerContrasena', $usuario);
 @endphp
 
-<div>
+<div class="field">
     <label for="nombre_usuario">Nombre de usuario:</label>
     <input type="text" id="nombre_usuario" name="nombre_usuario" value="{{ old('nombre_usuario', $usuario?->nombre_usuario) }}" maxlength="100" required>
     @error('nombre_usuario')
@@ -12,7 +12,7 @@
     @enderror
 </div>
 
-<div>
+<div class="field">
     <label for="correo_electronico">Correo electrónico:</label>
     <input type="email" id="correo_electronico" name="correo_electronico" value="{{ old('correo_electronico', $usuario?->correo_electronico) }}" maxlength="150">
     @error('correo_electronico')
@@ -20,7 +20,7 @@
     @enderror
 </div>
 
-<div>
+<div class="field">
     <label for="rol_id">Rol:</label>
     @if ($esPropio)
         {{-- No se puede cambiar el rol propio: se envía el actual. --}}
@@ -39,7 +39,7 @@
     @enderror
 </div>
 
-<div>
+<div class="field">
     <label for="policia_id">Policía asociado:</label>
     <select id="policia_id" name="policia_id">
         <option value="">Ninguno</option>
@@ -54,7 +54,7 @@
     @enderror
 </div>
 
-<div>
+<div class="field">
     @if ($esPropio)
         <input type="hidden" name="activo" value="{{ $usuario->activo ? 1 : 0 }}">
         <span>Activo (no podés desactivar tu propio usuario)</span>
@@ -71,7 +71,7 @@
 </div>
 
 @if ($mostrarContrasena)
-    <div>
+    <div class="field">
         <label for="contrasena">Contraseña{{ $usuario ? ' (dejala vacía para no cambiarla)' : '' }}:</label>
         <input type="password" id="contrasena" name="contrasena" autocomplete="new-password" @required($usuario === null)>
         @error('contrasena')
@@ -79,7 +79,7 @@
         @enderror
     </div>
 
-    <div>
+    <div class="field">
         <label for="contrasena_confirmation">Confirmar contraseña:</label>
         <input type="password" id="contrasena_confirmation" name="contrasena_confirmation" autocomplete="new-password" @required($usuario === null)>
     </div>

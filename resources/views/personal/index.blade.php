@@ -3,57 +3,59 @@
 @section('title', 'Personal')
 
 @section('content')
-<div class="row" style="justify-content: space-between; margin-bottom: 20px;">
+<div class="workspace-view view-index">
+<div class="row page-header" style="justify-content: space-between; margin-bottom: 20px;">
     <div>
         <h1>Personal</h1>
         <p class="muted">Agentes de la dependencia, su situación de revista y antigüedad.</p>
     </div>
     @can('create', App\Models\Policia::class)
-        <a href="{{ route('personal.create') }}" class="btn">Nuevo agente</a>
+        <a href="{{ route('personal.create') }}" class="action-button action-primary">Nuevo agente</a>
     @endcan
 </div>
 
-<form method="GET" class="panel">
+<form method="GET" class="panel filter-panel">
     <div class="row" style="gap: 12px; align-items:end;">
         <div style="flex:2; min-width:200px;">
-            <label for="search">Buscar</label>
-            <input id="search" name="search" value="{{ request('search') }}" placeholder="Apellido, nombre, DNI o legajo">
+            <div class="filter-field"><label for="search">Buscar</label>
+            <input id="search" name="search" value="{{ request('search') }}" placeholder="Apellido, nombre, DNI o legajo"></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="jerarquia_id">Jerarquía</label>
+            <div class="filter-field"><label for="jerarquia_id">Jerarquía</label>
             <select id="jerarquia_id" name="jerarquia_id">
                 <option value="">Todas</option>
                 @foreach($jerarquias as $jerarquia)
                     <option value="{{ $jerarquia->id }}" {{ (string) request('jerarquia_id') === (string) $jerarquia->id ? 'selected' : '' }}>{{ $jerarquia->nombre }}</option>
                 @endforeach
-            </select>
+            </select></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="oficina_id">Oficina</label>
+            <div class="filter-field"><label for="oficina_id">Oficina</label>
             <select id="oficina_id" name="oficina_id">
                 <option value="">Todas</option>
                 @foreach($oficinas as $oficina)
                     <option value="{{ $oficina->id }}" {{ (string) request('oficina_id') === (string) $oficina->id ? 'selected' : '' }}>{{ $oficina->nombre }}</option>
                 @endforeach
-            </select>
+            </select></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="situacion">Situación de revista</label>
+            <div class="filter-field"><label for="situacion">Situación de revista</label>
             <select id="situacion" name="situacion">
                 <option value="">Todas</option>
                 @foreach($situaciones as $valor => $texto)
                     <option value="{{ $valor }}" {{ request('situacion') === $valor ? 'selected' : '' }}>{{ $texto }}</option>
                 @endforeach
-            </select>
+            </select></div>
         </div>
         <div>
-            <button type="submit" class="btn">Filtrar</button>
+            <button type="submit" class="action-button action-primary">Filtrar</button>
+            <a href="{{ url()->current() }}" class="action-button action-neutral">Limpiar</a>
         </div>
     </div>
 </form>
 
 <div class="panel" style="margin-top: 20px;">
-    <table>
+    <div class="table-panel"><table>
         <thead>
             <tr>
                 <th>Legajo</th>
@@ -63,7 +65,7 @@
                 <th>Oficina</th>
                 <th>Antigüedad</th>
                 <th>Situación</th>
-                <th>Acciones</th>
+                <th class="actions-column">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -87,8 +89,9 @@
                 <tr><td colspan="8">No hay agentes que coincidan con los filtros.</td></tr>
             @endforelse
         </tbody>
-    </table>
+    </table></div>
 
     @include('partials.pagination', ['paginator' => $policias])
+</div>
 </div>
 @endsection
