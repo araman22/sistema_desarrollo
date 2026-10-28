@@ -18,6 +18,8 @@
     <div class="system-nav"><nav aria-label="Navegación principal">
         <a href="{{ route('dashboard') }}" @if(request()->routeIs('dashboard')) aria-current="page" @endif>Inicio</a>
         @can('viewAny', App\Models\Oficina::class)<a href="{{ route('oficinas.index') }}" @if(request()->routeIs('oficinas.*')) aria-current="page" @endif>Oficinas</a>@endcan
+        @can('viewAny', App\Models\Policia::class)<a href="{{ route('personal.index') }}" @if(request()->routeIs('personal.*')) aria-current="page" @endif>Personal</a>@endcan
+        @can('viewAny', App\Models\Licencia::class)<a href="{{ route('licencias.index') }}" @if(request()->routeIs('licencias.*')) aria-current="page" @endif>Licencias</a>@endcan
         @can('viewAny', App\Models\Inventario::class)<a href="{{ route('inventarios.index') }}" @if(request()->routeIs('inventarios.*')) aria-current="page" @endif>Inventario</a>@endcan
         @can('viewAny', App\Models\EquipamientoTecnologico::class)<a href="{{ route('equipamientos-tecnologicos.index') }}" @if(request()->routeIs('equipamientos-tecnologicos.*')) aria-current="page" @endif>Equipamiento</a>@endcan
         @can('viewAny', App\Models\Documento::class)<a href="{{ route('documentos.index') }}" @if(request()->routeIs('documentos.*')) aria-current="page" @endif>Documentos</a>@endcan

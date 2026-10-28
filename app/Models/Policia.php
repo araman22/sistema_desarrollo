@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Models\Concerns\RegistraAuditoria;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -49,6 +51,67 @@ class Policia extends Model
     public function getNombreCompletoAttribute(): string
     {
         return $this->persona?->nombre_completo ?? '';
+    }
+
+    /**
+     * Antigüedad en la Policía calculada desde la fecha de ingreso.
+     *
+     * @return array{anios: int, meses: int}|null
+     */
+    public function antiguedad(?CarbonInterface $al = null): ?array
+    {
+        if (! $this->fecha_ingreso) {
+            return null;
+        }
+        $diferencia = $this->fecha_ingreso->diff($al ?? today());
+
+        return $diferencia->invert ? ['anios' => 0, 'meses' => 0] : ['anios' => $diferencia->y, 'meses' => $diferencia->m];
+    }
+
+    public function getAntiguedadTextoAttribute(): string
+    {
+        $antiguedad = $this->antiguedad();
+        if ($antiguedad === null) {
+            return 'Sin fecha de ingreso';
+        }
+
+        return $antiguedad['anios'].' '.($antiguedad['anios'] === 1 ? 'año' : 'años').' y '.$antiguedad['meses'].' '.($antiguedad['meses'] === 1 ? 'mes' : 'meses');
+    }
+
+    // La novedad vigente más reciente define la situación; sin novedades el agente está activo.
+    public function situacionActual(?CarbonInterface $al = null): string
+    {
+        return $this->novedades()->vigentesAl($al ?? today())->orderByDesc('fecha_desde')->orderByDesc('id')->value('situacion') ?? 'activo';
+    }
+
+    /**
+     * Sincroniza las funciones adicionales y deja constancia en auditoría.
+     *
+     * @param  list<int>  $ids
+     */
+    public function sincronizarFuncionesAdicionales(array $ids): void
+    {
+        $anteriores = $this->funcionesAdicionales()->pluck('funciones.id')->sort()->values()->all();
+        $this->funcionesAdicionales()->sync($ids);
+        $nuevas = collect($ids)->map(fn ($id) => (int) $id)->sort()->values()->all();
+        if ($anteriores !== $nuevas) {
+            $this->registrarAuditoria('editar', ['funciones_adicionales' => $anteriores], ['funciones_adicionales' => $nuevas]);
+        }
+    }
+
+    public function familiares(): HasMany
+    {
+        return $this->hasMany(Familiar::class, 'policia_id');
+    }
+
+    public function funcionesAdicionales(): BelongsToMany
+    {
+        return $this->belongsToMany(Funcion::class, 'policia_funciones', 'policia_id', 'funcion_id')->withTimestamps();
+    }
+
+    public function novedades(): HasMany
+    {
+        return $this->hasMany(NovedadRevista::class, 'policia_id');
     }
 
     public function persona(): BelongsTo
