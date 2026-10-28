@@ -17,7 +17,18 @@ class TipoLicencia extends Model
      */
     protected $fillable = [
         'nombre',
+        'computa_cupo_anual',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'computa_cupo_anual' => 'boolean',
+        ];
+    }
 
     public function licencias(): HasMany
     {
