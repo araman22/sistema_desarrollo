@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\RestablecerContrasenaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\EquipamientoTecnologicoController;
+use App\Http\Controllers\Expedientes\BiblioratoController;
+use App\Http\Controllers\Expedientes\ExpedienteController;
+use App\Http\Controllers\Expedientes\ExpedientePaseController;
 use App\Http\Controllers\FondoFijoController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\OficinaController;
@@ -52,6 +55,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('personal/{policia}/familiares/{familiar}', [FamiliarController::class, 'destroy'])->scopeBindings()->name('personal.familiares.destroy');
     Route::post('personal/{policia}/novedades', [NovedadRevistaController::class, 'store'])->name('personal.novedades.store');
     Route::resource('licencias', LicenciaController::class)->parameters(['licencias' => 'licencia']);
+
+    // Expedientes
+    Route::get('expedientes/biblioratos', [BiblioratoController::class, 'index'])->name('biblioratos.index');
+    Route::post('expedientes/biblioratos', [BiblioratoController::class, 'store'])->name('biblioratos.store');
+    Route::put('expedientes/biblioratos/{bibliorato}', [BiblioratoController::class, 'update'])->name('biblioratos.update');
+    Route::resource('expedientes', ExpedienteController::class)->parameters(['expedientes' => 'expediente']);
+    Route::post('expedientes/{expediente}/pases', [ExpedientePaseController::class, 'store'])->name('expedientes.pases.store');
+    Route::patch('expedientes/{expediente}/pases/{pase}/recepcion', [ExpedientePaseController::class, 'recibir'])->scopeBindings()->name('expedientes.pases.recibir');
 
     // Fondo fijo
     Route::get('/fondo-fijo', [FondoFijoController::class, 'index'])

@@ -27,6 +27,7 @@ class RolSeeder extends Seeder
                 'oficinas' => ['ver', 'editar'],
                 'proyectos' => '*',
                 'licencias' => '*',
+                'expedientes' => '*',
                 'capacitaciones' => '*',
                 'actividades' => '*',
                 'incidencias' => ['ver', 'crear', 'editar', 'resolver'],
@@ -54,6 +55,7 @@ class RolSeeder extends Seeder
                 'vehiculos' => ['ver', 'crear', 'editar'],
                 'vehiculo_mantenimientos' => ['ver', 'crear', 'editar'],
                 'documentos' => ['ver', 'crear', 'editar', 'descargar'],
+                'expedientes' => ['ver', 'crear', 'editar', 'pasar'],
                 'policias' => ['ver'],
             ],
         ],
@@ -66,6 +68,7 @@ class RolSeeder extends Seeder
                 'actividades' => ['ver'],
                 'inventarios' => ['ver'],
                 'capacitaciones' => ['ver'],
+                'expedientes' => ['ver'],
             ],
         ],
     ];
