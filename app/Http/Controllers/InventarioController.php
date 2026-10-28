@@ -16,37 +16,63 @@ class InventarioController extends Controller
     {
         Gate::authorize('viewAny', Inventario::class);
 
-        $query = Inventario::query()->with(['oficina', 'responsable.persona']);
+        // Un valor vacío equivale a "Todas"; los filtros se combinan entre sí.
+        $filtros = request()->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'categoria' => ['nullable', 'string', 'max:100'],
+            'estado' => ['nullable', 'string', 'max:50'],
+            'oficina_id' => ['nullable', 'integer'],
+            'responsable_id' => ['nullable', 'integer'],
+        ]);
 
-        if ($search = request('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('codigo', 'like', "%{$search}%")
-                    ->orWhere('descripcion', 'like', "%{$search}%")
-                    ->orWhere('numero_serie', 'like', "%{$search}%");
-            });
+        $query = Inventario::query()->filtrar($filtros);
+
+        // Los totales se calculan sobre todos los registros filtrados, no sobre la página visible.
+        $subtotales = (clone $query)
+            ->selectRaw('oficina_id, count(*) as registros, sum(cantidad) as unidades')
+            ->groupBy('oficina_id')
+            ->get();
+        $nombresOficinas = Oficina::query()->whereKey($subtotales->pluck('oficina_id')->filter())->pluck('nombre', 'id');
+        $subtotales = $subtotales
+            ->map(fn ($fila) => [
+                'oficina_id' => $fila->oficina_id,
+                'oficina' => $nombresOficinas[$fila->oficina_id] ?? 'Sin oficina',
+                'registros' => (int) $fila->registros,
+                'unidades' => (int) $fila->unidades,
+            ])
+            ->sortBy(fn ($fila) => [$fila['oficina_id'] === null ? 1 : 0, $fila['oficina']])
+            ->values();
+        $totalGeneral = ['registros' => $subtotales->sum('registros'), 'unidades' => $subtotales->sum('unidades')];
+
+        // Con "Todas las oficinas" los registros se listan agrupados por oficina.
+        $agrupado = empty($filtros['oficina_id']);
+        if ($agrupado) {
+            $query->orderByRaw('inventarios.oficina_id is null')
+                ->orderBy(Oficina::select('nombre')->whereColumn('oficinas.id', 'inventarios.oficina_id'));
         }
 
-        if ($categoria = request('categoria')) {
-            $query->where('categoria', $categoria);
-        }
+        $inventarios = $query->with(['oficina', 'responsable.persona'])
+            ->orderBy('codigo')
+            ->paginate(10)
+            ->appends(request()->query());
 
-        if ($estado = request('estado')) {
-            $query->where('estado', $estado);
-        }
-
-        if ($oficinaId = request('oficina_id')) {
-            $query->where('oficina_id', $oficinaId);
-        }
-
-        if ($responsableId = request('responsable_id')) {
-            $query->where('responsable_id', $responsableId);
-        }
-
-        $inventarios = $query->orderBy('codigo')->paginate(10)->appends(request()->query());
         $oficinas = Oficina::query()->orderBy('nombre')->get();
         $responsables = Policia::query()->with('persona')->orderBy('numero_legajo')->get();
+        $categorias = collect(Inventario::CATEGORIAS)
+            ->merge(Inventario::query()->distinct()->orderBy('categoria')->pluck('categoria'))
+            ->unique()->values();
 
-        return view('inventarios.index', compact('inventarios', 'oficinas', 'responsables'));
+        return view('inventarios.index', [
+            'inventarios' => $inventarios,
+            'oficinas' => $oficinas,
+            'responsables' => $responsables,
+            'categorias' => $categorias,
+            'estados' => Inventario::ESTADOS,
+            'subtotales' => $subtotales,
+            'subtotalesPorOficina' => $subtotales->keyBy(fn ($fila) => $fila['oficina_id'] ?? 'sin'),
+            'totalGeneral' => $totalGeneral,
+            'agrupado' => $agrupado,
+        ]);
     }
 
     public function create(): View
@@ -57,8 +83,8 @@ class InventarioController extends Controller
             'inventario' => new Inventario(),
             'oficinas' => Oficina::query()->orderBy('nombre')->get(),
             'responsables' => Policia::query()->with('persona')->orderBy('numero_legajo')->get(),
-            'estados' => ['disponible', 'en_uso', 'en_mantenimiento', 'baja', 'perdido'],
-            'categorias' => ['Tecnologia', 'Mobiliario', 'Herramienta', 'Otro'],
+            'estados' => Inventario::ESTADOS,
+            'categorias' => Inventario::CATEGORIAS,
         ]);
     }
 
@@ -89,8 +115,8 @@ class InventarioController extends Controller
             'inventario' => $inventario,
             'oficinas' => Oficina::query()->orderBy('nombre')->get(),
             'responsables' => Policia::query()->with('persona')->orderBy('numero_legajo')->get(),
-            'estados' => ['disponible', 'en_uso', 'en_mantenimiento', 'baja', 'perdido'],
-            'categorias' => ['Tecnologia', 'Mobiliario', 'Herramienta', 'Otro'],
+            'estados' => Inventario::ESTADOS,
+            'categorias' => Inventario::CATEGORIAS,
         ]);
     }
 

@@ -14,6 +14,10 @@ class Inventario extends Model
 
     protected $table = 'inventarios';
 
+    public const CATEGORIAS = ['Tecnologia', 'Mobiliario', 'Herramienta', 'Otro'];
+
+    public const ESTADOS = ['disponible', 'en_uso', 'en_mantenimiento', 'baja', 'perdido'];
+
     /**
      * @var list<string>
      */
@@ -21,6 +25,7 @@ class Inventario extends Model
         'codigo',
         'descripcion',
         'categoria',
+        'cantidad',
         'marca',
         'modelo',
         'numero_serie',
@@ -40,9 +45,27 @@ class Inventario extends Model
     protected function casts(): array
     {
         return [
+            'cantidad' => 'integer',
             'fecha_adquisicion' => 'date',
             'valor_adquisicion' => 'decimal:2',
         ];
+    }
+
+    /**
+     * @param  array{search?: ?string, categoria?: ?string, estado?: ?string, oficina_id?: ?int, responsable_id?: ?int}  $filtros
+     */
+    public function scopeFiltrar(Builder $query, array $filtros): Builder
+    {
+        return $query
+            ->when($filtros['search'] ?? null, fn ($q, $search) => $q->where(function ($q) use ($search) {
+                $q->where('codigo', 'like', "%{$search}%")
+                    ->orWhere('descripcion', 'like', "%{$search}%")
+                    ->orWhere('numero_serie', 'like', "%{$search}%");
+            }))
+            ->when($filtros['categoria'] ?? null, fn ($q, $categoria) => $q->where('categoria', $categoria))
+            ->when($filtros['estado'] ?? null, fn ($q, $estado) => $q->where('estado', $estado))
+            ->when($filtros['oficina_id'] ?? null, fn ($q, $oficinaId) => $q->where('oficina_id', $oficinaId))
+            ->when($filtros['responsable_id'] ?? null, fn ($q, $responsableId) => $q->where('responsable_id', $responsableId));
     }
 
     public function oficina(): BelongsTo

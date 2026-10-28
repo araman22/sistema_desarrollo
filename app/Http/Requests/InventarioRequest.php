@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Inventario;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -20,10 +21,11 @@ class InventarioRequest extends FormRequest
             'codigo' => ['required', 'string', 'max:50', Rule::unique('inventarios', 'codigo')->ignore($inventarioId)],
             'descripcion' => ['required', 'string', 'max:255'],
             'categoria' => ['required', 'string', 'max:100'],
+            'cantidad' => ['required', 'integer', 'min:1', 'max:1000000'],
             'marca' => ['nullable', 'string', 'max:100'],
             'modelo' => ['nullable', 'string', 'max:100'],
             'numero_serie' => ['nullable', 'string', 'max:100', Rule::unique('inventarios', 'numero_serie')->ignore($inventarioId)],
-            'estado' => ['required', Rule::in(['disponible', 'en_uso', 'en_mantenimiento', 'baja', 'perdido'])],
+            'estado' => ['required', Rule::in(Inventario::ESTADOS)],
             'ubicacion' => ['nullable', 'string', 'max:255'],
             'oficina_id' => ['nullable', 'exists:oficinas,id'],
             'responsable_id' => ['nullable', 'exists:policias,id'],

@@ -16,6 +16,7 @@
 
     <div class="grid">
         <div class="card"><strong>Categoria:</strong> {{ $inventario->categoria }}</div>
+        <div class="card"><strong>Cantidad:</strong> {{ number_format($inventario->cantidad, 0, ',', '.') }}</div>
         <div class="card"><strong>Estado:</strong> {{ $inventario->estado }}</div>
         <div class="card"><strong>Oficina:</strong> {{ $inventario->oficina->nombre ?? 'Sin oficina' }}</div>
         <div class="card"><strong>Responsable:</strong> {{ $inventario->responsable?->persona?->nombre_completo ?? 'Sin responsable' }}</div>
