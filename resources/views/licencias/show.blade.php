@@ -3,8 +3,9 @@
 @section('title', 'Detalle de licencia')
 
 @section('content')
+<div class="workspace-view view-show">
 <div class="panel">
-    <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div class="row page-header" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
         <div>
             <h1>{{ $licencia->tipo?->nombre ?? 'Licencia' }} · {{ $licencia->anio_correspondiente }}</h1>
             <p class="muted"><a href="{{ route('personal.show', $licencia->policia) }}">{{ $licencia->policia?->persona?->nombre_completo }}</a> · <span class="badge">{{ $licencia->estado_texto }}</span></p>
@@ -14,7 +15,7 @@
                 <a href="{{ route('licencias.edit', $licencia) }}" class="action-button action-edit">Editar</a>
             @endcan
             @can('delete', $licencia)
-                <form method="POST" action="{{ route('licencias.destroy', $licencia) }}" onsubmit="return confirm('¿Eliminar la licencia pendiente?');">
+                <form method="POST" action="{{ route('licencias.destroy', $licencia) }}" onsubmit="return confirm('¿Eliminar la licencia pendiente?');" class="record-action-form">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="action-button action-delete">Eliminar</button>
@@ -55,7 +56,8 @@
     </div>
 
     <div class="row">
-        <a href="{{ route('licencias.index') }}" class="btn secondary">Volver al listado</a>
+        <a href="{{ route('licencias.index') }}" class="action-button action-neutral">Volver al listado</a>
     </div>
+</div>
 </div>
 @endsection

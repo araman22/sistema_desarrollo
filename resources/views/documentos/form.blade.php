@@ -3,9 +3,10 @@
 @section('title', isset($documento->id) ? 'Editar documento' : 'Nuevo documento')
 
 @section('content')
-<div class="panel" style="max-width: 720px; margin: 0 auto;">
+<div class="workspace-view view-form">
+<div class="panel page-header" style="max-width: 720px; margin: 0 auto;">
     <h1>{{ isset($documento->id) ? 'Editar documento' : 'Nuevo documento' }}</h1>
-    <form method="POST" action="{{ isset($documento->id) ? route('documentos.update', $documento) : route('documentos.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ isset($documento->id) ? route('documentos.update', $documento) : route('documentos.store') }}" enctype="multipart/form-data" class="record-form">
         @csrf
         @if(isset($documento->id))
             @method('PUT')
@@ -44,10 +45,11 @@
             @endif
         </div>
 
-        <div class="row">
-            <button type="submit" class="btn">Guardar</button>
-            <a href="{{ route('documentos.index') }}" class="btn secondary">Cancelar</a>
+        <div class="row form-actions">
+            <button type="submit" class="action-button action-primary">Guardar</button>
+            <a href="{{ route('documentos.index') }}" class="action-button action-neutral">Cancelar</a>
         </div>
     </form>
+</div>
 </div>
 @endsection

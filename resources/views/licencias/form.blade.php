@@ -3,12 +3,13 @@
 @section('title', $licencia->exists ? 'Editar licencia' : 'Nueva licencia')
 
 @section('content')
-<div class="panel" style="max-width: 900px; margin: 0 auto;">
+<div class="workspace-view view-form">
+<div class="panel page-header" style="max-width: 900px; margin: 0 auto;">
     <h1>{{ $licencia->exists ? 'Editar licencia' : 'Nueva licencia' }}</h1>
     @if($cupo)
         <p class="muted">Cupo anual {{ $cupo['anio'] }} del agente: {{ $cupo['cupo'] }} días corridos · utilizados {{ $cupo['utilizados'] }} · disponibles {{ $cupo['disponibles'] }}. Solo la licencia anual consume cupo.</p>
     @endif
-    <form method="POST" action="{{ $licencia->exists ? route('licencias.update', $licencia) : route('licencias.store') }}">
+    <form method="POST" action="{{ $licencia->exists ? route('licencias.update', $licencia) : route('licencias.store') }}" class="record-form">
         @csrf
         @if($licencia->exists)
             @method('PUT')
@@ -106,10 +107,11 @@
             <textarea id="observaciones" name="observaciones" rows="2" maxlength="5000">{{ old('observaciones', $licencia->observaciones) }}</textarea>
         </div>
 
-        <div class="row">
-            <button type="submit" class="btn">Guardar</button>
-            <a href="{{ $licencia->exists ? route('licencias.show', $licencia) : route('licencias.index') }}" class="btn secondary">Cancelar</a>
+        <div class="row form-actions">
+            <button type="submit" class="action-button action-primary">Guardar</button>
+            <a href="{{ $licencia->exists ? route('licencias.show', $licencia) : route('licencias.index') }}" class="action-button action-neutral">Cancelar</a>
         </div>
     </form>
+</div>
 </div>
 @endsection

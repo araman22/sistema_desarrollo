@@ -3,6 +3,7 @@
 @section('title', 'Rol '.$rol->nombre)
 
 @section('content')
+<div class="workspace-view view-show">
     <h1>Rol {{ $rol->nombre }}</h1>
 
     <dl>
@@ -28,6 +29,7 @@
 
     <p>
         @include('roles._acciones', ['rol' => $rol])
-        <a href="{{ route('roles.index') }}">Volver al listado</a>
+        <a href="{{ route('roles.index') }}" class="action-button action-neutral">Volver al listado</a>
     </p>
+</div>
 @endsection

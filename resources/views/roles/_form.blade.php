@@ -5,7 +5,7 @@
     $seleccionados = array_map('intval', (array) old('permisos', $permisosDelRol ?? []));
 @endphp
 
-<div>
+<div class="field">
     <label for="nombre">Nombre:</label>
     @if ($esAdministrador)
         {{-- El nombre del administrador es fijo: se envía el actual. --}}
@@ -19,7 +19,7 @@
     @enderror
 </div>
 
-<div>
+<div class="field">
     <label for="descripcion">Descripción:</label>
     <textarea id="descripcion" name="descripcion" maxlength="500" rows="3">{{ old('descripcion', $rol?->descripcion) }}</textarea>
     @error('descripcion')
@@ -27,7 +27,7 @@
     @enderror
 </div>
 
-<div>
+<div class="field">
     @if ($esAdministrador)
         <input type="hidden" name="activo" value="1">
         <span>Activo (el rol administrador no se puede desactivar)</span>
