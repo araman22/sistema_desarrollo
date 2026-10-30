@@ -3,6 +3,7 @@
 @section('title', 'Usuario '.$usuario->nombre_usuario)
 
 @section('content')
+<div class="workspace-view view-show">
     <h1>Usuario {{ $usuario->nombre_usuario }}</h1>
 
     <dl>
@@ -36,6 +37,7 @@
 
     <p>
         @include('usuarios._acciones', ['usuario' => $usuario])
-        <a href="{{ route('usuarios.index') }}">Volver al listado</a>
+        <a href="{{ route('usuarios.index') }}" class="action-button action-neutral">Volver al listado</a>
     </p>
+</div>
 @endsection

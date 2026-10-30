@@ -3,9 +3,10 @@
 @section('title', $expediente->exists ? 'Editar expediente' : 'Nuevo expediente')
 
 @section('content')
-<div class="panel" style="max-width: 900px; margin: 0 auto;">
+<div class="workspace-view view-form">
+<div class="panel page-header" style="max-width: 900px; margin: 0 auto;">
     <h1>{{ $expediente->exists ? 'Editar expediente '.$expediente->numero : 'Nuevo expediente' }}</h1>
-    <form method="POST" action="{{ $expediente->exists ? route('expedientes.update', $expediente) : route('expedientes.store') }}">
+    <form method="POST" action="{{ $expediente->exists ? route('expedientes.update', $expediente) : route('expedientes.store') }}" class="record-form">
         @csrf
         @if($expediente->exists)
             @method('PUT')
@@ -97,10 +98,11 @@
             <textarea id="observaciones" name="observaciones" rows="3" maxlength="5000">{{ old('observaciones', $expediente->observaciones) }}</textarea>
         </div>
 
-        <div class="row">
-            <button type="submit" class="btn">Guardar</button>
-            <a href="{{ $expediente->exists ? route('expedientes.show', $expediente) : route('expedientes.index') }}" class="btn secondary">Cancelar</a>
+        <div class="row form-actions">
+            <button type="submit" class="action-button action-primary">Guardar</button>
+            <a href="{{ $expediente->exists ? route('expedientes.show', $expediente) : route('expedientes.index') }}" class="action-button action-neutral">Cancelar</a>
         </div>
     </form>
+</div>
 </div>
 @endsection

@@ -3,9 +3,10 @@
 @section('title', $policia->exists ? 'Editar agente' : 'Nuevo agente')
 
 @section('content')
-<div class="panel" style="max-width: 900px; margin: 0 auto;">
+<div class="workspace-view view-form">
+<div class="panel page-header" style="max-width: 900px; margin: 0 auto;">
     <h1>{{ $policia->exists ? 'Editar agente' : 'Nuevo agente' }}</h1>
-    <form method="POST" action="{{ $policia->exists ? route('personal.update', $policia) : route('personal.store') }}">
+    <form method="POST" action="{{ $policia->exists ? route('personal.update', $policia) : route('personal.store') }}" class="record-form">
         @csrf
         @if($policia->exists)
             @method('PUT')
@@ -122,10 +123,11 @@
             <textarea id="observaciones" name="observaciones" rows="3" maxlength="5000">{{ old('observaciones', $policia->observaciones) }}</textarea>
         </div>
 
-        <div class="row">
-            <button type="submit" class="btn">Guardar</button>
-            <a href="{{ $policia->exists ? route('personal.show', $policia) : route('personal.index') }}" class="btn secondary">Cancelar</a>
+        <div class="row form-actions">
+            <button type="submit" class="action-button action-primary">Guardar</button>
+            <a href="{{ $policia->exists ? route('personal.show', $policia) : route('personal.index') }}" class="action-button action-neutral">Cancelar</a>
         </div>
     </form>
+</div>
 </div>
 @endsection

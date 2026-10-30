@@ -3,8 +3,9 @@
 @section('title', 'Detalle de inventario')
 
 @section('content')
+<div class="workspace-view view-show">
 <div class="panel">
-    <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div class="row page-header" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
         <div>
             <h1>{{ $inventario->codigo }}</h1>
             <p class="muted">{{ $inventario->descripcion }}</p>
@@ -37,7 +38,8 @@
     </div>
 
     <div class="row">
-        <a href="{{ route('inventarios.index') }}" class="btn secondary">Volver al listado</a>
+        <a href="{{ route('inventarios.index') }}" class="action-button action-neutral">Volver al listado</a>
     </div>
+</div>
 </div>
 @endsection

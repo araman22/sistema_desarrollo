@@ -3,58 +3,60 @@
 @section('title', 'Inventario')
 
 @section('content')
-<div class="row" style="justify-content: space-between; margin-bottom: 20px;">
+<div class="workspace-view view-index">
+<div class="row page-header" style="justify-content: space-between; margin-bottom: 20px;">
     <div>
         <h1>Inventario</h1>
         <p class="muted">Recursos y bienes asignados a oficinas y responsables.</p>
     </div>
     @can('create', App\Models\Inventario::class)
-        <a href="{{ route('inventarios.create') }}" class="btn">Nuevo recurso</a>
+        <a href="{{ route('inventarios.create') }}" class="action-button action-primary">Nuevo recurso</a>
     @endcan
 </div>
 
-<form method="GET" class="panel">
+<form method="GET" class="panel filter-panel">
     <div class="row" style="gap: 12px; align-items:end;">
         <div style="flex:2; min-width:200px;">
-            <label for="search">Buscar</label>
-            <input id="search" name="search" value="{{ request('search') }}" placeholder="Código, descripción o serie">
+            <div class="filter-field"><label for="search">Buscar</label>
+            <input id="search" name="search" value="{{ request('search') }}" placeholder="Código, descripción o serie"></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="oficina_id">Oficina</label>
+            <div class="filter-field"><label for="oficina_id">Oficina</label>
             <select id="oficina_id" name="oficina_id">
                 <option value="">Todas</option>
                 @foreach($oficinas as $oficina)
                     <option value="{{ $oficina->id }}" {{ (string) request('oficina_id') === (string) $oficina->id ? 'selected' : '' }}>{{ $oficina->nombre }}</option>
                 @endforeach
-            </select>
+            </select></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="categoria">Categoría</label>
+            <div class="filter-field"><label for="categoria">Categoría</label>
             <select id="categoria" name="categoria">
                 <option value="">Todas</option>
                 @foreach($categorias as $categoria)
                     <option value="{{ $categoria }}" {{ request('categoria') === $categoria ? 'selected' : '' }}>{{ $categoria }}</option>
                 @endforeach
-            </select>
+            </select></div>
         </div>
         <div style="flex:1; min-width:170px;">
-            <label for="estado">Estado</label>
+            <div class="filter-field"><label for="estado">Estado</label>
             <select id="estado" name="estado">
                 <option value="">Todos</option>
                 @foreach($estados as $estado)
                     <option value="{{ $estado }}" {{ request('estado') === $estado ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ',$estado)) }}</option>
                 @endforeach
-            </select>
+            </select></div>
         </div>
         <div>
-            <button type="submit" class="btn">Filtrar</button>
+            <button type="submit" class="action-button action-primary">Filtrar</button>
+            <a href="{{ url()->current() }}" class="action-button action-neutral">Limpiar</a>
         </div>
     </div>
 </form>
 
 <section class="panel" style="margin-top: 20px;" aria-labelledby="totales-heading">
     <h2 id="totales-heading">Totales según los filtros</h2>
-    <table>
+    <div class="table-panel"><table>
         <thead>
             <tr>
                 <th>Oficina</th>
@@ -80,11 +82,11 @@
                 <th>{{ number_format($totalGeneral['unidades'], 0, ',', '.') }}</th>
             </tr>
         </tfoot>
-    </table>
+    </table></div>
 </section>
 
 <div class="panel" style="margin-top: 20px;">
-    <table>
+    <div class="table-panel"><table>
         <thead>
             <tr>
                 <th>Código</th>
@@ -93,7 +95,7 @@
                 <th>Cantidad</th>
                 <th>Oficina</th>
                 <th>Estado</th>
-                <th>Acciones</th>
+                <th class="actions-column">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -119,7 +121,7 @@
                             <a href="{{ route('inventarios.edit', $inventario) }}" class="action-button action-edit">Editar</a>
                         @endcan
                         @can('delete', $inventario)
-                            <form method="POST" action="{{ route('inventarios.destroy', $inventario) }}" onsubmit="return confirm('¿Desea eliminar el recurso?');">
+                            <form method="POST" action="{{ route('inventarios.destroy', $inventario) }}" onsubmit="return confirm('¿Desea eliminar el recurso?');" class="record-action-form">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="action-button action-delete">Eliminar</button>
@@ -131,8 +133,9 @@
                 <tr><td colspan="7">No hay recursos de inventario registrados.</td></tr>
             @endforelse
         </tbody>
-    </table>
+    </table></div>
 
     @include('partials.pagination', ['paginator' => $inventarios])
+</div>
 </div>
 @endsection

@@ -3,8 +3,9 @@
 @section('title', 'Expediente '.$expediente->numero)
 
 @section('content')
+<div class="workspace-view view-show">
 <div class="panel">
-    <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div class="row page-header" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
         <div>
             <h1>Expediente {{ $expediente->numero }}</h1>
             <p class="muted">{{ $expediente->bibliorato?->nombre }} · <span class="badge">{{ $expediente->estado_texto }}</span></p>
@@ -15,7 +16,7 @@
             @endcan
             @if($expediente->pases->isEmpty())
                 @can('delete', $expediente)
-                    <form method="POST" action="{{ route('expedientes.destroy', $expediente) }}" onsubmit="return confirm('¿Eliminar el expediente?');">
+                    <form method="POST" action="{{ route('expedientes.destroy', $expediente) }}" onsubmit="return confirm('¿Eliminar el expediente?');" class="record-action-form">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="action-button action-delete">Eliminar</button>
@@ -52,7 +53,7 @@
 
 <section class="panel" style="margin-top:20px;" aria-labelledby="recorrido-heading">
     <h2 id="recorrido-heading">Recorrido y pases</h2>
-    <table>
+    <div class="table-panel"><table>
         <thead><tr><th>#</th><th>Origen</th><th>Destino</th><th>Envío</th><th>Envía</th><th>Recepción</th><th>Recibe</th><th>Observaciones</th></tr></thead>
         <tbody>
             @forelse($expediente->pases as $pase)
@@ -76,11 +77,11 @@
                 <tr><td colspan="8">Sin pases: el expediente permanece en {{ $expediente->ubicacion_actual }}.</td></tr>
             @endforelse
         </tbody>
-    </table>
+    </table></div>
 
     @can('pasar', $expediente)
         @if($expediente->paseEnCurso)
-            <form method="POST" action="{{ route('expedientes.pases.recibir', [$expediente, $expediente->paseEnCurso]) }}" style="margin-top:16px;">
+            <form method="POST" action="{{ route('expedientes.pases.recibir', [$expediente, $expediente->paseEnCurso]) }}" style="margin-top:16px;" class="record-form">
                 @csrf
                 @method('PATCH')
                 <h3>Registrar recepción en {{ $expediente->paseEnCurso->destino }}</h3>
@@ -96,11 +97,11 @@
                         </select>
                     </div>
                     <div class="field" style="flex:2; min-width:200px;"><label for="observaciones_recepcion">Observaciones</label><input id="observaciones_recepcion" name="observaciones_recepcion" value="{{ old('observaciones_recepcion') }}" maxlength="2000"></div>
-                    <div class="field"><button type="submit" class="btn">Registrar recepción</button></div>
+                    <div class="field"><button type="submit" class="action-button action-primary">Registrar recepción</button></div>
                 </div>
             </form>
         @elseif($expediente->estado === 'en_tramite')
-            <form method="POST" action="{{ route('expedientes.pases.store', $expediente) }}" style="margin-top:16px;">
+            <form method="POST" action="{{ route('expedientes.pases.store', $expediente) }}" style="margin-top:16px;" class="record-form">
                 @csrf
                 <h3>Nuevo pase desde {{ $expediente->ubicacion_actual }}</h3>
                 <div class="row" style="gap:12px; align-items:end;">
@@ -116,7 +117,7 @@
                         </select>
                     </div>
                     <div class="field" style="flex:2; min-width:200px;"><label for="pase_observaciones">Observaciones</label><input id="pase_observaciones" name="observaciones" value="{{ old('observaciones') }}" maxlength="2000"></div>
-                    <div class="field"><button type="submit" class="btn">Enviar pase</button></div>
+                    <div class="field"><button type="submit" class="action-button action-primary">Enviar pase</button></div>
                 </div>
             </form>
         @endif
@@ -124,6 +125,7 @@
 </section>
 
 <div class="row" style="margin-top:20px;">
-    <a href="{{ route('expedientes.index') }}" class="btn secondary">Volver al listado</a>
+    <a href="{{ route('expedientes.index') }}" class="action-button action-neutral">Volver al listado</a>
+</div>
 </div>
 @endsection

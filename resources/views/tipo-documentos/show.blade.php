@@ -3,8 +3,9 @@
 @section('title', 'Detalle de tipo de documento')
 
 @section('content')
+<div class="workspace-view view-show">
 <div class="panel">
-    <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div class="row page-header" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
         <div>
             <h1>{{ $tipoDocumento->nombre }}</h1>
             <p class="muted">Catálogo documentario del sistema.</p>
@@ -19,7 +20,8 @@
     </div>
 
     <div class="row">
-        <a href="{{ route('tipo-documentos.index') }}" class="btn secondary">Volver al listado</a>
+        <a href="{{ route('tipo-documentos.index') }}" class="action-button action-neutral">Volver al listado</a>
     </div>
+</div>
 </div>
 @endsection
