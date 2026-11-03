@@ -1,6 +1,8 @@
 # Matriz de roles y permisos
 
 Fuente: `database/seeders/PermisoSeeder.php`, `RolSeeder.php` y `FondoFijoPermisoSeeder.php`.
+Cada permiso se llama `modulo.accion` (ej. `oficinas.editar`).
+El rol `administrador` tiene **todos** los permisos.
 
 ## Roles
 
