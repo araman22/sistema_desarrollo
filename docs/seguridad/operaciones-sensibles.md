@@ -11,9 +11,10 @@ Operaciones que deben verificar permiso en el servidor (no alcanza con ocultar e
 | Asignar permisos a un rol | `roles.asignar` | Escalada de privilegios | administrador |
 | Eliminar cualquier registro | `*.eliminar` | Pérdida de datos | administrador, soporte (equipamientos, inventarios, mantenimientos, drones, baterías), encargado_oficina (licencias, capacitaciones, actividades, proyectos) |
 | Autorizar licencias | `licencias.autorizar` | Aprobar ausencias sin control | administrador, encargado_oficina |
+| Pasar expedientes a otra oficina | `expedientes.pasar` | Mover documentación oficial sin control | administrador, encargado_oficina, administrativo |
 | Registrar movimientos económicos | `movimientos_economicos.crear` / `.editar` | Fraude o errores contables | administrador, administrativo |
-| Movimientos de caja chica | `caja_chica.crear` | Manejo de dinero | administrador, administrativo |
-| Descargar documentos y tickets | `documentos.descargar` / `caja_chica.descargar` | Fuga de información | administrador, administrativo, encargado_oficina (caja chica) |
+| Movimientos de caja chica | `fondo_fijo.crear` | Manejo de dinero | administrador, administrativo |
+| Descargar documentos y tickets | `documentos.descargar` / `fondo_fijo.descargar` | Fuga de información | administrador, administrativo, encargado_oficina (caja chica) |
 | Exportar datos | `policias.exportar` / `movimientos_economicos.exportar` / `auditorias.exportar` | Fuga masiva de datos personales | ver matriz |
 | Ver auditoría | `auditorias.ver` | Expone quién hizo qué | administrador, encargado_oficina |
 
