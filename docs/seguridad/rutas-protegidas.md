@@ -13,10 +13,10 @@ Los permisos de cada rol están en `matriz-roles-permisos.md`.
 
 | Ruta | Para qué | Protección extra |
 |---|---|---|
-| `GET /login`, `POST /login` | Iniciar sesión | `guest`; bloqueo tras 5 intentos fallidos |
+|`GET /login`, `POST /login` | Iniciar sesión | `guest`; `throttle:20,1` por IP y bloqueo tras 5 intentos por usuario.|
 | `/olvide-contrasena` | Pedir enlace de recuperación | `guest`, `throttle:6,1` |
 | `/restablecer-contrasena` | Cambiar contraseña con token | `guest`, `throttle:6,1` |
-| `/movilidad/acceso` | Login alternativo de movilidad | `guest`, `throttle:6,1` |
+| `/movilidad/acceso` | Dirección vieja: redirige a `/login` | — |
 
 ## Rutas protegidas
 
@@ -37,6 +37,12 @@ Los permisos de cada rol están en `matriz-roles-permisos.md`.
 |---|---|---|---|
 | Usuarios | `/usuarios` | `UsuarioController` | `usuarios.*` (incluye activar/desactivar) |
 | Roles | `/roles` | `RolController` | `roles.*` (incluye activar/desactivar) |
+| Personal (policías) | `/personal` | `PoliciaController` | `policias.*` |
+| Familiares y novedades | `/personal/{policia}/familiares`, `/personal/{policia}/novedades` | `FamiliarController`, `NovedadRevistaController` | `policias.editar` |
+| Licencias | `/licencias` | `LicenciaController` | `licencias.*` (incluye `licencias.autorizar`) |
+| Expedientes | `/expedientes` | `ExpedienteController` | `expedientes.*` |
+| Pases de expedientes | `/expedientes/{expediente}/pases` | `ExpedientePaseController` | `expedientes.pasar` |
+| Biblioratos | `/expedientes/biblioratos` | `BiblioratoController` | `expedientes.ver` / `expedientes.categorias` |
 | Vehículos | `/vehiculos` | `VehiculoController` + `VehiculoRequest` | `vehiculos.*` |
 | Mantenimiento de vehículos | `/vehiculos/{vehiculo}/mantenimientos` | `VehiculoMantenimientoController` | `vehiculo_mantenimientos.*` |
 | Documentos de vehículos | `/vehiculos/{vehiculo}/documentos` | `VehiculoDocumentoController` | según `VehiculoPolicy` |
