@@ -3,9 +3,10 @@
 @section('title', isset($equipamiento->id) ? 'Editar equipo' : 'Nuevo equipo')
 
 @section('content')
-<div class="panel" style="max-width: 900px; margin: 0 auto;">
+<div class="workspace-view view-form">
+<div class="panel page-header" style="max-width: 900px; margin: 0 auto;">
     <h1>{{ isset($equipamiento->id) ? 'Editar equipo' : 'Nuevo equipo' }}</h1>
-    <form method="POST" action="{{ isset($equipamiento->id) ? route('equipamientos-tecnologicos.update', $equipamiento) : route('equipamientos-tecnologicos.store') }}">
+    <form method="POST" action="{{ isset($equipamiento->id) ? route('equipamientos-tecnologicos.update', $equipamiento) : route('equipamientos-tecnologicos.store') }}" class="record-form">
         @csrf
         @if(isset($equipamiento->id))
             @method('PUT')
@@ -109,10 +110,11 @@
             <textarea id="observaciones" name="observaciones" rows="3">{{ old('observaciones', $equipamiento->observaciones) }}</textarea>
         </div>
 
-        <div class="row">
-            <button type="submit" class="btn">Guardar</button>
-            <a href="{{ route('equipamientos-tecnologicos.index') }}" class="btn secondary">Cancelar</a>
+        <div class="row form-actions">
+            <button type="submit" class="action-button action-primary">Guardar</button>
+            <a href="{{ route('equipamientos-tecnologicos.index') }}" class="action-button action-neutral">Cancelar</a>
         </div>
     </form>
+</div>
 </div>
 @endsection

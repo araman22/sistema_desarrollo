@@ -29,7 +29,7 @@ class TipoLicenciaSeeder extends Seeder
         ];
 
         foreach ($tipos as $nombre) {
-            TipoLicencia::updateOrCreate(['nombre' => $nombre]);
+            TipoLicencia::updateOrCreate(['nombre' => $nombre], ['computa_cupo_anual' => $nombre === 'Licencia anual']);
         }
     }
 }

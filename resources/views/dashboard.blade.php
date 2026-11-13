@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Inicio')
 @section('content')
+<div class="workspace-view view-dashboard">
 <nav class="breadcrumbs" aria-label="Ubicación"><span>SIGDET</span><span aria-hidden="true">/</span><span aria-current="page">Inicio</span></nav>
 <div class="page-heading"><div><p class="eyebrow">Panel de gestión</p><h1>Resumen general</h1><p class="page-description">Información de recursos y actividad administrativa del departamento.</p></div><span class="dashboard-caption">Sistema de trabajo institucional</span></div>
 <section aria-labelledby="recursos-heading">
@@ -32,4 +33,5 @@
     @can('viewAny', App\Models\Usuario::class)<a href="{{ route('usuarios.index') }}"><strong>Usuarios</strong><span>Cuentas y acceso al sistema</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
     @can('viewAny', App\Models\Rol::class)<a href="{{ route('roles.index') }}"><strong>Roles</strong><span>Perfiles y permisos</span><span class="shortcut-arrow" aria-hidden="true">→</span></a>@endcan
 </div></section>
+</div>
 @endsection

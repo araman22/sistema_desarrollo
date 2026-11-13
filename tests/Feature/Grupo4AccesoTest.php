@@ -73,6 +73,14 @@ class Grupo4AccesoTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_login_limita_los_intentos_por_ip_aunque_cambie_el_usuario(): void
+    {
+        for ($intento = 0; $intento < 20; $intento++) {
+            $this->post(route('login.store'), ['nombre_usuario' => "usuario{$intento}", 'password' => 'x'])->assertSessionHasErrors('nombre_usuario');
+        }
+        $this->post(route('login.store'), ['nombre_usuario' => 'otro', 'password' => 'x'])->assertStatus(429);
+    }
+
     public function test_usuario_inactivo_no_puede_iniciar_sesion(): void
     {
         $usuario = $this->usuario([], ['activo' => false]);

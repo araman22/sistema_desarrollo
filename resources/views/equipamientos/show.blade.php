@@ -3,8 +3,9 @@
 @section('title', 'Detalle de equipo')
 
 @section('content')
+<div class="workspace-view view-show">
 <div class="panel">
-    <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div class="row page-header" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
         <div>
             <h1>{{ $equipamientoTecnologico->nombre }}</h1>
             <p class="muted">{{ $equipamientoTecnologico->tipo }} · {{ $equipamientoTecnologico->codigo }}</p>
@@ -31,7 +32,8 @@
     </div>
 
     <div class="row">
-        <a href="{{ route('equipamientos-tecnologicos.index') }}" class="btn secondary">Volver al listado</a>
+        <a href="{{ route('equipamientos-tecnologicos.index') }}" class="action-button action-neutral">Volver al listado</a>
     </div>
+</div>
 </div>
 @endsection

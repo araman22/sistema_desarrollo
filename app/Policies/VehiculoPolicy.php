@@ -3,14 +3,14 @@
 namespace App\Policies;
 
 use App\Models\Vehiculo;
-use App\Services\MovilidadPermisos;
+use App\Support\PermisosMovilidad;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class VehiculoPolicy
 {
     public function viewAny(Authenticatable $u): bool
     {
-        return MovilidadPermisos::permite($u, 'vehiculos.ver');
+        return PermisosMovilidad::permite($u, 'vehiculos.ver');
     }
 
     public function view(Authenticatable $u, Vehiculo $m): bool
@@ -20,16 +20,16 @@ class VehiculoPolicy
 
     public function create(Authenticatable $u): bool
     {
-        return MovilidadPermisos::permite($u, 'vehiculos.crear');
+        return PermisosMovilidad::permite($u, 'vehiculos.crear');
     }
 
     public function update(Authenticatable $u, Vehiculo $m): bool
     {
-        return MovilidadPermisos::permite($u, 'vehiculos.editar');
+        return PermisosMovilidad::permite($u, 'vehiculos.editar');
     }
 
     public function delete(Authenticatable $u, Vehiculo $m): bool
     {
-        return MovilidadPermisos::permite($u, 'vehiculos.eliminar');
+        return PermisosMovilidad::permite($u, 'vehiculos.eliminar');
     }
 }

@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\DroneRobot;
-use App\Models\MantenimientoMovilidad;
+use App\Models\Mantenimiento;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/** @extends Factory<MantenimientoMovilidad> */
+/** @extends Factory<Mantenimiento> */
 class MantenimientoFactory extends Factory
 {
-    protected $model = MantenimientoMovilidad::class;
+    protected $model = Mantenimiento::class;
 
     public function definition(): array
     {

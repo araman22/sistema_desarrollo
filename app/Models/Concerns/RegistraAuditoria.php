@@ -73,11 +73,22 @@ trait RegistraAuditoria
                 'direccion_ip' => request()->ip(),
             ]);
         } catch (Throwable $e) {
+            if ($this->auditoriaObligatoria()) {
+                throw $e;
+            }
             Log::error('No se pudo registrar la auditoria: '.$e->getMessage(), [
                 'modelo' => static::class,
                 'registro_id' => $this->getKey(),
             ]);
         }
+    }
+
+    /**
+     * Si devuelve true, un fallo de auditoria cancela la operacion en lugar de solo registrarse en el log.
+     */
+    protected function auditoriaObligatoria(): bool
+    {
+        return false;
     }
 
     /**

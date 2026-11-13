@@ -7,7 +7,6 @@ use App\Models\Bateria;
 use App\Models\DroneRobot;
 use App\Models\Funcion;
 use App\Models\Mantenimiento;
-use App\Models\MantenimientoMovilidad;
 use App\Models\Permiso;
 use App\Models\Persona;
 use App\Models\Policia;
@@ -278,9 +277,24 @@ class MovilidadTest extends TestCase
         }
     }
 
+    public function test_la_auditoria_obligatoria_no_alcanza_a_los_mantenimientos_de_otros_modulos(): void
+    {
+        $drone = DroneRobot::factory()->create();
+        Auditoria::creating(fn () => throw new \RuntimeException('Auditoría no disponible'));
+        try {
+            Mantenimiento::factory()->create(['mantenible_tipo' => (new Policia)->getMorphClass(), 'mantenible_id' => 1]);
+            $this->assertDatabaseCount('mantenimientos', 1);
+            $this->expectExceptionMessage('Auditoría no disponible');
+            Mantenimiento::factory()->create(['mantenible_id' => $drone->id]);
+        } finally {
+            Auditoria::flushEventListeners();
+            Model::clearBootedModels();
+        }
+    }
+
     public function test_factories_y_seeder_son_funcionales_e_idempotentes(): void
     {
-        MantenimientoMovilidad::factory()->create();
+        Mantenimiento::factory()->create();
         $this->seed(MovilidadDemoSeeder::class);
         $conteos = [DroneRobot::count(), Bateria::count(), Mantenimiento::count()];
         $this->seed(MovilidadDemoSeeder::class);

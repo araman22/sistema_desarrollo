@@ -3,8 +3,9 @@
 @section('title', 'Detalle del documento')
 
 @section('content')
+<div class="workspace-view view-show">
 <div class="panel">
-    <div class="row" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <div class="row page-header" style="justify-content:space-between; align-items:center; margin-bottom:20px;">
         <div>
             <h1>{{ $documento->nombre }}</h1>
             <p class="muted">{{ $documento->tipo?->nombre ?? 'Sin tipo' }} · Nº {{ $documento->numero }}</p>
@@ -28,9 +29,10 @@
 
     <div class="row">
         @can('download', $documento)
-            <a href="{{ route('documentos.download', $documento) }}" class="btn">Descargar archivo</a>
+            <a href="{{ route('documentos.download', $documento) }}" class="action-button action-download">Descargar archivo</a>
         @endcan
-        <a href="{{ route('documentos.index') }}" class="btn secondary">Volver al listado</a>
+        <a href="{{ route('documentos.index') }}" class="action-button action-neutral">Volver al listado</a>
     </div>
+</div>
 </div>
 @endsection

@@ -38,10 +38,12 @@ class RutasIntegracionTest extends TestCase
         }
     }
 
-    public function test_el_acceso_anterior_de_movilidad_usa_el_login_general(): void
+    public function test_el_acceso_anterior_de_movilidad_redirige_al_login_general(): void
     {
-        $this->get(route('movilidad.login'))->assertOk()->assertViewIs('auth.login');
-        $this->post(route('movilidad.login.store'), [])->assertSessionHasErrors(['nombre_usuario', 'password']);
+        $this->get('/movilidad/acceso')->assertStatus(301)->assertRedirect(route('login'));
+        $this->post('/movilidad/acceso', [])->assertStatus(405);
+        $this->assertFalse(Route::has('movilidad.login'));
+        $this->assertFalse(Route::has('movilidad.logout'));
     }
 
     public function test_la_navegacion_de_movilidad_y_los_documentos_de_vehiculos_existen(): void

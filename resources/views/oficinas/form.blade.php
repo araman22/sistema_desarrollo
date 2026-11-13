@@ -3,9 +3,10 @@
 @section('title', isset($oficina->id) ? 'Editar oficina' : 'Nueva oficina')
 
 @section('content')
-<div class="panel" style="max-width: 760px; margin: 0 auto;">
+<div class="workspace-view view-form">
+<div class="panel page-header" style="max-width: 760px; margin: 0 auto;">
     <h1>{{ isset($oficina->id) ? 'Editar oficina' : 'Nueva oficina' }}</h1>
-    <form method="POST" action="{{ isset($oficina->id) ? route('oficinas.update', $oficina) : route('oficinas.store') }}">
+    <form method="POST" action="{{ isset($oficina->id) ? route('oficinas.update', $oficina) : route('oficinas.store') }}" class="record-form">
         @csrf
         @if(isset($oficina->id))
             @method('PUT')
@@ -64,10 +65,11 @@
             <textarea id="observaciones" name="observaciones" rows="3">{{ old('observaciones', $oficina->observaciones) }}</textarea>
         </div>
 
-        <div class="row">
-            <button type="submit" class="btn">Guardar</button>
-            <a href="{{ route('oficinas.index') }}" class="btn secondary">Cancelar</a>
+        <div class="row form-actions">
+            <button type="submit" class="action-button action-primary">Guardar</button>
+            <a href="{{ route('oficinas.index') }}" class="action-button action-neutral">Cancelar</a>
         </div>
     </form>
+</div>
 </div>
 @endsection

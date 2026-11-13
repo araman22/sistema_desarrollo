@@ -3,20 +3,21 @@
 @section('title', 'Roles')
 
 @section('content')
-    <h1>Roles</h1>
+<div class="workspace-view view-index">
+    <div class="page-header"><h1>Roles</h1>
 
     @can('create', App\Models\Rol::class)
-        <p><a href="{{ route('roles.create') }}">Nuevo rol</a></p>
-    @endcan
+        <p><a href="{{ route('roles.create') }}" class="action-button action-primary">Nuevo rol</a></p>
+    @endcan</div>
 
-    <form action="{{ route('roles.index') }}" method="GET">
-        <label for="q">Buscar:</label>
-        <input type="search" id="q" name="q" value="{{ request('q') }}" placeholder="Nombre del rol">
-        <button type="submit">Buscar</button>
-        <a href="{{ route('roles.index') }}">Limpiar</a>
+    <form action="{{ route('roles.index') }}" method="GET" class="panel filter-panel">
+        <div class="filter-field"><label for="q">Buscar:</label>
+        <input type="search" id="q" name="q" value="{{ request('q') }}" placeholder="Nombre del rol"></div>
+        <button type="submit" class="action-button action-primary">Buscar</button>
+        <a href="{{ route('roles.index') }}" class="action-button action-neutral">Limpiar</a>
     </form>
 
-    <table>
+    <div class="table-panel"><table>
         <thead>
             <tr>
                 <th>Nombre</th>
@@ -24,13 +25,13 @@
                 <th>Estado</th>
                 <th>Usuarios</th>
                 <th>Permisos</th>
-                <th>Acciones</th>
+                <th class="actions-column">Acciones</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($roles as $rol)
                 <tr>
-                    <td><a href="{{ route('roles.show', $rol) }}">{{ $rol->nombre }}</a></td>
+                    <td>{{ $rol->nombre }}</td>
                     <td>{{ $rol->descripcion ?? '—' }}</td>
                     <td>{{ $rol->activo ? 'Activo' : 'Inactivo' }}</td>
                     <td>{{ $rol->usuarios_count }}</td>
@@ -45,7 +46,8 @@
                 </tr>
             @endforelse
         </tbody>
-    </table>
+    </table></div>
 
     {{ $roles->links() }}
+</div>
 @endsection

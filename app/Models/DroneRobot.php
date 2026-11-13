@@ -75,7 +75,7 @@ class DroneRobot extends Model
 
     public function mantenimientos(): MorphMany
     {
-        return $this->morphMany(MantenimientoMovilidad::class, 'mantenible', 'mantenible_tipo', 'mantenible_id');
+        return $this->morphMany(Mantenimiento::class, 'mantenible', 'mantenible_tipo', 'mantenible_id');
     }
 
     public function scopeDeTipo(Builder $query, string $tipo): Builder

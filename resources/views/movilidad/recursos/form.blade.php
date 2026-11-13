@@ -1,10 +1,12 @@
 @extends('layouts.app')
 @section('title', $recurso->exists ? 'Editar recurso' : 'Registrar recurso')
 @section('content')
+<div class="workspace-view view-form">
 <h1>{{ $recurso->exists ? 'Editar' : 'Registrar' }} · {{ $titulo }}</h1><p class="muted">Los campos con * son obligatorios.</p>
-<form class="card" method="POST" action="{{ $recurso->exists ? route('movilidad.'.$modulo.'.update', $recurso) : route('movilidad.'.$modulo.'.store') }}">@csrf @if($recurso->exists) @method('PUT') @endif
+<form class="card record-form" method="POST" action="{{ $recurso->exists ? route('movilidad.'.$modulo.'.update', $recurso) : route('movilidad.'.$modulo.'.store') }}">@csrf @if($recurso->exists) @method('PUT') @endif
 <div class="grid">
-@foreach($campos as $campo => $label)
+@php($ordenCampos = array_flip(['codigo','nombre','tipo','numero_serie','marca','modelo','capacidad','estado','dron_robot_id','responsable_id','horas_uso','ciclos','fecha_adquisicion','ultima_revision','observaciones']))
+@foreach(collect($campos)->sortBy(fn ($label, $campo) => $ordenCampos[$campo] ?? 50) as $campo => $label)
 @if(in_array($campo, ['tipo','estado','responsable_id','dron_robot_id']))
 <div><label for="{{ $campo }}">{{ $label }}{{ $campo !== 'responsable_id' ? ' *' : '' }}</label><select id="{{ $campo }}" name="{{ $campo }}" @required($campo !== 'responsable_id')>
 @if($campo === 'responsable_id')<option value="">Sin responsable</option>@foreach($responsables as $responsable)<option value="{{ $responsable->id }}" @selected((string)old($campo, $recurso->$campo) === (string)$responsable->id)>{{ $responsable->numero_legajo }} · {{ $responsable->nombre_completo }}</option>@endforeach
@@ -16,5 +18,6 @@
 @elseif($campo === 'observaciones')<x-field :name="$campo" :label="$label" :value="$recurso->$campo" type="textarea" maxlength="5000" />
 @else<x-field :name="$campo" :label="$label" :value="$recurso->$campo" :required="in_array($campo,['nombre','codigo'])" :maxlength="$campo === 'nombre' ? 150 : (in_array($campo,['codigo','capacidad']) ? 50 : 100)" />@endif
 @endforeach
-</div><p class="muted">Las horas y los ciclos acumulados no pueden disminuir. La capacidad se informa con su unidad, por ejemplo 5000 mAh.</p><div class="actions"><button>Guardar</button><a href="{{ route('movilidad.'.$modulo.'.index') }}">Volver</a></div></form>
+</div><p class="muted">Las horas y los ciclos acumulados no pueden disminuir. La capacidad se informa con su unidad, por ejemplo 5000 mAh.</p><div class="actions form-actions"><button class="action-button action-primary">Guardar</button><a href="{{ route('movilidad.'.$modulo.'.index') }}" class="action-button action-neutral">Volver</a></div></form>
+</div>
 @endsection

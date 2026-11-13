@@ -13,6 +13,8 @@ class Persona extends Model
 
     protected $table = 'personas';
 
+    public const ESTADOS_CIVILES = ['soltero' => 'Soltero/a', 'casado' => 'Casado/a', 'union_convivencial' => 'Unión convivencial', 'divorciado' => 'Divorciado/a', 'viudo' => 'Viudo/a'];
+
     /**
      * @var list<string>
      */
@@ -22,6 +24,7 @@ class Persona extends Model
         'apellido',
         'fecha_nacimiento',
         'sexo',
+        'estado_civil',
         'direccion',
         'telefono',
         'correo_electronico',

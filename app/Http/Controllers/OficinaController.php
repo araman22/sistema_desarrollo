@@ -6,12 +6,15 @@ use App\Http\Requests\OficinaRequest;
 use App\Models\Oficina;
 use App\Models\Policia;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class OficinaController extends Controller
 {
     public function index(): View
     {
+        Gate::authorize('viewAny', Oficina::class);
+
         $query = Oficina::query()->with(['responsable.persona']);
 
         if ($search = request('search')) {
@@ -41,6 +44,8 @@ class OficinaController extends Controller
 
     public function create(): View
     {
+        Gate::authorize('create', Oficina::class);
+
         return view('oficinas.form', [
             'oficina' => new Oficina(),
             'responsables' => Policia::query()->with('persona')->orderBy('numero_legajo')->get(),
@@ -50,6 +55,8 @@ class OficinaController extends Controller
 
     public function store(OficinaRequest $request): RedirectResponse
     {
+        Gate::authorize('create', Oficina::class);
+
         $oficina = Oficina::create($request->validated());
 
         return redirect()->route('oficinas.show', $oficina)
@@ -58,6 +65,8 @@ class OficinaController extends Controller
 
     public function show(Oficina $oficina): View
     {
+        Gate::authorize('view', $oficina);
+
         $oficina->load(['responsable.persona', 'policias.persona', 'inventarios', 'equipamiento']);
 
         return view('oficinas.show', compact('oficina'));
@@ -65,6 +74,8 @@ class OficinaController extends Controller
 
     public function edit(Oficina $oficina): View
     {
+        Gate::authorize('update', $oficina);
+
         return view('oficinas.form', [
             'oficina' => $oficina,
             'responsables' => Policia::query()->with('persona')->orderBy('numero_legajo')->get(),
@@ -74,6 +85,8 @@ class OficinaController extends Controller
 
     public function update(OficinaRequest $request, Oficina $oficina): RedirectResponse
     {
+        Gate::authorize('update', $oficina);
+
         $oficina->update($request->validated());
 
         return redirect()->route('oficinas.show', $oficina)
@@ -82,6 +95,8 @@ class OficinaController extends Controller
 
     public function destroy(Oficina $oficina): RedirectResponse
     {
+        Gate::authorize('delete', $oficina);
+
         if ($oficina->policias()->exists() || $oficina->inventarios()->exists() || $oficina->equipamiento()->exists() || $oficina->proyectos()->exists()) {
             return back()->withErrors([
                 'oficina' => 'No se puede eliminar la oficina porque existen registros asociados.',

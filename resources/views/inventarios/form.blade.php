@@ -3,9 +3,10 @@
 @section('title', isset($inventario->id) ? 'Editar inventario' : 'Nuevo recurso')
 
 @section('content')
-<div class="panel" style="max-width: 820px; margin: 0 auto;">
+<div class="workspace-view view-form">
+<div class="panel page-header" style="max-width: 820px; margin: 0 auto;">
     <h1>{{ isset($inventario->id) ? 'Editar recurso' : 'Nuevo recurso' }}</h1>
-    <form method="POST" action="{{ isset($inventario->id) ? route('inventarios.update', $inventario) : route('inventarios.store') }}">
+    <form method="POST" action="{{ isset($inventario->id) ? route('inventarios.update', $inventario) : route('inventarios.store') }}" class="record-form">
         @csrf
         @if(isset($inventario->id))
             @method('PUT')
@@ -23,6 +24,10 @@
                         <option value="{{ $categoria }}" {{ old('categoria', $inventario->categoria) === $categoria ? 'selected' : '' }}>{{ $categoria }}</option>
                     @endforeach
                 </select>
+            </div>
+            <div class="field" style="flex:1; min-width:140px;">
+                <label for="cantidad">Cantidad</label>
+                <input id="cantidad" name="cantidad" type="number" min="1" max="1000000" value="{{ old('cantidad', $inventario->cantidad ?? 1) }}" required>
             </div>
             <div class="field" style="flex:1; min-width:220px;">
                 <label for="estado">Estado</label>
@@ -97,10 +102,11 @@
             <textarea id="observaciones" name="observaciones" rows="3">{{ old('observaciones', $inventario->observaciones) }}</textarea>
         </div>
 
-        <div class="row">
-            <button type="submit" class="btn">Guardar</button>
-            <a href="{{ route('inventarios.index') }}" class="btn secondary">Cancelar</a>
+        <div class="row form-actions">
+            <button type="submit" class="action-button action-primary">Guardar</button>
+            <a href="{{ route('inventarios.index') }}" class="action-button action-neutral">Cancelar</a>
         </div>
     </form>
+</div>
 </div>
 @endsection

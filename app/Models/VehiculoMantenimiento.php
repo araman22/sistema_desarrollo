@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use App\Models\Concerns\RegistraAuditoria;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+// Se audita con MovilidadAuditoria dentro de la transacción de cada operación.
 class VehiculoMantenimiento extends Model
 {
-    use RegistraAuditoria;
-
     protected $table = 'vehiculo_mantenimientos';
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Requests\DocumentoRequest;
 use App\Models\Documento;
 use App\Models\TipoDocumento;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,8 @@ class DocumentoController extends Controller
 {
     public function index(): View
     {
+        Gate::authorize('viewAny', Documento::class);
+
         $query = Documento::query()->with('tipo');
 
         if ($search = request('search')) {
@@ -37,6 +40,8 @@ class DocumentoController extends Controller
 
     public function create(): View
     {
+        Gate::authorize('create', Documento::class);
+
         return view('documentos.form', [
             'documento' => new Documento(),
             'tipos' => TipoDocumento::query()->orderBy('nombre')->get(),
@@ -45,6 +50,8 @@ class DocumentoController extends Controller
 
     public function store(DocumentoRequest $request): RedirectResponse
     {
+        Gate::authorize('create', Documento::class);
+
         $archivo = $request->file('archivo');
         $this->validarArchivo($archivo);
 
@@ -68,6 +75,8 @@ class DocumentoController extends Controller
 
     public function show(Documento $documento): View
     {
+        Gate::authorize('view', $documento);
+
         $documento->load(['tipo', 'usuario']);
 
         return view('documentos.show', compact('documento'));
@@ -75,6 +84,8 @@ class DocumentoController extends Controller
 
     public function edit(Documento $documento): View
     {
+        Gate::authorize('update', $documento);
+
         return view('documentos.form', [
             'documento' => $documento,
             'tipos' => TipoDocumento::query()->orderBy('nombre')->get(),
@@ -83,6 +94,8 @@ class DocumentoController extends Controller
 
     public function update(DocumentoRequest $request, Documento $documento): RedirectResponse
     {
+        Gate::authorize('update', $documento);
+
         $datos = [
             'tipo_documento_id' => $request->input('tipo_documento_id'),
             'nombre' => $request->input('nombre'),
@@ -114,6 +127,8 @@ class DocumentoController extends Controller
 
     public function destroy(Documento $documento): RedirectResponse
     {
+        Gate::authorize('delete', $documento);
+
         if ($documento->ruta_archivo && Storage::disk('local')->exists($documento->ruta_archivo)) {
             Storage::disk('local')->delete($documento->ruta_archivo);
         }
@@ -126,6 +141,8 @@ class DocumentoController extends Controller
 
     public function download(Documento $documento)
     {
+        Gate::authorize('download', $documento);
+
         if (! $documento->ruta_archivo || ! Storage::disk('local')->exists($documento->ruta_archivo)) {
             abort(404, 'El archivo ya no está disponible.');
         }

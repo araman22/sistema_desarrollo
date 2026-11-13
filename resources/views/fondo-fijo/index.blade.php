@@ -3,13 +3,14 @@
 @section('title', 'Fondo fijo - SIGDET')
 
 @section('content')
+<div class="workspace-view view-index">
 <div class="panel">
-    <div class="row" style="justify-content: space-between; align-items: center;">
+    <div class="row page-header" style="justify-content: space-between; align-items: center;">
         <div>
             <h1>Control de Gastos</h1>
             <p class="muted">Registro de ingresos y egresos del fondo operativo.</p>
         </div>
-        <a href="{{ route('dashboard') }}" class="btn secondary">Volver a pagina principal</a>
+        <a href="{{ route('dashboard') }}" class="action-button action-neutral">Volver a pagina principal</a>
     </div>
 </div>
 
@@ -37,7 +38,7 @@
 <div class="grid" style="margin-top: 24px;">
     <div class="panel">
         <h2>Registrar ingreso</h2>
-        <form action="{{ route('fondo-fijo.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('fondo-fijo.store') }}" method="POST" enctype="multipart/form-data" class="record-form">
             @csrf
             <input type="hidden" name="tipo" value="ingreso">
 
@@ -61,13 +62,13 @@
                 <textarea id="ingreso_descripcion" name="descripcion" rows="3" placeholder="Detalle del ingreso"></textarea>
             </div>
 
-            <button type="submit" class="btn">Guardar ingreso</button>
+            <button type="submit" class="action-button action-primary">Guardar ingreso</button>
         </form>
     </div>
 
     <div class="panel">
         <h2>Registrar egreso</h2>
-        <form action="{{ route('fondo-fijo.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('fondo-fijo.store') }}" method="POST" enctype="multipart/form-data" class="record-form">
             @csrf
             <input type="hidden" name="tipo" value="egreso">
 
@@ -96,7 +97,7 @@
                 <input id="ticket" type="file" name="ticket" accept=".pdf,.jpg,.jpeg,.png">
             </div>
 
-            <button type="submit" class="btn">Guardar egreso</button>
+            <button type="submit" class="action-button action-primary">Guardar egreso</button>
         </form>
     </div>
 </div>
@@ -105,7 +106,7 @@
 
 <div class="panel" style="margin-top: 24px;">
     <h2>Historial</h2>
-    <table>
+    <div class="table-panel"><table>
         <thead>
             <tr>
                 <th>Tipo</th>
@@ -136,10 +137,11 @@
                 </tr>
             @endforelse
         </tbody>
-    </table>
+    </table></div>
 
     <div style="margin-top: 16px;">
         {{ $movimientos->links() }}
     </div>
+</div>
 </div>
 @endsection

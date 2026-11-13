@@ -350,7 +350,7 @@ class DatosPruebaSeeder extends Seeder
             $vehiculos[] = $vehiculo = Vehiculo::updateOrCreate(
                 ['dominio' => $dominio],
                 [
-                    'tipo_vehiculo_id' => TipoVehiculo::where('nombre', $tipo)->firstOrFail()->id,
+                    'tipo_vehiculo_id' => TipoVehiculo::obtener($tipo)->id,
                     'anio' => $anio,
                     'numero_chasis' => 'CH-'.$dominio,
                     'numero_motor' => 'MT-'.$dominio,

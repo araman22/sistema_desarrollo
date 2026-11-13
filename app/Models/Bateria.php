@@ -26,7 +26,7 @@ class Bateria extends Model
 
     public function mantenimientos(): MorphMany
     {
-        return $this->morphMany(MantenimientoMovilidad::class, 'mantenible', 'mantenible_tipo', 'mantenible_id');
+        return $this->morphMany(Mantenimiento::class, 'mantenible', 'mantenible_tipo', 'mantenible_id');
     }
 
     protected $table = 'baterias';
